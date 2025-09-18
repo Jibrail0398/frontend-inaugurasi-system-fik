@@ -1,5 +1,5 @@
 import { createBrowserRouter } from "react-router";
-import LoginPage from "./pages/admin/LoginPage.jsx";
+import LoginPage from "./pages/admin/auth/LoginPage.jsx";
 import AdminLayout from "./layouts/AdminLayout.jsx";
 import DashboardPage from "./pages/admin/DashboardPage.jsx";
 import AdminAuthLayout from "./layouts/AdminAuthLayout.jsx";

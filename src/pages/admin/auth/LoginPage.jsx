@@ -1,5 +1,5 @@
 import { useState } from "react";
-import AdminAuthLayout from "../../layouts/AdminAuthLayout";
+import AdminAuthLayout from "../../../layouts/AdminAuthLayout";
 import { Link, Navigate, useNavigate } from "react-router";
 
 export default function LoginPage() {
@@ -40,7 +40,7 @@ export default function LoginPage() {
             </form>
             <hr />
             <div className="text-center">
-                <Link className="small" to="/admin/forgot-password">
+                <Link className="small" to="/admin/auth/forgot-password">
                     Forgot Password?
                 </Link>
             </div>
