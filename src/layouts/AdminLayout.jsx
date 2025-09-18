@@ -1,23 +1,16 @@
-import "bootstrap/dist/css/bootstrap.min.css";
-import "../assets/img/favicon/favicon.ico";
-import "../assets/vendor/fonts/iconify-icons.css";
-import "../assets/vendor/libs/node-waves/node-waves.css";
-import "../assets/vendor/libs/pickr/pickr-themes.css";
-import "../assets/vendor/css/core.css";
-import "../assets/css/demo.css";
-import "../assets/vendor/libs/perfect-scrollbar/perfect-scrollbar.css";
-import "../assets/vendor/libs/@form-validation/form-validation.css";
-import "../assets/vendor/css/pages/page-auth.css";
-
 import { Outlet } from "react-router";
+import NavbarAdmin from "../components/NavbarAdmin";
 
-const AdminLayout = ({ children }) => {
+const AdminLayout = () => {
     return (
-        <div className="container-xxl">
-            <div className="authentication-wrapper authentication-basic container-p-y">
-                <div className="authentication-inner py-6">
-                    <Outlet />
-                </div>
+        <div className="layout-wrapper layout-navbar-full layout-horizontal layout-without-menu">
+            <div className="layout-container">
+                <NavbarAdmin />
+
+                <Outlet />
+
+                <div className="layout-overlay layout-menu-toggle" />
+                <div className="drag-target" />
             </div>
         </div>
     );
