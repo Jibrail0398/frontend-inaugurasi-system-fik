@@ -1,17 +1,34 @@
 import { Outlet } from "react-router";
-import NavbarAdmin from "../components/NavbarAdmin";
+import { useExternalScripts } from "../hooks/useExternalScript";
+import SidebarAdmin from "../components/SidebarAdmin";
+import TopbarAdmin from "../components/TopbarAdmin";
+import FooterAdmin from "../components/FooterAdmin";
 
 const AdminLayout = () => {
+    useExternalScripts(["/vendor/chart.js/Chart.min.js", "/js/demo/chart-area-demo.js", "/js/demo/chart-pie-demo.js"], "body");
     return (
-        <div className="layout-wrapper layout-navbar-full layout-horizontal layout-without-menu">
-            <div className="layout-container">
-                <NavbarAdmin />
+        <div id="page-top">
+            {/* Page Wrapper */}
+            <div id="wrapper">
+                <SidebarAdmin />
 
-                <Outlet />
+                {/* Content Wrapper */}
+                <div id="content-wrapper" className="d-flex flex-column">
+                    {/* Main Content */}
+                    <div id="content">
+                        <TopbarAdmin />
 
-                <div className="layout-overlay layout-menu-toggle" />
-                <div className="drag-target" />
+                        <div className="container-fluid">
+                            <Outlet />
+                        </div>
+
+                        <FooterAdmin />
+                    </div>
+                    {/* End of Main Content */}
+                </div>
+                {/* End of Content Wrapper */}
             </div>
+            {/* End of Page Wrapper */}
         </div>
     );
 };

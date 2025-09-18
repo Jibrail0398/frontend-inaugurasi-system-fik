@@ -1,17 +1,20 @@
 import { createBrowserRouter } from "react-router";
-import App from "./App.jsx";
 import LoginPage from "./pages/admin/LoginPage.jsx";
 import AdminLayout from "./layouts/AdminLayout.jsx";
 import DashboardPage from "./pages/admin/DashboardPage.jsx";
+import AdminAuthLayout from "./layouts/AdminAuthLayout.jsx";
+import NotFoundPage from "./pages/NotFoundPage.jsx";
 
 const router = createBrowserRouter([
     {
-        path: "/",
-        element: <App />,
-    },
-    {
-        path: "/admin/login",
-        element: <LoginPage />,
+        path: "/admin/auth",
+        element: <AdminAuthLayout />,
+        children: [
+            {
+                path: "login",
+                element: <LoginPage />,
+            },
+        ],
     },
     {
         path: "/admin",
@@ -22,6 +25,10 @@ const router = createBrowserRouter([
                 element: <DashboardPage />,
             },
         ],
+    },
+    {
+        path: "*",
+        element: <NotFoundPage />,
     },
 ]);
 
