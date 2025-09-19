@@ -1,5 +1,5 @@
 import { Outlet } from "react-router";
-import { useExternalScripts } from "../hooks/useExternalScript";
+import { useExternalScripts } from "../hooks/useExternalScripts";
 import SidebarAdmin from "../components/SidebarAdmin";
 import TopbarAdmin from "../components/TopbarAdmin";
 import FooterAdmin from "../components/FooterAdmin";

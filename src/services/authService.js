@@ -15,3 +15,11 @@ export const login = ({ nim, password }, remember) => {
 export const logout = () => {
     return true;
 };
+
+export const isAuthenticated = () => {};
+
+export const getToken = () => {};
+
+export const forgotPassword = () => {};
+
+export const resetPassword = () => {};

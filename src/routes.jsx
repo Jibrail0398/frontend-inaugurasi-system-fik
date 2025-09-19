@@ -4,6 +4,7 @@ import AdminLayout from "./layouts/AdminLayout.jsx";
 import DashboardPage from "./pages/admin/DashboardPage.jsx";
 import AdminAuthLayout from "./layouts/AdminAuthLayout.jsx";
 import NotFoundPage from "./pages/NotFoundPage.jsx";
+import EventPage from "./pages/admin/event/EventPage.jsx";
 
 const router = createBrowserRouter([
     {
@@ -23,6 +24,10 @@ const router = createBrowserRouter([
             {
                 index: true,
                 element: <DashboardPage />,
+            },
+            {
+                path: "events",
+                element: <EventPage />,
             },
         ],
     },
