@@ -4,7 +4,7 @@ import SidebarAdmin from "../components/SidebarAdmin";
 import TopbarAdmin from "../components/TopbarAdmin";
 import FooterAdmin from "../components/FooterAdmin";
 
-const AdminLayout = () => {
+const AdminLayout = ({ children }) => {
     useExternalScripts(["/vendor/chart.js/Chart.min.js", "/js/demo/chart-area-demo.js", "/js/demo/chart-pie-demo.js"], "body");
     return (
         <div id="page-top">
@@ -20,6 +20,7 @@ const AdminLayout = () => {
 
                         <div className="container-fluid">
                             <Outlet />
+                            {children}
                         </div>
 
                         <FooterAdmin />

@@ -1,4 +1,31 @@
+import { useNavigate } from "react-router";
+import { useLocalStorage } from "react-use";
+import Swal from "sweetalert2";
+
 const TopbarAdmin = () => {
+    const navigate = useNavigate();
+    const [_, setToken] = useLocalStorage("token");
+
+    const handleLogout = async () => {
+        const response = await Swal.fire({
+            title: "Logout",
+            text: "Apakah anda yakin ingin logout?",
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonColor: "#3085d6",
+            cancelButtonColor: "#d33",
+            confirmButtonText: "Logout",
+            cancelButtonText: "Batal",
+        });
+
+        const confirm = response.isConfirmed;
+
+        if (!confirm) return;
+
+        setToken(null);
+        navigate("/admin/auth/login");
+    };
+
     return (
         <nav className="navbar navbar-expand navbar-light bg-white topbar mb-4 static-top shadow">
             {/* Sidebar Toggle (Topbar) */}
@@ -152,7 +179,7 @@ const TopbarAdmin = () => {
                             Activity Log
                         </a>
                         <div className="dropdown-divider" />
-                        <a className="dropdown-item" href="#" data-toggle="modal" data-target="#logoutModal">
+                        <a className="dropdown-item" data-toggle="modal" data-target="#logoutModal" onClick={handleLogout}>
                             <i className="fas fa-sign-out-alt fa-sm fa-fw mr-2 text-gray-400" />
                             Logout
                         </a>

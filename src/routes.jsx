@@ -5,6 +5,7 @@ import DashboardPage from "./pages/admin/DashboardPage.jsx";
 import AdminAuthLayout from "./layouts/AdminAuthLayout.jsx";
 import NotFoundPage from "./pages/NotFoundPage.jsx";
 import EventPage from "./pages/admin/event/EventPage.jsx";
+import TestPage from "./pages/TestPage.jsx";
 
 const router = createBrowserRouter([
     {
@@ -30,6 +31,10 @@ const router = createBrowserRouter([
                 element: <EventPage />,
             },
         ],
+    },
+    {
+        path: "/test",
+        element: <TestPage />,
     },
     {
         path: "*",

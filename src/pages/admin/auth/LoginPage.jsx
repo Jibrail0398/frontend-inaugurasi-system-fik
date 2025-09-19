@@ -1,21 +1,44 @@
-import { useState } from "react";
-import AdminAuthLayout from "../../../layouts/AdminAuthLayout";
-import { Link, Navigate, useNavigate } from "react-router";
+import { useEffect, useState } from "react";
+import { Link, useNavigate } from "react-router";
+import AlertBasic from "../../../components/alert/AlertBasic";
+import useAuth from "../../../hooks/useAuth";
 
 export default function LoginPage() {
     const navigate = useNavigate();
+
+    const [alert, setAlert] = useState(null);
+    const { login } = useAuth();
 
     // input
     const [nim, setNim] = useState("");
     const [password, setPassword] = useState("");
     const [rememberMe, setRememberMe] = useState(false);
 
-    const handleSubmit = () => {
+    const handleSubmit = async () => {
+        const isValid = await login({ nim, password }, rememberMe);
+
+        if (!isValid) {
+            setAlert({
+                type: "danger",
+                message: "NIM atau password salah",
+            });
+            return;
+        }
+
         navigate("/admin");
     };
 
+    useEffect(() => {
+        // Clear alert
+        return () => {
+            setAlert(null);
+        };
+    }, []);
+
     return (
         <>
+            {alert && <AlertBasic type={alert.type} message={alert.message} />}
+
             <div className="text-center">
                 <h1 className="h4 text-gray-900 mb-4">Welcome Back!</h1>
             </div>
