@@ -36,20 +36,18 @@ const DashboardPage = () => {
     };
 
     const fetchData = () => {
+        const randomNumber = Math.floor(Math.random() * 1000);
         // Ganti dengan fetch API
         setTimeout(() => {
-            setTotalPeserta(150);
-            setTotalPesertaTerverifikasi(120);
-            setTotalUangMasuk(5000000);
-            setTotalUangKeluar(2000000);
-
-            console.log("fetch data");
+            setTotalPeserta(1000 + randomNumber);
+            setTotalPesertaTerverifikasi(800 + randomNumber);
+            setTotalUangMasuk(5000000 + randomNumber * 1000);
+            setTotalUangKeluar(2000000 + randomNumber * 500);
         }, 1000);
     };
 
     // Clear Interval
     const clearRealtime = () => {
-        console.log("clear", intervalRef.current);
         clearInterval(intervalRef.current);
         intervalRef.current = null;
     };
@@ -92,7 +90,7 @@ const DashboardPage = () => {
                 <div className="form-check">
                     <input className="form-check-input" type="checkbox" id="data-realtime" checked={isRealtime} onChange={handleCheckboxRealtime} />
                     <label className="form-check-label" htmlFor="data-realtime">
-                        Data Reatime
+                        Data Realtime
                     </label>
                 </div>
             </div>

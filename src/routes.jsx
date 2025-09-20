@@ -6,6 +6,7 @@ import AdminAuthLayout from "./layouts/AdminAuthLayout.jsx";
 import NotFoundPage from "./pages/NotFoundPage.jsx";
 import EventPage from "./pages/admin/event/EventPage.jsx";
 import TestPage from "./pages/TestPage.jsx";
+import ComingSoonPage from "./pages/ComingSoonPage.jsx";
 
 const router = createBrowserRouter([
     {
@@ -27,6 +28,10 @@ const router = createBrowserRouter([
                 element: <DashboardPage />,
             },
             {
+                path: "event-types",
+                element: <ComingSoonPage />,
+            },
+            {
                 path: "events",
                 element: <EventPage />,
             },
@@ -35,6 +40,10 @@ const router = createBrowserRouter([
     {
         path: "/test",
         element: <TestPage />,
+    },
+    {
+        path: "/comingsoon",
+        element: <ComingSoonPage />,
     },
     {
         path: "*",

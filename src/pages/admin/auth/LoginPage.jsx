@@ -28,13 +28,6 @@ export default function LoginPage() {
         navigate("/admin");
     };
 
-    useEffect(() => {
-        // Clear alert
-        return () => {
-            setAlert(null);
-        };
-    }, []);
-
     return (
         <>
             {alert && <AlertBasic type={alert.type} message={alert.message} />}
