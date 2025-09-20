@@ -1,32 +1,36 @@
+import { useState } from "react";
 import AdminSidebar from "../components/AdminSidebar";
 import AdminHeader from "../components/AdminHeader";
 import AdminFooter from "../components/AdminFooter";
 import { Outlet } from "react-router-dom";
 
 export default function AdminLayout() {
+    const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+
     return (
-        <div className="flex h-screen bg-gray-100">
+        <div id="wrapper" className="d-flex">
         {/* Sidebar */}
-        <aside className="w-64 bg-gradient-to-b from-blue-600 to-blue-800 text-white">
+        <div
+            className={`bg-gradient-primary sidebar sidebar-dark accordion ${
+            isSidebarOpen ? "toggled" : ""
+            }`}
+        >
             <AdminSidebar />
-        </aside>
+        </div>
 
-        {/* Main content */}
-        <div className="flex-1 flex flex-col">
-            {/* Header tetap ada */}
-            <header className="sticky top-0 z-50 bg-white shadow">
-            <AdminHeader />
-            </header>
+        {/* Content Wrapper */}
+        <div id="content-wrapper" className="d-flex flex-column flex-grow-1">
+            {/* Main Content */}
+            <div id="content">
+            <AdminHeader onToggleSidebar={() => setIsSidebarOpen(!isSidebarOpen)} />
 
-            {/* Halaman dinamis */}
-            <main className="flex-1 p-6 overflow-y-auto">
-            <Outlet />
-            </main>
+            <div className="container-fluid">
+                <Outlet />
+            </div>
+            </div>
 
             {/* Footer */}
-            <footer>
             <AdminFooter />
-            </footer>
         </div>
         </div>
     );

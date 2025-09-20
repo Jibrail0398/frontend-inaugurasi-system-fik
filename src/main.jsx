@@ -3,6 +3,14 @@ import { createRoot } from 'react-dom/client'
 import './index.css'
 import App from './App.jsx'
 
+// ✅ Import Bootstrap & SB Admin 2
+import 'bootstrap/dist/css/bootstrap.min.css'
+import '@fortawesome/fontawesome-free/css/all.min.css'
+import './assets/css/sb-admin-2.min.css'
+
+// ✅ Import Bootstrap JS (sudah include Popper)
+import 'bootstrap/dist/js/bootstrap.bundle.min.js'
+
 createRoot(document.getElementById('root')).render(
   <StrictMode>
     <App />
