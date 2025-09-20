@@ -40,11 +40,11 @@ const NavItemCollapse = ({ heading, heading2, childs, active = false, icon }) =>
     );
 };
 
-const SidebarAdmin = () => {
+const SidebarAdmin = ({ show = true }) => {
     const location = useLocation();
 
     return (
-        <ul className="navbar-nav bg-gradient-primary sidebar sidebar-dark accordion" id="accordionSidebar">
+        <ul className={"navbar-nav bg-gradient-primary sidebar sidebar-dark accordion" + (show ? "" : " toggled")} id="accordionSidebar">
             {/* Sidebar - Brand */}
             <Link className="sidebar-brand d-flex align-items-center justify-content-center" to="/admin">
                 <div className="sidebar-brand-icon rotate-n-15">
