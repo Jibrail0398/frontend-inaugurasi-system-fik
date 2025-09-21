@@ -5,6 +5,10 @@ import DashboardPage from "./pages/admin/DashboardPage.jsx";
 import AdminAuthLayout from "./layouts/AdminAuthLayout.jsx";
 import NotFoundPage from "./pages/NotFoundPage.jsx";
 import EventPage from "./pages/admin/event/EventPage.jsx";
+import DaftarPanitia from "./pages/admin/DaftarPanitia.jsx";
+import DaftarPeserta from "./pages/admin/DaftarPeserta.jsx";
+import DaftarHadirPeserta from "./pages/admin/DaftarHadirPeserta.jsx";
+import DaftarHadirPanitia from "./pages/admin/DaftarHadirPanitia.jsx";
 import TestPage from "./pages/TestPage.jsx";
 import ComingSoonPage from "./pages/ComingSoonPage.jsx";
 import NotLoginMiddleware from "./components/middlewares/NotLoginMiddleware.jsx";
@@ -40,6 +44,23 @@ const router = createBrowserRouter([
                 path: "events",
                 element: <EventPage />,
             },
+            {
+                path:"listpeserta",
+                element:<DaftarPeserta/>
+            },
+            {
+                path:"listpanitia",
+                element:<DaftarPanitia/>
+            },
+            {
+                path:"presensipeserta",
+                element:<DaftarHadirPeserta/>
+            },
+            {
+                path:"presensipanitia",
+                element:<DaftarHadirPanitia/>
+            },
+            
         ],
     },
     {
