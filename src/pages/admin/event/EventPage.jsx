@@ -11,6 +11,47 @@ import { event } from "jquery";
 import { formatDateID } from "../../../helpers/dateHelper";
 import CardInfo from "../../../components/CardInfo";
 
+const TableEvents = ({ events, setEvents, handleDelete, handleEdit, handleDetail }) => {
+    return (
+        <>
+            <AddEventModal handleAdd={(event) => setEvents([...events, event])} />
+            <TableSearch
+                data={events}
+                defaultOrder={{ column: 0, order: "desc" }}
+                className="mt-4"
+                header={["ID", "Nama Event", "Jenis", "Tema", "Tempat", "Status Pendaftaran Panitia", "Status Pendaftaran Peserta", "Created At", "Aksi"].map((item, index) => (
+                    <th key={index}>{item}</th>
+                ))}
+                body={events.map((event, index) => (
+                    <tr key={index}>
+                        <td>{event.id}</td>
+                        <td>{event.nama_event}</td>
+                        <td>{event.jenis}</td>
+                        <td>{event.tema}</td>
+                        <td>{event.tempat}</td>
+                        <td>{event.status_pendaftaran_panitia}</td>
+                        <td>{event.status_pendaftaran_peserta}</td>
+                        <td>{formatDateID(event.created_at)}</td>
+                        <td>
+                            <div className="d-flex gap-2">
+                                <button className="btn btn-danger btn-circle btn-sm" onClick={() => handleDelete("Event 1")}>
+                                    <i className="fas fa-trash"></i>
+                                </button>
+                                <button className="btn btn-primary btn-circle btn-sm" onClick={() => handleEdit("Event 1")}>
+                                    <i className="fas fa-edit"></i>
+                                </button>
+                                <a href="#" className="btn btn-info btn-circle btn-sm" onClick={() => handleDetail("Event 1")}>
+                                    <i className="fas fa-info-circle"></i>
+                                </a>
+                            </div>
+                        </td>
+                    </tr>
+                ))}
+            />
+        </>
+    );
+};
+
 const EventPage = () => {
     const navigate = useNavigate();
     const [showEditModal, setShowEditModal] = useState(false);
@@ -40,7 +81,6 @@ const EventPage = () => {
     };
 
     const handleEdit = (id) => {
-        // console.log(showEditModal);
         setShowEditModal(!showEditModal);
     };
 
@@ -51,36 +91,7 @@ const EventPage = () => {
     const fetchData = async () => {
         try {
             let eventResponse = await getAll();
-
-            let eventModified = eventResponse.map((event) => {
-                // Konversi object ke array
-                event = Object.values(event);
-
-                // Hapus Updated At
-                event.pop();
-
-                // Format Created At
-                const createdAt = formatDateID(event[event.length - 1]);
-                event[event.length - 1] = createdAt;
-
-                // Menambahkan Aksi
-                event.push(
-                    <div className="d-flex gap-2">
-                        <button className="btn btn-danger btn-circle btn-sm" onClick={() => handleDelete("Event 1")}>
-                            <i className="fas fa-trash"></i>
-                        </button>
-                        <button className="btn btn-primary btn-circle btn-sm" onClick={() => handleEdit("Event 1")}>
-                            <i className="fas fa-edit"></i>
-                        </button>
-                        <a href="#" className="btn btn-info btn-circle btn-sm" onClick={() => handleDetail("Event 1")}>
-                            <i className="fas fa-info-circle"></i>
-                        </a>
-                    </div>
-                );
-                return event;
-            });
-
-            setEvents(eventModified);
+            setEvents(eventResponse);
         } catch (error) {
             Swal.fire({
                 title: "Error",
@@ -100,30 +111,21 @@ const EventPage = () => {
     return (
         <>
             <div className="d-sm-flex align-items-center justify-content-between mb-4">
-                <h1 className="h3 mb-0 text-gray-800">Dashboard</h1>
+                <h1 className="h3 mb-0 text-gray-800">Event</h1>
             </div>
             <div className="row">
                 {/* Total Event */}
                 <CardInfo type="primary" title="Total Event" value={events.length} icon="fa-list" />
-                {/* Event yang dibuka */}
-                <CardInfo type="success" title="Event yang dibuka" value={events.filter((event) => event[5] === "buka").length} icon="fa-list" />
-                {/* Event yang ditutup */}
-                <CardInfo type="danger" title="Event yang ditutup" value={events.filter((event) => event[5] === "tutup").length} icon="fa-list" />
+                <CardInfo type="success" title="Pendaftaran Panitia Buka" value={events.filter((event) => event.status_pendaftaran_panitia === "buka").length} icon="fa-list" />
+                <CardInfo type="info" title="Pendaftaran Peserta Buka" value={events.filter((event) => event.status_pendaftaran_peserta === "buka").length} icon="fa-list" />
+                {/* Tutup */}
+                <CardInfo type="warning" title="Pendaftaran Panitia Tutup" value={events.filter((event) => event.status_pendaftaran_panitia === "tutup").length} icon="fa-list" />
+                <CardInfo type="danger" title="Pendaftaran Peserta Tutup" value={events.filter((event) => event.status_pendaftaran_peserta === "tutup").length} icon="fa-list" />
             </div>
 
             <div className="card shadow mb-4 p-3">
                 {loading && <div>Loading...</div>}
-                {!loading && (
-                    <>
-                        <AddEventModal handleAdd={(event) => setEvents([...events, event])} />
-                        <TableSearch
-                            columns={["ID", "Nama", "Jenis", "Tema", "Tempat", "Status Pendaftaran Panitia", "Status Pendaftaran Peserta", "Waktu Dibuat", "Aksi"]}
-                            data={events}
-                            defaultOrder={{ column: 0, order: "desc" }}
-                            className="mt-4"
-                        />
-                    </>
-                )}
+                {!loading && <TableEvents events={events} setEvents={setEvents} handleDelete={handleDelete} handleEdit={handleEdit} handleDetail={handleDetail} />}
             </div>
         </>
     );

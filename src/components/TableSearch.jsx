@@ -7,9 +7,9 @@ import "datatables.net-bs5/css/dataTables.bootstrap5.min.css";
 
 /**
  * TableSearch Component
- * @param {{ columns: string[], data: string[], defaultOrder: { column: number, order: string }, className?: string }} props order: { column: 0, order: "asc" | "desc" }
+ * @param {{ header, body, defaultOrder: { column: number, order: string }, className?: string }} props order: { column: 0, order: "asc" | "desc" }
  */
-const TableSearch = ({ columns, data, defaultOrder = { column: 0, order: "asc" }, className }) => {
+const TableSearch = ({ header, body, defaultOrder = { column: 0, order: "asc" }, className }) => {
     const randomId = Math.random().toString(36).substring(2, 15);
     const tableId = `table-${randomId}`;
 
@@ -25,21 +25,9 @@ const TableSearch = ({ columns, data, defaultOrder = { column: 0, order: "asc" }
         <div className={className}>
             <table id={tableId} className="table table-striped" style={{ width: "100%" }}>
                 <thead>
-                    <tr>
-                        {columns.map((col, index) => (
-                            <th key={index}>{col}</th>
-                        ))}
-                    </tr>
+                    <tr>{header}</tr>
                 </thead>
-                <tbody>
-                    {data.map((row, rowIndex) => (
-                        <tr key={rowIndex}>
-                            {row.map((cell, cellIndex) => (
-                                <td key={cellIndex}>{cell}</td>
-                            ))}
-                        </tr>
-                    ))}
-                </tbody>
+                <tbody>{body}</tbody>
             </table>
         </div>
     );
