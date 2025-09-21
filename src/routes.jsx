@@ -9,6 +9,8 @@ import DaftarPanitia from "./pages/admin/DaftarPanitia.jsx";
 import DaftarPeserta from "./pages/admin/DaftarPeserta.jsx";
 import DaftarHadirPeserta from "./pages/admin/DaftarHadirPeserta.jsx";
 import DaftarHadirPanitia from "./pages/admin/DaftarHadirPanitia.jsx";
+import FormPeserta from "./pages/FormPeserta";
+import FormPanitia from "./pages/FormPanitia";
 import TestPage from "./pages/TestPage.jsx";
 
 const router = createBrowserRouter([
@@ -35,23 +37,30 @@ const router = createBrowserRouter([
                 element: <EventPage />,
             },
             {
-                path:"listpeserta",
-                element:<DaftarPeserta/>
+                path: "listpeserta",
+                element: <DaftarPeserta/>
             },
             {
-                path:"listpanitia",
-                element:<DaftarPanitia/>
+                path: "listpanitia",
+                element: <DaftarPanitia/>
             },
             {
-                path:"presensipeserta",
-                element:<DaftarHadirPeserta/>
+                path: "presensipeserta",
+                element: <DaftarHadirPeserta/>
             },
             {
-                path:"presensipanitia",
-                element:<DaftarHadirPanitia/>
+                path: "presensipanitia",
+                element: <DaftarHadirPanitia/>
             },
-            
         ],
+    },
+    {
+        path: "/daftar-peserta",
+        element: <FormPeserta />,
+    },
+    {
+        path: "/daftar-panitia",
+        element: <FormPanitia />,
     },
     {
         path: "/test",
