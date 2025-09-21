@@ -1,25 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { formatCurrency } from "../../helpers/currencyHelper";
-
-const Card = ({ type, title, value, icon }) => {
-    return (
-        <div className="col-xl-3 col-md-6 mb-4">
-            <div className={"card border-left-" + type + " shadow h-100 py-2"}>
-                <div className="card-body">
-                    <div className="row no-gutters align-items-center">
-                        <div className="col mr-2">
-                            <div className={"text-xs font-weight-bold text-" + type + " text-uppercase mb-1"}>{title}</div>
-                            <div className="h5 mb-0 font-weight-bold text-gray-800">{value}</div>
-                        </div>
-                        <div className="col-auto">
-                            <i className={"fas " + icon + " fa-2x text-gray-300"} />
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    );
-};
+import CardInfo from "../../components/CardInfo";
 
 const DashboardPage = () => {
     const [isRealtime, setIsRealtime] = useState(false);
@@ -97,13 +78,13 @@ const DashboardPage = () => {
             {/* Content Row */}
             <div className="row">
                 {/* Peserta Terdaftar */}
-                <Card type="primary" title="Peserta Terdaftar" value={totalPeserta} icon="fa-users" />
+                <CardInfo type="primary" title="Peserta Terdaftar" value={totalPeserta} icon="fa-users" />
                 {/* Peserta Terverifikasi */}
-                <Card type="success" title="Peserta Terverifikasi" value={totalPesertaTerverifikasi} icon="fa-user-check" />
+                <CardInfo type="success" title="Peserta Terverifikasi" value={totalPesertaTerverifikasi} icon="fa-user-check" />
                 {/* Uang Masuk */}
-                <Card type="warning" title=" Uang Masuk" value={formatCurrency(totalUangMasuk)} icon="fa-dollar-sign" />
+                <CardInfo type="warning" title=" Uang Masuk" value={formatCurrency(totalUangMasuk)} icon="fa-dollar-sign" />
                 {/* Uang Keluar */}
-                <Card type="danger" title="Uang Keluar" value={formatCurrency(totalUangKeluar)} icon="fa-dollar-sign" />
+                <CardInfo type="danger" title="Uang Keluar" value={formatCurrency(totalUangKeluar)} icon="fa-dollar-sign" />
             </div>
         </>
     );

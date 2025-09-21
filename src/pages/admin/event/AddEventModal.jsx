@@ -17,7 +17,7 @@ const AddEventModal = ({ handleAdd }) => {
     };
 
     return (
-        <div className="p-3">
+        <div>
             <Button variant="primary" onClick={handleShow}>
                 Tambah Event
             </Button>
