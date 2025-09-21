@@ -35,19 +35,19 @@ const router = createBrowserRouter([
                 element: <EventPage />,
             },
             {
-                path:"daftarPeserta",
+                path:"listpeserta",
                 element:<DaftarPeserta/>
             },
             {
-                path:"daftarPanitia",
+                path:"listpanitia",
                 element:<DaftarPanitia/>
             },
             {
-                path:"daftarHadirPeserta",
+                path:"presensipeserta",
                 element:<DaftarHadirPeserta/>
             },
             {
-                path:"daftarHadirPanitia",
+                path:"presensipanitia",
                 element:<DaftarHadirPanitia/>
             },
             
