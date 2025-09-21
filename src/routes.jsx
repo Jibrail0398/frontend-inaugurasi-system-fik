@@ -12,6 +12,7 @@ import DaftarHadirPanitia from "./pages/admin/DaftarHadirPanitia.jsx";
 import TestPage from "./pages/TestPage.jsx";
 import ComingSoonPage from "./pages/ComingSoonPage.jsx";
 import NotLoginMiddleware from "./components/middlewares/NotLoginMiddleware.jsx";
+import IsLoginMiddleware from "./components/middlewares/IsLoginMiddleware.jsx";
 
 const router = createBrowserRouter([
     {
@@ -30,7 +31,11 @@ const router = createBrowserRouter([
     },
     {
         path: "/admin",
-        element: <AdminLayout />,
+        element: (
+            <IsLoginMiddleware>
+                <AdminLayout />
+            </IsLoginMiddleware>
+        ),
         children: [
             {
                 index: true,
@@ -45,22 +50,21 @@ const router = createBrowserRouter([
                 element: <EventPage />,
             },
             {
-                path:"listpeserta",
-                element:<DaftarPeserta/>
+                path: "listpeserta",
+                element: <DaftarPeserta />,
             },
             {
-                path:"listpanitia",
-                element:<DaftarPanitia/>
+                path: "listpanitia",
+                element: <DaftarPanitia />,
             },
             {
-                path:"presensipeserta",
-                element:<DaftarHadirPeserta/>
+                path: "presensipeserta",
+                element: <DaftarHadirPeserta />,
             },
             {
-                path:"presensipanitia",
-                element:<DaftarHadirPanitia/>
+                path: "presensipanitia",
+                element: <DaftarHadirPanitia />,
             },
-            
         ],
     },
     {

@@ -1,10 +1,11 @@
 import { useNavigate } from "react-router";
 import { useLocalStorage } from "react-use";
 import Swal from "sweetalert2";
+import useAuth from "../hooks/useAuth";
 
 const TopbarAdmin = ({ handleSidebarToggle }) => {
     const navigate = useNavigate();
-    const [_, setToken] = useLocalStorage("token");
+    const { user, logout } = useAuth();
 
     const handleLogout = async () => {
         const response = await Swal.fire({
@@ -22,7 +23,7 @@ const TopbarAdmin = ({ handleSidebarToggle }) => {
 
         if (!confirm) return;
 
-        setToken(null);
+        logout();
         navigate("/admin/auth/login");
     };
 
@@ -88,7 +89,7 @@ const TopbarAdmin = ({ handleSidebarToggle }) => {
                 {/* Nav Item - User Information */}
                 <li className="nav-item dropdown no-arrow">
                     <a className="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                        <span className="mr-2 d-none d-lg-inline text-gray-600 small">Douglas McGee</span>
+                        <span className="mr-2 d-none d-lg-inline text-gray-600 small">{user?.name}</span>
                         <img className="img-profile rounded-circle" src="img/undraw_profile.svg" />
                     </a>
                     {/* Dropdown - User Information */}

@@ -19,6 +19,7 @@ const useAuth = () => {
         }
 
         const tokenResponse = response.token.split(" ")[1];
+
         setToken(tokenResponse);
         setUser(response.user);
     }, []);
@@ -33,7 +34,7 @@ const useAuth = () => {
     // Cek apakah user sudah login (token ada)
     useEffect(() => {
         (async () => {
-            const response = authService.user(token ?? "");
+            const response = await authService.user(token ?? "");
             if (!response.success) {
                 setUser(null);
                 setToken(null);
@@ -45,7 +46,7 @@ const useAuth = () => {
         })();
     }, []);
 
-    return { user, loading, login, logout, isAuthenticated: !!user };
+    return { user, loading, login, logout, isAuthenticated: !!user, token };
 };
 
 export default useAuth;
