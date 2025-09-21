@@ -7,11 +7,16 @@ import NotFoundPage from "./pages/NotFoundPage.jsx";
 import EventPage from "./pages/admin/event/EventPage.jsx";
 import TestPage from "./pages/TestPage.jsx";
 import ComingSoonPage from "./pages/ComingSoonPage.jsx";
+import NotLoginMiddleware from "./components/middlewares/NotLoginMiddleware.jsx";
 
 const router = createBrowserRouter([
     {
         path: "/admin/auth",
-        element: <AdminAuthLayout />,
+        element: (
+            <NotLoginMiddleware>
+                <AdminAuthLayout />
+            </NotLoginMiddleware>
+        ),
         children: [
             {
                 path: "login",
