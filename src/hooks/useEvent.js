@@ -20,6 +20,11 @@ const useEvent = () => {
         }
     }, []);
 
+    const create = useCallback(async (data) => {
+        eventService.createEvent(data);
+        await getAll();
+    });
+
     useEffect(() => {
         const fetchData = async () => {
             await getAll();
@@ -27,7 +32,7 @@ const useEvent = () => {
         };
         fetchData();
     }, []);
-    return { loading, events, getAll };
+    return { loading, events, getAll, create };
 };
 
 export default useEvent;

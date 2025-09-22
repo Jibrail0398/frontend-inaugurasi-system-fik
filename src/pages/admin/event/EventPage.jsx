@@ -10,13 +10,12 @@ import TableSearch from "../../../components/TableSearch";
 import { event } from "jquery";
 import { formatDateID } from "../../../helpers/dateHelper";
 import CardInfo from "../../../components/CardInfo";
+import { Button } from "react-bootstrap";
 
-const TableEvents = ({ events, setEvents, handleDelete, handleEdit, handleDetail }) => {
+const TableEvents = ({ events, handleDelete, handleEdit, handleDetail }) => {
     return (
         <>
-            <AddEventModal handleAdd={(event) => setEvents([...events, event])} />
             <TableSearch
-                data={events}
                 defaultOrder={{ column: 0, order: "desc" }}
                 className="mt-4"
                 header={["ID", "Nama Event", "Jenis", "Tema", "Tempat", "Status Pendaftaran Panitia", "Status Pendaftaran Peserta", "Created At", "Aksi"].map((item, index) => (
@@ -29,18 +28,22 @@ const TableEvents = ({ events, setEvents, handleDelete, handleEdit, handleDetail
                         <td>{event.jenis}</td>
                         <td>{event.tema}</td>
                         <td>{event.tempat}</td>
-                        <td>{event.status_pendaftaran_panitia}</td>
-                        <td>{event.status_pendaftaran_peserta}</td>
+                        <td>
+                            <div className={"badge " + (event.status_pendaftaran_panitia === "buka" ? "bg-success" : "bg-danger")}>{event.status_pendaftaran_panitia}</div>
+                        </td>
+                        <td>
+                            <div className={"badge " + (event.status_pendaftaran_peserta === "buka" ? "bg-success" : "bg-danger")}>{event.status_pendaftaran_peserta}</div>
+                        </td>
                         <td>{formatDateID(event.created_at)}</td>
                         <td>
                             <div className="d-flex gap-2">
-                                <button className="btn btn-danger btn-circle btn-sm" onClick={() => handleDelete("Event 1")}>
+                                <button className="btn btn-danger btn-circle btn-sm" onClick={() => handleDelete(event.id)}>
                                     <i className="fas fa-trash"></i>
                                 </button>
-                                <button className="btn btn-primary btn-circle btn-sm" onClick={() => handleEdit("Event 1")}>
+                                <button className="btn btn-primary btn-circle btn-sm" onClick={() => handleEdit(event.id)}>
                                     <i className="fas fa-edit"></i>
                                 </button>
-                                <a href="#" className="btn btn-info btn-circle btn-sm" onClick={() => handleDetail("Event 1")}>
+                                <a href="#" className="btn btn-info btn-circle btn-sm" onClick={() => handleDetail(event.id)}>
                                     <i className="fas fa-info-circle"></i>
                                 </a>
                             </div>
@@ -53,15 +56,27 @@ const TableEvents = ({ events, setEvents, handleDelete, handleEdit, handleDetail
 };
 
 const EventPage = () => {
-    const navigate = useNavigate();
-    const [showEditModal, setShowEditModal] = useState(false);
+    // Modal State
+    const [showAddModal, setShowAddModal] = useState(false);
     const [showDetailModal, setShowDetailModal] = useState(false);
-    const intervalRef = null;
-    const [loading, setLoading] = useState(true);
+    const [showEditModal, setShowEditModal] = useState(false);
+
+    // Hooks Event
+    const { create, getAll, events, loading } = useEvent();
 
     // Data
-    const { getAll } = useEvent();
-    const [events, setEvents] = useState([]);
+    const [event, setEvent] = useState({});
+
+    const handleAdd = (dataRequest) => {
+        create(dataRequest);
+        Swal.fire({
+            title: "Success",
+            text: "Event berhasil ditambahkan",
+            icon: "success",
+            confirmButtonText: "OK",
+        });
+        fetchData();
+    };
 
     const handleDelete = async (id) => {
         const response = await Swal.fire({
@@ -78,10 +93,27 @@ const EventPage = () => {
         const shouldDelete = response.isConfirmed;
 
         if (!shouldDelete) return;
+
+        Swal.fire({
+            title: "Deleted!",
+            text: "Event berhasil dihapus.",
+            icon: "success",
+            confirmButtonText: "OK",
+        });
     };
 
     const handleEdit = (id) => {
-        setShowEditModal(!showEditModal);
+        setShowEditModal(true);
+    };
+
+    const handleSubmitEdit = (dataRequest) => {
+        Swal.fire({
+            title: "Success",
+            text: "Event berhasil diubah",
+            icon: "success",
+            confirmButtonText: "OK",
+        });
+        fetchData();
     };
 
     const handleDetail = (id) => {
@@ -90,8 +122,7 @@ const EventPage = () => {
 
     const fetchData = async () => {
         try {
-            let eventResponse = await getAll();
-            setEvents(eventResponse);
+            await getAll();
         } catch (error) {
             Swal.fire({
                 title: "Error",
@@ -100,8 +131,6 @@ const EventPage = () => {
                 confirmButtonText: "OK",
             });
         }
-
-        setLoading(false);
     };
 
     useEffect(() => {
@@ -124,9 +153,18 @@ const EventPage = () => {
             </div>
 
             <div className="card shadow mb-4 p-3">
+                <div>
+                    <Button variant="primary" onClick={() => setShowAddModal(true)}>
+                        Tambah Event
+                    </Button>
+                </div>
+
                 {loading && <div>Loading...</div>}
-                {!loading && <TableEvents events={events} setEvents={setEvents} handleDelete={handleDelete} handleEdit={handleEdit} handleDetail={handleDetail} />}
+                {!loading && <TableEvents events={events} handleDelete={handleDelete} handleEdit={handleEdit} handleDetail={handleDetail} />}
             </div>
+            <AddEventModal handleAdd={handleAdd} show={showAddModal} setShow={setShowAddModal} />
+            <EditEventModal show={showEditModal} setShow={setShowEditModal} handleSubmitEdit={handleSubmitEdit} event={events[0] || {}} />
+            <DetailEventModal show={showDetailModal} setShow={setShowDetailModal} event={events[0] || {}} />
         </>
     );
 };
