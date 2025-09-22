@@ -13,6 +13,7 @@ import TestPage from "./pages/TestPage.jsx";
 import ComingSoonPage from "./pages/ComingSoonPage.jsx";
 import NotLoginMiddleware from "./components/middlewares/NotLoginMiddleware.jsx";
 import IsLoginMiddleware from "./components/middlewares/IsLoginMiddleware.jsx";
+import UangMasukPage from "./pages/admin/keuangan/UangMasukPage.jsx";
 
 const router = createBrowserRouter([
     {
@@ -50,8 +51,21 @@ const router = createBrowserRouter([
                 element: <EventPage />,
             },
             {
-                path: "finance",
-                element: <ComingSoonPage />,
+                path: "keuangan",
+                children: [
+                    {
+                        path: "uang-masuk",
+                        element: <UangMasukPage />,
+                    },
+                    {
+                        path: "uang-keluar",
+                        element: <ComingSoonPage />,
+                    },
+                    {
+                        path: "laporan",
+                        element: <ComingSoonPage />,
+                    },
+                ],
             },
             {
                 path: "listpeserta",

@@ -73,7 +73,17 @@ const SidebarAdmin = ({ show = true }) => {
             {/* Event */}
             <NavItem text="Daftar Event" icon="fas fa-fw fa-calendar" to="/admin/events" active={location.pathname === "/admin/events"} />
 
-            <NavItem icon="fas fa-fw fa-coins" text="Keuangan" to="/admin/finance" active={location.pathname === "/admin/finance"} />
+            <NavItemCollapse
+                heading="Keuangan"
+                heading2="Opsi Keuangan"
+                icon="fas fa-fw fa-coins"
+                active={location.pathname.startsWith("/admin/keuangan")}
+                childs={[
+                    { text: "Pemasukan", to: "/admin/keuangan/uang-masuk" },
+                    { text: "Pengeluaran", to: "/admin/keuangan/uang-keluar" },
+                    { text: "Laporan Keuangan", to: "/admin/keuangan/laporan" },
+                ]}
+            />
 
             {/* Tambahan dari Sidebar 2 */}
             <NavItem icon="fas fa-fw fa-users" text="Daftar Peserta" to="/admin/listpeserta" active={location.pathname === "/admin/listpeserta"} />
