@@ -4,7 +4,7 @@ const ENVIRONMENT = import.meta.env.VITE_ENVIRONMENT;
 let BASE_URL_API;
 
 if (ENVIRONMENT !== "production") {
-    BASE_URL_API = "http://localhost:5173/api-test";
+    BASE_URL_API = " http://192.168.5.220:5173/api-test";
 } else {
     BASE_URL_API = import.meta.env.VITE_BASE_URL_API;
 }

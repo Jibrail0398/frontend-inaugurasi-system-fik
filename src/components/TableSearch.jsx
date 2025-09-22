@@ -22,7 +22,7 @@ const TableSearch = ({ header, body, defaultOrder = { column: 0, order: "asc" },
     }, []);
 
     return (
-        <div className={className}>
+        <div className={className + " table-responsive"}>
             <table id={tableId} className="table table-striped" style={{ width: "100%" }}>
                 <thead>
                     <tr>{header}</tr>
