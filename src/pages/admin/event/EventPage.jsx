@@ -1,13 +1,10 @@
 import { useEffect, useState } from "react";
-import Table from "../../../components/Table";
-import { useNavigate } from "react-router";
 import Swal from "sweetalert2";
 import AddEventModal from "./AddEventModal";
 import EditEventModal from "./EditEventModal";
 import DetailEventModal from "./DetailEventModal";
 import useEvent from "../../../hooks/useEvent";
 import TableSearch from "../../../components/TableSearch";
-import { event } from "jquery";
 import { formatDateID } from "../../../helpers/dateHelper";
 import CardInfo from "../../../components/CardInfo";
 import { Button } from "react-bootstrap";
@@ -145,10 +142,13 @@ const EventPage = () => {
             <div className="row">
                 {/* Total Event */}
                 <CardInfo type="primary" title="Total Event" value={events.length} icon="fa-list" />
+
+                {/* Total Pendaftaran Panitia */}
                 <CardInfo type="success" title="Pendaftaran Panitia Buka" value={events.filter((event) => event.status_pendaftaran_panitia === "buka").length} icon="fa-list" />
-                <CardInfo type="info" title="Pendaftaran Peserta Buka" value={events.filter((event) => event.status_pendaftaran_peserta === "buka").length} icon="fa-list" />
-                {/* Tutup */}
-                <CardInfo type="warning" title="Pendaftaran Panitia Tutup" value={events.filter((event) => event.status_pendaftaran_panitia === "tutup").length} icon="fa-list" />
+                <CardInfo type="danger" title="Pendaftaran Panitia Tutup" value={events.filter((event) => event.status_pendaftaran_panitia === "tutup").length} icon="fa-list" />
+
+                {/* Total Pendaftaran Peserta */}
+                <CardInfo type="success" title="Pendaftaran Peserta Buka" value={events.filter((event) => event.status_pendaftaran_peserta === "buka").length} icon="fa-list" />
                 <CardInfo type="danger" title="Pendaftaran Peserta Tutup" value={events.filter((event) => event.status_pendaftaran_peserta === "tutup").length} icon="fa-list" />
             </div>
 

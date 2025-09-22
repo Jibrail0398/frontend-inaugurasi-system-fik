@@ -42,12 +42,16 @@ const router = createBrowserRouter([
                 element: <DashboardPage />,
             },
             {
-                path: "event-types",
+                path: "users",
                 element: <ComingSoonPage />,
             },
             {
                 path: "events",
                 element: <EventPage />,
+            },
+            {
+                path: "finance",
+                element: <ComingSoonPage />,
             },
             {
                 path: "listpeserta",

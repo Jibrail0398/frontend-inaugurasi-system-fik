@@ -51,7 +51,7 @@ const SidebarAdmin = ({ show = true }) => {
                     <i className="fas fa-laugh-wink" />
                 </div>
                 <div className="sidebar-brand-text mx-3">
-                    SB Admin <sup>2</sup>
+                    Inaugurasi <sup>FIK</sup>
                 </div>
             </Link>
 
