@@ -34,13 +34,13 @@ const TableEvents = ({ events, handleDelete, handleEdit, handleDetail }) => {
                         <td>{formatDateID(event.created_at)}</td>
                         <td>
                             <div className="d-flex gap-2">
-                                <button className="btn btn-danger btn-circle btn-sm" onClick={() => handleDelete(event.id)}>
+                                <button className="btn btn-danger btn-circle btn-sm" onClick={() => handleDelete(event)}>
                                     <i className="fas fa-trash"></i>
                                 </button>
-                                <button className="btn btn-primary btn-circle btn-sm" onClick={() => handleEdit(event.id)}>
+                                <button className="btn btn-primary btn-circle btn-sm" onClick={() => handleEdit(event)}>
                                     <i className="fas fa-edit"></i>
                                 </button>
-                                <a href="#" className="btn btn-info btn-circle btn-sm" onClick={() => handleDetail(event.id)}>
+                                <a href="#" className="btn btn-info btn-circle btn-sm" onClick={() => handleDetail(event)}>
                                     <i className="fas fa-info-circle"></i>
                                 </a>
                             </div>
@@ -75,7 +75,7 @@ const EventPage = () => {
         fetchData();
     };
 
-    const handleDelete = async (id) => {
+    const handleDelete = async (event) => {
         const response = await Swal.fire({
             title: "Delete Event",
             text: "Apakah anda yakin ingin menghapus event ini?",
@@ -99,7 +99,8 @@ const EventPage = () => {
         });
     };
 
-    const handleEdit = (id) => {
+    const handleEdit = (event) => {
+        setEvent(event);
         setShowEditModal(true);
     };
 
@@ -113,8 +114,9 @@ const EventPage = () => {
         fetchData();
     };
 
-    const handleDetail = (id) => {
-        setShowDetailModal(!showDetailModal);
+    const handleDetail = (event) => {
+        setEvent(event);
+        setShowDetailModal(true);
     };
 
     const fetchData = async () => {
@@ -163,8 +165,8 @@ const EventPage = () => {
                 {!loading && <TableEvents events={events} handleDelete={handleDelete} handleEdit={handleEdit} handleDetail={handleDetail} />}
             </div>
             <AddEventModal handleAdd={handleAdd} show={showAddModal} setShow={setShowAddModal} />
-            <EditEventModal show={showEditModal} setShow={setShowEditModal} handleSubmitEdit={handleSubmitEdit} event={events[0] || {}} />
-            <DetailEventModal show={showDetailModal} setShow={setShowDetailModal} event={events[0] || {}} />
+            <EditEventModal show={showEditModal} setShow={setShowEditModal} handleSubmitEdit={handleSubmitEdit} event={event} />
+            <DetailEventModal show={showDetailModal} setShow={setShowDetailModal} event={event} />
         </>
     );
 };
