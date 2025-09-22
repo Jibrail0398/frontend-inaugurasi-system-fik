@@ -11,6 +11,7 @@ import DaftarHadirPeserta from "./pages/admin/DaftarHadirPeserta.jsx";
 import DaftarHadirPanitia from "./pages/admin/DaftarHadirPanitia.jsx";
 import FormPeserta from "./pages/FormPeserta";
 import FormPanitia from "./pages/FormPanitia";
+import FormPresensi from "./pages/FormPresensi";
 import TestPage from "./pages/TestPage.jsx";
 
 const router = createBrowserRouter([
@@ -61,6 +62,10 @@ const router = createBrowserRouter([
     {
         path: "/daftar-panitia",
         element: <FormPanitia />,
+    },
+    {
+        path: "/presensi",
+        element: <FormPresensi />,
     },
     {
         path: "/test",
