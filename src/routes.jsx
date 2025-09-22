@@ -13,7 +13,7 @@ import TestPage from "./pages/TestPage.jsx";
 import ComingSoonPage from "./pages/ComingSoonPage.jsx";
 import NotLoginMiddleware from "./components/middlewares/NotLoginMiddleware.jsx";
 import IsLoginMiddleware from "./components/middlewares/IsLoginMiddleware.jsx";
-import UangMasukPage from "./pages/admin/keuangan/UangMasukPage.jsx";
+import UangMasukPage from "./pages/admin/keuangan/uang-masuk/UangMasukPage.jsx";
 
 const router = createBrowserRouter([
     {
