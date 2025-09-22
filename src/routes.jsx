@@ -9,6 +9,8 @@ import DaftarPanitia from "./pages/admin/DaftarPanitia.jsx";
 import DaftarPeserta from "./pages/admin/DaftarPeserta.jsx";
 import DaftarHadirPeserta from "./pages/admin/DaftarHadirPeserta.jsx";
 import DaftarHadirPanitia from "./pages/admin/DaftarHadirPanitia.jsx";
+import FormDokumentasi from "./pages/admin/FormDokumentasi.jsx";
+import FormSertifikat from "./pages/admin/FormSertifikat";
 import TestPage from "./pages/TestPage.jsx";
 
 const router = createBrowserRouter([
@@ -49,6 +51,15 @@ const router = createBrowserRouter([
             {
                 path:"presensipanitia",
                 element:<DaftarHadirPanitia/>
+            },
+            {
+                path:"dokumentasi",
+                element:<FormDokumentasi/>
+            },
+
+            {
+                path:"sertifikat",
+                element:<FormSertifikat/>
             },
             
         ],
