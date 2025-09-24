@@ -1,0 +1,273 @@
+/* Styles untuk aplikasi pendaftaran peserta */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background-color: #084096;
+  color: #333;
+  line-height: 1.6;
+  padding: 20px;
+}
+
+.app {
+  max-width: 900px;
+  margin: 0 auto;
+  background-color: rgb(255, 255, 255);
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+}
+
+.header {
+  text-align: center;
+  margin-bottom: 30px;
+  padding-bottom: 20px;
+  border-bottom: 1px solid #eee;
+}
+
+.header h3 {
+  color: #0606c9;
+  margin-bottom: 10px;
+}
+
+.header p {
+  color: #7f8c8d;
+}
+
+.add-form {
+  background-color: #f8f9fa;
+  padding: 20px;
+  border-radius: 8px;
+  margin-bottom: 20px;
+}
+
+.add-form h3 {
+  margin-bottom: 20px;
+  color: #2c3e50;
+  text-align: center;
+}
+
+.form-row {
+  display: flex;
+  gap: 15px;
+  margin-bottom: 15px;
+}
+
+.form-row .form-group {
+  flex: 1;
+}
+
+.form-group {
+  margin-bottom: 15px;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 5px;
+  font-weight: 500;
+  color: #2c3e50;
+}
+
+.required {
+  color: #e74c3c;
+}
+
+.form-group input, 
+.form-group select, 
+.form-group textarea {
+  width: 100%;
+  padding: 12px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 16px;
+  transition: border-color 0.3s;
+}
+
+.form-group input:focus, 
+.form-group select:focus, 
+.form-group textarea:focus {
+  border-color: #3498db;
+  outline: none;
+  box-shadow: 0 0 0 2px rgba(52, 152, 219, 0.2);
+}
+
+.radio-group {
+  display: flex;
+  gap: 15px;
+  flex-wrap: wrap;
+}
+
+.radio-label {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  cursor: pointer;
+}
+
+.radio-label input[type="radio"] {
+  width: auto;
+  margin-right: 5px;
+  align-items: center;
+  text-align: center;
+}
+
+button {
+  background-color: #084096;
+  color: white;
+  border: none;
+  padding: 12px 20px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 16px;
+  transition: background-color 0.3s;
+  display: block;
+  width: 100%;
+  margin-top: 10px;
+}
+
+button:hover {
+  background-color: #2980b9;
+}
+
+.list {
+  background-color: white;
+  border-radius: 8px;
+  margin-bottom: 20px;
+  overflow: hidden;
+}
+
+.list h3 {
+  padding: 15px 20px;
+  background-color: #f8f9fa;
+  margin-bottom: 0;
+  color: #2c3e50;
+  border-bottom: 1px solid #eee;
+}
+
+.empty-message {
+  text-align: center;
+  padding: 30px;
+  color: #7f8c8d;
+  font-style: italic;
+}
+
+ul {
+  list-style-type: none;
+}
+
+li {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  padding: 15px 20px;
+  border-bottom: 1px solid #eee;
+  transition: background-color 0.2s;
+}
+
+li:hover {
+  background-color: #f8f9fa;
+}
+
+li:last-child {
+  border-bottom: none;
+}
+
+.participant-info h4 {
+  margin: 0 0 10px 0;
+  color: #2c3e50;
+}
+
+.participant-info p {
+  margin: 5px 0;
+  color: #34495e;
+  font-size: 14px;
+}
+
+.status-sudah {
+  color: #27ae60;
+  font-weight: bold;
+}
+
+.status-belum {
+  color: #e74c3c;
+  font-weight: bold;
+}
+
+.delete-btn {
+  background-color: #e74c3c;
+  font-size: 20px;
+  width: 30px;
+  height: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+}
+
+.delete-btn:hover {
+  background-color: #c0392b;
+}
+
+.stats {
+  text-align: center;
+  padding: 15px;
+  background-color: #ecf0f1;
+  border-radius: 8px;
+  color: #2c3e50;
+  font-weight: 500;
+}
+
+@media (max-width: 768px) {
+  .form-row {
+    flex-direction: column;
+    gap: 0;
+  }
+  
+  .radio-group {
+    flex-direction: column;
+    gap: 8px;
+  }
+}
+
+/* Checkbox Group Styles */
+.checkbox-group {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  margin-top: 10px;
+}
+
+.checkbox-label {
+  display: flex;
+  align-items: flex-start; /* Rata kiri */
+  gap: 12px;
+  cursor: pointer;
+  padding: 12px;
+  background-color: #f8f9fa;
+  border-radius: 8px;
+  border-left: 4px solid #3498db;
+  transition: all 0.3s ease;
+}
+
+.checkbox-label:hover {
+  background-color: #e8f4fc;
+  transform: translateX(5px);
+}
+
+.checkbox-label input[type="checkbox"] {
+  margin: 3px 0 0 0; /* Untuk alignment vertikal */
+  flex-shrink: 0; /* Mencegah checkbox menyusut */
+  width: 18px;
+  height: 18px;
+  cursor: pointer;
+}
+
+.checkbox-label span {
+  flex: 1; /* Agar teks mengambil sisa ruang */
+  line-height: 1.5;
+}
