@@ -44,7 +44,13 @@ const SidebarAdmin = ({ show = true }) => {
     const location = useLocation();
 
     return (
-        <ul className={"navbar-nav bg-gradient-primary sidebar sidebar-dark accordion" + (show ? "" : " toggled")} id="accordionSidebar">
+        <ul
+            className={
+                "navbar-nav bg-gradient-primary sidebar sidebar-dark accordion" +
+                (show ? "" : " toggled")
+            }
+            id="accordionSidebar"
+        >
             {/* Sidebar - Brand */}
             <Link className="sidebar-brand d-flex align-items-center justify-content-center" to="/admin">
                 <div className="sidebar-brand-icon rotate-n-15">
@@ -93,6 +99,20 @@ const SidebarAdmin = ({ show = true }) => {
             <NavItem icon="fas fa-fw fa-clipboard-list" text="Daftar Hadir Peserta" to="/admin/presensipeserta" active={location.pathname === "/admin/presensipeserta"} />
 
             <NavItem icon="fas fa-fw fa-clipboard-check" text="Daftar Hadir Panitia" to="/admin/presensipanitia" active={location.pathname === "/admin/presensipanitia"} />
+
+            <NavItem
+                icon="fas fa-fw fa-camera"
+                text="Form Dokumentasi"
+                to="/admin/dokumentasi"
+                active={location.pathname === "/admin/dokumentasi"}
+            />
+
+            <NavItem
+                icon="fas fa-fw fa-certificate"
+                text="Form Sertifikat"
+                to="/admin/sertifikat"
+                active={location.pathname === "/admin/sertifikat"}
+            />
 
             {/* Divider */}
             <hr className="sidebar-divider" />

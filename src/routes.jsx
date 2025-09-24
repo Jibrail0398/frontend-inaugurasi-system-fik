@@ -12,6 +12,8 @@ import DaftarHadirPanitia from "./pages/admin/DaftarHadirPanitia.jsx";
 import FormPeserta from "./pages/FormPeserta";
 import FormPanitia from "./pages/FormPanitia";
 import FormPresensi from "./pages/FormPresensi";
+import FormDokumentasi from "./pages/admin/FormDokumentasi.jsx";
+import FormSertifikat from "./pages/admin/FormSertifikat";
 import TestPage from "./pages/TestPage.jsx";
 import ComingSoonPage from "./pages/ComingSoonPage.jsx";
 import NotLoginMiddleware from "./components/middlewares/NotLoginMiddleware.jsx";
@@ -87,6 +89,16 @@ const router = createBrowserRouter([
                 path: "presensipanitia",
                 element: <DaftarHadirPanitia />,
             },
+            {
+                path:"dokumentasi",
+                element:<FormDokumentasi/>
+            },
+
+            {
+                path:"sertifikat",
+                element:<FormSertifikat/>
+            },
+            
         ],
     },
     {
