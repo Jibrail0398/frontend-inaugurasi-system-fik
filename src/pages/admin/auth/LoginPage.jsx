@@ -2,6 +2,8 @@ import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router";
 import AlertBasic from "../../../components/alert/AlertBasic";
 import useAuth from "../../../hooks/useAuth";
+import * as authService from "../../../services/authService";
+import Swal from "sweetalert2";
 
 export default function LoginPage() {
     const navigate = useNavigate();
@@ -15,25 +17,19 @@ export default function LoginPage() {
     const [rememberMe, setRememberMe] = useState(false);
 
     const handleSubmit = async () => {
-        const isValid = await login({ nim, password }, rememberMe);
-
-        if (!isValid) {
-            setAlert({
-                type: "danger",
-                message: "NIM atau password salah",
+        try {
+            await login({ nim, password }, rememberMe);
+        } catch (error) {
+            Swal.fire({
+                icon: "error",
+                title: "Login Failed",
+                text: error.response?.data?.message || error.message,
             });
             return;
         }
 
         navigate("/admin");
     };
-
-    useEffect(() => {
-        // Clear alert
-        return () => {
-            setAlert(null);
-        };
-    }, []);
 
     return (
         <>

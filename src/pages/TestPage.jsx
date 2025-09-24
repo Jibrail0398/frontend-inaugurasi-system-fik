@@ -1,53 +1,34 @@
 import React, { useState } from "react";
 import { Modal, Button, Form } from "react-bootstrap";
+import TableSearch from "../components/TableSearch";
 
 function TestPage() {
-    const [show, setShow] = useState(false);
-
-    const handleClose = () => setShow(false);
-    const handleShow = () => setShow(true);
-
-    const handleSubmit = (e) => {
-        e.preventDefault();
-        const data = new FormData(e.target);
-        console.log("Nama:", data.get("nama"));
-        console.log("Email:", data.get("email"));
-        handleClose();
-    };
-
     return (
-        <div className="p-3">
-            <Button variant="primary" onClick={handleShow}>
-                Buka Form
-            </Button>
-
-            <Modal show={show} onHide={handleClose}>
-                <Modal.Header closeButton>
-                    <Modal.Title>Form Pendaftaran</Modal.Title>
-                </Modal.Header>
-                <Form onSubmit={handleSubmit}>
-                    <Modal.Body>
-                        <Form.Group className="mb-3">
-                            <Form.Label>Nama</Form.Label>
-                            <Form.Control type="text" name="nama" required />
-                        </Form.Group>
-
-                        <Form.Group className="mb-3">
-                            <Form.Label>Email</Form.Label>
-                            <Form.Control type="email" name="email" required />
-                        </Form.Group>
-                    </Modal.Body>
-                    <Modal.Footer>
-                        <Button variant="secondary" onClick={handleClose}>
-                            Batal
-                        </Button>
-                        <Button variant="primary" type="submit">
-                            Simpan
-                        </Button>
-                    </Modal.Footer>
-                </Form>
-            </Modal>
-        </div>
+        <TableSearch
+            columns={["A", "B", "C"]}
+            data={[
+                [1, 2, 3],
+                [4, 5, 6],
+                [7, 8, 9],
+                [10, 11, 12],
+                [13, 14, 15],
+                [16, 17, 18],
+                [19, 20, 21],
+                [22, 23, 24],
+                [25, 26, 27],
+                [28, 29, 30],
+                [31, 32, 33],
+                [34, 35, 36],
+                [37, 38, 39],
+                [40, 41, 42],
+                [43, 44, 45],
+                [46, 47, 48],
+                [49, 50, 51],
+                [52, 53, 54],
+                [55, 56, 57],
+                [58, 59, 60],
+            ]}
+        />
     );
 }
 
