@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const BASE_URL_API = "http://192.168.5.220:5173/api-test";
+const BASE_URL_API = "http://localhost:5173/api-test";
 
 export const getKeuangan = async (token) => {
     return;

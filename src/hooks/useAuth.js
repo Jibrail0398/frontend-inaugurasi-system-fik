@@ -12,7 +12,7 @@ const useAuth = () => {
      * @returns {Promise<void> | Promise<never>}
      */
     const login = useCallback(async (credentials, remember) => {
-        const response = await authService.login(credentials, remember);
+        const response = await authService.login(credentials);
 
         if (!response.success) {
             throw new Error(response.message);
@@ -35,12 +35,14 @@ const useAuth = () => {
     useEffect(() => {
         (async () => {
             const response = await authService.user(token ?? "");
+
             if (!response.success) {
                 setUser(null);
                 setToken(null);
                 setLoading(false);
                 return;
             }
+
             setUser(response.user);
             setLoading(false);
         })();

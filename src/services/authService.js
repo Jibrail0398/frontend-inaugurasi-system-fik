@@ -1,13 +1,7 @@
 import axios from "axios";
 
 const ENVIRONMENT = import.meta.env.VITE_ENVIRONMENT;
-let BASE_URL_API;
-
-if (ENVIRONMENT !== "production") {
-    BASE_URL_API = " http://192.168.5.220:5173/api-test";
-} else {
-    BASE_URL_API = import.meta.env.VITE_BASE_URL_API;
-}
+const BASE_URL_API = import.meta.env.VITE_BASE_URL_API;
 
 /**
  * User login
@@ -16,21 +10,7 @@ if (ENVIRONMENT !== "production") {
  * @returns {Promise<Object>} token
  */
 export const login = async ({ nim, password }, remember) => {
-    let response;
-
-    if (ENVIRONMENT === "production") {
-        response = await axios.post(`${BASE_URL_API}/login`, { nim, password });
-    } else {
-        let url;
-
-        if (password === "benar") {
-            url = `${BASE_URL_API}/login/success.json`;
-        } else {
-            url = `${BASE_URL_API}/login/failed.json`;
-        }
-
-        response = await axios.post(url, { nim, password, remember });
-    }
+    const response = await axios.post(`${BASE_URL_API}/login`, { nim, password });
     return response.data;
 };
 
@@ -50,7 +30,7 @@ export const logout = async () => {
         }
     );
 
-    return true;
+    return response.data?.success ?? false;
 };
 
 /**
@@ -59,17 +39,11 @@ export const logout = async () => {
  * @returns {Promise<Object>} user
  */
 export const user = async (token) => {
-    let response;
-
-    if (ENVIRONMENT === "production") {
-        response = await axios.get(`${BASE_URL_API}/profile/me`, {
-            headers: {
-                Authorization: `Bearer ${token}`,
-            },
-        });
-    } else {
-        response = await axios.get(`${BASE_URL_API}/profile/me/success.json`);
-    }
+    const response = await axios.get(`${BASE_URL_API}/me`, {
+        headers: {
+            Authorization: `Bearer ${token}`,
+        },
+    });
 
     return response.data;
 };
