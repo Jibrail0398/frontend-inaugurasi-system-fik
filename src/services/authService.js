@@ -1,3 +1,9 @@
+/**
+ * @typedef CredentialsRequest
+ * @property {string} nim
+ * @property {string} password
+ */
+
 import axios from "axios";
 
 const ENVIRONMENT = import.meta.env.VITE_ENVIRONMENT;
@@ -5,19 +11,18 @@ const BASE_URL_API = import.meta.env.VITE_BASE_URL_API;
 
 /**
  * User login
- * @param {{nim: string, password: string}} credentials
- * @param {boolean} remember
- * @returns {Promise<Object>} token
+ * @param {CredentialsRequest} credentials
+ * @returns {Promise<Object>} Response
  */
-export const login = async ({ nim, password }, remember) => {
-    const response = await axios.post(`${BASE_URL_API}/login`, { nim, password });
+export const login = async (data) => {
+    const response = await axios.post(`${BASE_URL_API}/login`, data);
     return response.data;
 };
 
 /**
  * User logout
  * @param {string} token
- * @returns {boolean} success
+ * @returns {Promise<Object>} success
  */
 export const logout = async () => {
     const response = await axios.post(
