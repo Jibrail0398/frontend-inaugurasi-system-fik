@@ -3,22 +3,16 @@ import useAuth from "../../hooks/useAuth";
 import { useEffect } from "react";
 
 const IsLoginMiddleware = ({ children }) => {
-    const { user, token } = useAuth();
+    const { user, token, loading } = useAuth();
     const navigate = useNavigate();
 
     useEffect(() => {
-        // Untuk development, cek token
-        if (import.meta.env.VITE_ENVIRONMENT === "development") {
-            if (!token) {
-                navigate("/admin/auth/login");
-            }
-        } else {
-            // Untuk production, cek user
-            if (!user) {
+        if (!loading) {
+            if (!user || !token) {
                 navigate("/admin/auth/login");
             }
         }
-    }, [user]);
+    }, [loading, user, token]);
     return <>{children}</>;
 };
 
