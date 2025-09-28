@@ -1,28 +1,50 @@
 import { useCallback, useEffect, useState } from "react";
 import * as eventService from "../services/eventService";
+import { useLocalStorage } from "react-use";
 
 const useEvent = () => {
     const [loading, setLoading] = useState(true);
     const [events, setEvents] = useState([]);
+    const [token, _] = useLocalStorage("token");
 
     const getAll = useCallback(async () => {
-        let response = null;
         try {
-            response = await eventService.getEvents();
-
-            if (response.success) {
-                setEvents(response.data);
-            }
-
+            const response = await eventService.getEvents(token);
+            setEvents(response.data);
             return response.data;
         } catch (error) {
-            throw error;
+            throw error?.response?.data?.message || error.message;
         }
     }, []);
 
     const create = useCallback(async (data) => {
-        eventService.createEvent(data);
-        await getAll();
+        try {
+            const response = await eventService.createEvent(data, token);
+            await getAll();
+            return response.data;
+        } catch (error) {
+            throw error?.response?.data?.message || error.message;
+        }
+    });
+
+    const destroyById = useCallback(async (id) => {
+        try {
+            const response = await eventService.deleteEvent(id, token);
+            await getAll();
+            return response.data;
+        } catch (error) {
+            throw error?.response?.data?.message || error.message;
+        }
+    });
+
+    const updateById = useCallback(async (id, data) => {
+        try {
+            const response = await eventService.updateEvent(id, data, token);
+            await getAll();
+            return response.data;
+        } catch (error) {
+            throw error?.response?.data?.message || error.message;
+        }
     });
 
     useEffect(() => {
@@ -32,7 +54,8 @@ const useEvent = () => {
         };
         fetchData();
     }, []);
-    return { loading, events, getAll, create };
+
+    return { loading, events, getAll, create, destroyById, updateById };
 };
 
 export default useEvent;
