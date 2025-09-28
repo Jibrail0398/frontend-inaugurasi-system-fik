@@ -59,19 +59,29 @@ const EventPage = () => {
     const [showEditModal, setShowEditModal] = useState(false);
 
     // Hooks Event
-    const { create, getAll, events, loading } = useEvent();
+    const { create, getAll, events, loading, destroyById, updateById } = useEvent();
 
     // Data
     const [event, setEvent] = useState({});
 
-    const handleAdd = (dataRequest) => {
-        create(dataRequest);
-        Swal.fire({
-            title: "Success",
-            text: "Event berhasil ditambahkan",
-            icon: "success",
-            confirmButtonText: "OK",
-        });
+    const handleAdd = async (dataRequest) => {
+        try {
+            await create(dataRequest);
+            Swal.fire({
+                title: "Success",
+                text: "Event berhasil ditambahkan",
+                icon: "success",
+                confirmButtonText: "OK",
+            });
+        } catch (error) {
+            Swal.fire({
+                title: "Error",
+                text: error,
+                icon: "error",
+                confirmButtonText: "OK",
+            });
+        }
+
         fetchData();
     };
 
@@ -91,6 +101,8 @@ const EventPage = () => {
 
         if (!shouldDelete) return;
 
+        destroyById(event.id);
+
         Swal.fire({
             title: "Deleted!",
             text: "Event berhasil dihapus.",
@@ -105,13 +117,23 @@ const EventPage = () => {
     };
 
     const handleSubmitEdit = (dataRequest) => {
-        Swal.fire({
-            title: "Success",
-            text: "Event berhasil diubah",
-            icon: "success",
-            confirmButtonText: "OK",
-        });
-        fetchData();
+        try {
+            updateById(event.id);
+            fetchData();
+            Swal.fire({
+                title: "Success",
+                text: "Event berhasil diubah",
+                icon: "success",
+                confirmButtonText: "OK",
+            });
+        } catch (error) {
+            Swal.fire({
+                title: "Error",
+                text: error,
+                icon: "error",
+                confirmButtonText: "OK",
+            });
+        }
     };
 
     const handleDetail = (event) => {
