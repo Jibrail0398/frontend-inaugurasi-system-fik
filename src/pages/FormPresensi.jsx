@@ -108,7 +108,8 @@ const FormPresensi = () => {
   };
 
   return (
-    <div className="attendance-container">
+    <div className='pendaftaran-page'>
+      <div className="attendance-container">
       <div className="attendance-header">
         <h1>📱 Presensi QR Code</h1>
         <p>Scan QR code untuk presensi {attendanceType === 'checkin' ? 'datang' : 'pulang'}</p>
@@ -195,6 +196,7 @@ const FormPresensi = () => {
             <p>📋 Terdeteksi: <strong>{scanResult}</strong></p>
           </div>
         )}
+      </div>
       </div>
     </div>
   );

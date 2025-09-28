@@ -1,54 +1,59 @@
-/* Styles untuk aplikasi pendaftaran peserta */
-* {
-  box-sizing: border-box;
-  margin: 0;
-  padding: 0;
-}
+/* Styles khusus untuk aplikasi pendaftaran peserta dan presensi */
 
-body {
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  background-color: #084096;
-  color: #333;
-  line-height: 1.6;
+/* BACKGROUND KHUSUS UNTUK PAGE PENDAFTARAN */
+.pendaftaran-page {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #3498db 0%, #2980b9 50%, #1f618d 100%);
   padding: 20px;
 }
 
-.app {
+/* Container untuk form pendaftaran */
+.form-container {
   max-width: 900px;
   margin: 0 auto;
   background-color: rgb(255, 255, 255);
   padding: 20px;
   border-radius: 10px;
-  box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  color: #333;
+  line-height: 1.6;
 }
 
-.header {
+/* Header Styles */
+.form-header {
   text-align: center;
   margin-bottom: 30px;
   padding-bottom: 20px;
-  border-bottom: 1px solid #eee;
+  border-bottom: 2px solid #e8f4fc;
 }
 
-.header h3 {
-  color: #0606c9;
+.form-header h3 {
+  color: #2c3e50;
   margin-bottom: 10px;
+  font-size: 2rem;
+  font-weight: 700;
 }
 
-.header p {
+.form-header p {
   color: #7f8c8d;
+  font-size: 1.1rem;
 }
 
+/* Form Styles */
 .add-form {
-  background-color: #f8f9fa;
-  padding: 20px;
+  background-color: #ffffff;
+  padding: 25px;
   border-radius: 8px;
   margin-bottom: 20px;
+  border: 1px solid #e9ecef;
 }
 
 .add-form h3 {
   margin-bottom: 20px;
   color: #2c3e50;
   text-align: center;
+  font-size: 1.5rem;
 }
 
 .form-row {
@@ -68,7 +73,7 @@ body {
 .form-group label {
   display: block;
   margin-bottom: 5px;
-  font-weight: 500;
+  font-weight: 600;
   color: #2c3e50;
 }
 
@@ -84,7 +89,9 @@ body {
   border: 1px solid #ddd;
   border-radius: 4px;
   font-size: 16px;
-  transition: border-color 0.3s;
+  transition: all 0.3s;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background-color: #f8f9fa;
 }
 
 .form-group input:focus, 
@@ -92,9 +99,11 @@ body {
 .form-group textarea:focus {
   border-color: #3498db;
   outline: none;
-  box-shadow: 0 0 0 2px rgba(52, 152, 219, 0.2);
+  box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1);
+  background-color: #ffffff;
 }
 
+/* Radio Group Styles */
 .radio-group {
   display: flex;
   gap: 15px;
@@ -107,41 +116,54 @@ body {
   justify-content: center;
   gap: 5px;
   cursor: pointer;
+  padding: 10px 15px;
+  background-color: #f8f9fa;
+  border-radius: 4px;
+  transition: background-color 0.3s;
+}
+
+.radio-label:hover {
+  background-color: #e8f4fc;
 }
 
 .radio-label input[type="radio"] {
   width: auto;
   margin-right: 5px;
-  align-items: center;
-  text-align: center;
 }
 
-button {
-  background-color: #084096;
+/* Button Styles */
+.form-button {
+  background: linear-gradient(135deg, #3498db 0%, #2980b9 100%);
   color: white;
   border: none;
-  padding: 12px 20px;
+  padding: 15px 20px;
   border-radius: 4px;
   cursor: pointer;
   font-size: 16px;
-  transition: background-color 0.3s;
+  font-weight: 600;
+  transition: all 0.3s;
   display: block;
   width: 100%;
   margin-top: 10px;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
-button:hover {
-  background-color: #2980b9;
+.form-button:hover {
+  background: linear-gradient(135deg, #2980b9 0%, #1f618d 100%);
+  transform: translateY(-2px);
+  box-shadow: 0 5px 15px rgba(52, 152, 219, 0.3);
 }
 
-.list {
+/* List Styles untuk Data Peserta */
+.participant-list {
   background-color: white;
   border-radius: 8px;
   margin-bottom: 20px;
   overflow: hidden;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
 }
 
-.list h3 {
+.participant-list h3 {
   padding: 15px 20px;
   background-color: #f8f9fa;
   margin-bottom: 0;
@@ -156,11 +178,7 @@ button:hover {
   font-style: italic;
 }
 
-ul {
-  list-style-type: none;
-}
-
-li {
+.participant-item {
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
@@ -169,11 +187,11 @@ li {
   transition: background-color 0.2s;
 }
 
-li:hover {
+.participant-item:hover {
   background-color: #f8f9fa;
 }
 
-li:last-child {
+.participant-item:last-child {
   border-bottom: none;
 }
 
@@ -188,6 +206,7 @@ li:last-child {
   font-size: 14px;
 }
 
+/* Status Styles */
 .status-sudah {
   color: #27ae60;
   font-weight: bold;
@@ -198,6 +217,7 @@ li:last-child {
   font-weight: bold;
 }
 
+/* Delete Button */
 .delete-btn {
   background-color: #e74c3c;
   font-size: 20px;
@@ -207,12 +227,18 @@ li:last-child {
   align-items: center;
   justify-content: center;
   padding: 0;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  color: white;
+  transition: background-color 0.3s;
 }
 
 .delete-btn:hover {
   background-color: #c0392b;
 }
 
+/* Stats Styles */
 .stats {
   text-align: center;
   padding: 15px;
@@ -220,18 +246,6 @@ li:last-child {
   border-radius: 8px;
   color: #2c3e50;
   font-weight: 500;
-}
-
-@media (max-width: 768px) {
-  .form-row {
-    flex-direction: column;
-    gap: 0;
-  }
-  
-  .radio-group {
-    flex-direction: column;
-    gap: 8px;
-  }
 }
 
 /* Checkbox Group Styles */
@@ -244,7 +258,7 @@ li:last-child {
 
 .checkbox-label {
   display: flex;
-  align-items: flex-start; /* Rata kiri */
+  align-items: flex-start;
   gap: 12px;
   cursor: pointer;
   padding: 12px;
@@ -260,14 +274,165 @@ li:last-child {
 }
 
 .checkbox-label input[type="checkbox"] {
-  margin: 3px 0 0 0; /* Untuk alignment vertikal */
-  flex-shrink: 0; /* Mencegah checkbox menyusut */
+  margin: 3px 0 0 0;
+  flex-shrink: 0;
   width: 18px;
   height: 18px;
   cursor: pointer;
 }
 
 .checkbox-label span {
-  flex: 1; /* Agar teks mengambil sisa ruang */
+  flex: 1;
   line-height: 1.5;
+}
+
+/* Payment Info Styles */
+.payment-info {
+  background-color: #e8f4fc;
+  padding: 15px;
+  border-radius: 5px;
+  margin-bottom: 15px;
+  border-left: 4px solid #3498db;
+}
+
+.payment-info h4 {
+  margin-top: 0;
+  color: #2c3e50;
+  margin-bottom: 10px;
+}
+
+.payment-info p {
+  margin: 5px 0;
+  color: #34495e;
+}
+
+.payment-info strong {
+  color: #2c3e50;
+}
+
+/* Upload Section Styles */
+.upload-section {
+  margin-top: 10px;
+}
+
+.file-input {
+  display: none;
+}
+
+.upload-label {
+  cursor: pointer;
+  display: block;
+}
+
+.upload-box {
+  border: 2px dashed #3498db;
+  padding: 25px;
+  text-align: center;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  background-color: #f8f9fa;
+}
+
+.upload-box:hover {
+  background-color: #e8f4fc;
+  border-color: #2980b9;
+}
+
+.upload-icon {
+  font-size: 28px;
+  margin-bottom: 10px;
+  color: #3498db;
+}
+
+.upload-box p {
+  margin: 5px 0;
+  color: #2c3e50;
+  font-weight: 500;
+}
+
+.upload-box small {
+  color: #7f8c8d;
+  font-size: 12px;
+}
+
+.file-preview {
+  margin-top: 15px;
+  padding: 12px;
+  background-color: #e8f4fc;
+  border-radius: 5px;
+  border-left: 4px solid #3498db;
+}
+
+.file-preview strong {
+  color: #2c3e50;
+}
+
+/* Tambahan CSS untuk Form Section */
+.form-section {
+  background-color: #f8f9fa;
+  padding: 20px;
+  border-radius: 8px;
+  margin-bottom: 20px;
+  border-left: 4px solid #3498db;
+}
+
+.form-section h4 {
+  color: #2c3e50;
+  margin-bottom: 15px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid #e9ecef;
+}
+
+/* Style untuk heading dalam form */
+.add-form h3,
+.add-form h4 {
+  color: #2c3e50;
+  margin-bottom: 15px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid #e9ecef;
+}
+
+/* Style khusus untuk form panitia */
+.form-section .form-group {
+  margin-bottom: 20px;
+}
+
+.form-section .form-group:last-child {
+  margin-bottom: 0;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .pendaftaran-page {
+    padding: 10px;
+  }
+  
+  .form-container {
+    padding: 15px;
+    margin: 10px;
+  }
+  
+  .form-row {
+    flex-direction: column;
+    gap: 0;
+  }
+  
+  .radio-group {
+    flex-direction: column;
+    gap: 8px;
+  }
+  
+  .checkbox-label {
+    padding: 10px;
+  }
+  
+  .participant-item {
+    flex-direction: column;
+    gap: 10px;
+  }
+  
+  .form-header h3 {
+    font-size: 1.5rem;
+  }
 }

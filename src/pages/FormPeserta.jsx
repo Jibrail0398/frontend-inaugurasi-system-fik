@@ -52,8 +52,12 @@ const FormPeserta = () => {
   };
 
   return (
-    <div className="app">
-      <Header />
+    <div className='pendaftaran-page'>
+          <div className="form-container">
+      <header className="form-header">
+        <h3>Form Pendaftaran Peserta Inaugurasi</h3>
+        <p>Isi data diri dengan lengkap untuk mendaftar sebagai peserta</p>
+      </header>
       
       <form className="add-form" onSubmit={handleSubmit}>
         <div className="form-row">
@@ -269,8 +273,9 @@ const FormPeserta = () => {
           </div>
         </div>
         
-        <button type="submit" className="submit-button">Daftarkan</button>
+        <button type="submit" className="form-button">Daftarkan</button>
       </form>
+    </div>
     </div>
   );
 };
