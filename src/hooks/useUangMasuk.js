@@ -1,14 +1,16 @@
 import { useCallback, useEffect, useState } from "react";
 import * as keuanganService from "../services/keuanganService";
+import { useLocalStorage } from "react-use";
 
 const useUangMasuk = () => {
     const [loading, setLoading] = useState(true);
     const [uangMasuk, setUangMasuk] = useState([]);
+    const [token, _] = useLocalStorage("token");
 
     const getAll = useCallback(async () => {
         setLoading(true);
 
-        const response = await keuanganService.getAllUangMasuk();
+        const response = await keuanganService.getAllUangMasuk(token);
         setUangMasuk(response.data);
 
         setLoading(false);

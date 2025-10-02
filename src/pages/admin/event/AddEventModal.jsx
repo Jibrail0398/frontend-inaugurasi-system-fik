@@ -41,7 +41,10 @@ const AddEventModal = ({ handleAdd, show, setShow }) => {
                     {/* Jenis */}
                     <Form.Group className="mb-3">
                         <Form.Label>Jenis</Form.Label>
-                        <Form.Control type="text" name="jenis" required />
+                        <Form.Select name="jenis" required>
+                            <option value="">Pilih Jenis</option>
+                            <option value="inaugurasi">Inaugurasi</option>
+                        </Form.Select>
                     </Form.Group>
 
                     {/* Tema */}

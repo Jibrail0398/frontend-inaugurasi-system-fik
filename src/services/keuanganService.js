@@ -5,7 +5,11 @@
 
 /**
  * @typedef CreateUangMasukRequest
- * @property {string} uang_masuk
+ * @property {number} jumlah_uang_masuk
+ * @property {string} asal_pemasukan
+ * @property {string} bukti_pemasukan
+ * @property {number} keuangan_id
+ * @property {string} tanggal_pemasukan
  */
 
 import axios from "axios";
@@ -33,7 +37,7 @@ export const getKeuangan = async (token) => {
  * @returns {Promise<Object>}
  */
 export const getAllUangMasuk = async (token) => {
-    const response = await axios.get(`${BASE_URL_API}/uang-masuk`, {
+    const response = await axios.get(`${BASE_URL_API}/uang-masuk/index`, {
         headers: {
             Authorization: `Bearer ${token}`,
         },

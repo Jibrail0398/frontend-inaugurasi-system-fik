@@ -118,7 +118,7 @@ const EventPage = () => {
 
     const handleSubmitEdit = (dataRequest) => {
         try {
-            updateById(event.id);
+            updateById(event.id, dataRequest);
             fetchData();
             Swal.fire({
                 title: "Success",
