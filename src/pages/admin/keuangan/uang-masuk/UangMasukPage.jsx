@@ -56,13 +56,14 @@ const UangMasukPage = () => {
     const [showDetailModal, setShowDetailModal] = useState(false);
     const [showBuktiModal, setShowBuktiModal] = useState(false);
 
-    const { loading, uangMasuk } = useUangMasuk();
+    const { loading, uangMasuk, create } = useUangMasuk();
 
     // Uang Masuk One
     const [uangMasukOne, setUangMasukOne] = useState({});
 
     const handleAdd = (dataRequest) => {
         console.log(dataRequest);
+        create(dataRequest);
     };
 
     const handleDelete = async (id) => {
