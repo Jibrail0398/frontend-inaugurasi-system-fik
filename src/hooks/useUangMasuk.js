@@ -22,7 +22,7 @@ const useUangMasuk = () => {
     }, []);
 
     const create = useCallback(async (data) => {
-        // Create data logic here
+        keuanganService.createUangMasuk(data, token);
     }, []);
 
     const update = useCallback(async (id, data) => {

@@ -66,9 +66,11 @@ export const getAllUangKeluar = (token) => {
  * @param {string} token
  */
 export const createUangMasuk = async (data, token) => {
-    const response = await axios.post(`${BASE_URL_API}/uang-masuk`, data, {
+    console.log(data);
+    const response = await axios.post(`${BASE_URL_API}/uang-masuk/add`, data, {
         headers: {
             Authorization: `Bearer ${token}`,
+            "Content-Type": "multipart/form-data",
         },
     });
 

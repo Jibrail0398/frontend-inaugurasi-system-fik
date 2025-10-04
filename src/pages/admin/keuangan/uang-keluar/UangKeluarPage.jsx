@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import useUangMasuk from "../../../../hooks/useUangMasuk";
+import useUangKeluar from "../../../../hooks/useUangKeluar";
 import CardInfo from "../../../../components/CardInfo";
 import { Button } from "react-bootstrap";
 import { formatCurrency } from "../../../../helpers/currencyHelper";
@@ -10,21 +10,21 @@ import DetailModal from "./DetailModal";
 import Swal from "sweetalert2";
 import BuktiModal from "./BuktiModal";
 
-const TableUangKeluar = ({ uangMasuk, handleDelete, handleEdit, handleDetail, handleShowBukti }) => {
+const TableUangKeluar = ({ uangKeluars, handleDelete, handleEdit, handleDetail, handleShowBukti }) => {
     return (
         <>
             <TableSearch
                 defaultOrder={{ column: 0, order: "desc" }}
                 className="mt-4"
-                header={["ID", "Nominal", "Asal Pemasukan", "Tanggal Pemasukan", "Created At", "Aksi"].map((item, index) => (
+                header={["ID", "Nominal", "Asal Pengeluaran", "Tanggal Pengeluaran", "Created At", "Aksi"].map((item, index) => (
                     <th key={index}>{item}</th>
                 ))}
-                body={uangMasuk.map((item, index) => (
+                body={uangKeluars.map((item, index) => (
                     <tr key={index}>
                         <td>{item.id}</td>
-                        <td>{item.jumlah_uang_masuk}</td>
-                        <td>{item.asal_pemasukan}</td>
-                        <td>{item.tanggal_pemasukan}</td>
+                        <td>{item.jumlah_uang_keluar}</td>
+                        <td>{item.asal_pengeluaran}</td>
+                        <td>{item.tanggal_pengeluaran}</td>
                         <td>{formatDateID(item.created_at)}</td>
                         <td>
                             <div className="d-flex gap-2">
@@ -56,10 +56,10 @@ const UangKeluarPage = () => {
     const [showDetailModal, setShowDetailModal] = useState(false);
     const [showBuktiModal, setShowBuktiModal] = useState(false);
 
-    const { loading, uangMasuk } = useUangMasuk();
+    const { loading, uangKeluars } = useUangKeluar();
 
-    // Uang Masuk One
-    const [uangMasukOne, setUangMasukOne] = useState({});
+    // Uang Keluar One
+    const [uangKeluar, setUangKeluar] = useState({});
 
     const handleAdd = (dataRequest) => {
         console.log(dataRequest);
@@ -67,8 +67,8 @@ const UangKeluarPage = () => {
 
     const handleDelete = async (id) => {
         const response = await Swal.fire({
-            title: "Delete Uang Masuk",
-            text: "Apakah anda yakin ingin menghapus uang masuk ini?",
+            title: "Delete Uang Keluar",
+            text: "Apakah anda yakin ingin menghapus uang keluar ini?",
             icon: "warning",
             showCancelButton: true,
             confirmButtonColor: "#3085d6",
@@ -83,19 +83,19 @@ const UangKeluarPage = () => {
 
         Swal.fire({
             title: "Deleted!",
-            text: "Uang Masuk berhasil dihapus.",
+            text: "Uang Keluar berhasil dihapus.",
             icon: "success",
             confirmButtonText: "OK",
         });
     };
 
-    const handleEdit = (uangMasukOne) => {
-        setUangMasukOne(uangMasukOne);
+    const handleEdit = (uangKeluarOne) => {
+        setUangKeluarOne(uangKeluarOne);
         setShowAddModal(true);
     };
 
-    const handleDetail = (uangMasukOne) => {
-        setUangMasukOne(uangMasukOne);
+    const handleDetail = (uangKeluarOne) => {
+        setUangKeluarOne(uangKeluarOne);
         setShowDetailModal(true);
     };
 
@@ -106,29 +106,29 @@ const UangKeluarPage = () => {
     return (
         <>
             <div className="d-sm-flex align-items-center justify-content-between mb-4">
-                <h1 className="h3 mb-0 text-gray-800">Uang Masuk</h1>
+                <h1 className="h3 mb-0 text-gray-800">Uang Keluar</h1>
             </div>
             <div className="row">
-                {/* Total Uang Masuk */}
-                <CardInfo type="success" title="Uang Masuk" value={formatCurrency(uangMasuk.reduce((total, item) => total + item.jumlah_uang_masuk, 0))} icon="fa-dollar-sign" />
-                {/* Total Data Uang Masuk */}
-                <CardInfo type="success" title="Data Uang Masuk" value={uangMasuk.length} icon="fa-database" />
+                {/* Total Uang Keluar */}
+                {/* <CardInfo type="success" title="Uang Keluar" value={formatCurrency(uangKeluar.reduce((total, item) => total + item.jumlah_uang_keluar, 0))} icon="fa-dollar-sign" /> */}
+                {/* Total Data Uang Keluar */}
+                {/* <CardInfo type="success" title="Data Uang Keluar" value={uangKeluar.length} icon="fa-database" /> */}
             </div>
 
             <div className="card shadow mb-4 p-3">
                 <div>
                     <Button variant="primary" onClick={() => setShowAddModal(true)}>
-                        Tambah Uang Masuk
+                        Tambah Uang Keluar
                     </Button>
                 </div>
 
                 {loading && <div>Loading...</div>}
-                {!loading && <TableUangMasuk uangMasuk={uangMasuk} handleDelete={handleDelete} handleEdit={handleEdit} handleDetail={handleDetail} handleShowBukti={handleShowBukti} />}
+                {!loading && <TableUangKeluar uangKeluars={uangKeluars} handleDelete={handleDelete} handleEdit={handleEdit} handleDetail={handleDetail} handleShowBukti={handleShowBukti} />}
             </div>
 
             <AddModal handleAdd={handleAdd} show={showAddModal} setShow={setShowAddModal} />
-            <DetailModal setShow={setShowDetailModal} show={showDetailModal} uangMasuk={uangMasukOne} />
-            <BuktiModal setShow={setShowBuktiModal} show={showBuktiModal} uangMasuk={uangMasukOne} />
+            <DetailModal setShow={setShowDetailModal} show={showDetailModal} uangKeluar={uangKeluar} />
+            <BuktiModal setShow={setShowBuktiModal} show={showBuktiModal} uangKeluar={uangKeluar} />
         </>
     );
 };

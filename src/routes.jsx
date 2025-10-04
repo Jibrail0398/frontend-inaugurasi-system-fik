@@ -15,6 +15,7 @@ import NotLoginMiddleware from "./components/middlewares/NotLoginMiddleware.jsx"
 import IsLoginMiddleware from "./components/middlewares/IsLoginMiddleware.jsx";
 import UangMasukPage from "./pages/admin/keuangan/uang-masuk/UangMasukPage.jsx";
 import LaporanKeuanganPage from "./pages/admin/keuangan/laporan/LaporanKeuanganPage.jsx";
+import UangKeluarPage from "./pages/admin/keuangan/uang-keluar/UangKeluarPage.jsx";
 
 const router = createBrowserRouter([
     {
@@ -60,7 +61,7 @@ const router = createBrowserRouter([
                     },
                     {
                         path: "uang-keluar",
-                        element: <ComingSoonPage />,
+                        element: <UangKeluarPage />,
                     },
                     {
                         path: "laporan",
