@@ -8,7 +8,6 @@ const useFormPesertaStore = create((set, get) => ({
     angkatan: '',
     kelas: '',
     programStudi: '',
-    tempatLahir: '',
     tanggalLahir: '',
     whatsapp: '',
     email: '',
@@ -51,7 +50,6 @@ const useFormPesertaStore = create((set, get) => ({
         angkatan: '',
         kelas: '',
         programStudi: '',
-        tempatLahir: '',
         tanggalLahir: '',
         whatsapp: '',
         email: '',
@@ -78,7 +76,6 @@ const useFormPesertaStore = create((set, get) => ({
         angkatan: '',
         kelas: '',
         programStudi: '',
-        tempatLahir: '',
         tanggalLahir: '',
         whatsapp: '',
         email: '',
@@ -101,7 +98,6 @@ const useFormPesertaStore = create((set, get) => ({
       formData.angkatan && 
       formData.kelas && 
       formData.programStudi && 
-      formData.tempatLahir && 
       formData.tanggalLahir && 
       formData.whatsapp && 
       formData.email && 

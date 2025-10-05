@@ -56,11 +56,11 @@ const router = createBrowserRouter([
         ],
     },
     {
-        path: "/daftar-peserta",
+        path: "/pendaftaranPeserta/:kodeEvent",
         element: <FormPeserta />,
     },
     {
-        path: "/daftar-panitia",
+        path: "/pendaftaranPanitia/:kodeEvent",
         element: <FormPanitia />,
     },
     {
