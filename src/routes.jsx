@@ -64,7 +64,7 @@ const router = createBrowserRouter([
         element: <FormPanitia />,
     },
     {
-        path: "/presensi",
+        path: "/presensi/:kodeEvent",
         element: <FormPresensi />,
     },
     {
