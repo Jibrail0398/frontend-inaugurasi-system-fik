@@ -62,7 +62,6 @@ const UangMasukPage = () => {
     const [uangMasukOne, setUangMasukOne] = useState({});
 
     const handleAdd = (dataRequest) => {
-        console.log(dataRequest);
         create(dataRequest);
     };
 
@@ -100,7 +99,8 @@ const UangMasukPage = () => {
         setShowDetailModal(true);
     };
 
-    const handleShowBukti = () => {
+    const handleShowBukti = (uangMasukOne) => {
+        setUangMasukOne(uangMasukOne);
         setShowBuktiModal(true);
     };
 

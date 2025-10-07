@@ -1,7 +1,9 @@
 import { useState } from "react";
 import { Button, Form, Modal } from "react-bootstrap";
+import useEvent from "../../../../hooks/useEvent";
 
 const AddModal = ({ handleAdd, show, setShow }) => {
+    const { events } = useEvent();
     // input
     const [jumlahUangMasuk, setJumlahUangMasuk] = useState("");
     const [asalPemasukan, setAsalPemasukan] = useState("");
@@ -55,10 +57,17 @@ const AddModal = ({ handleAdd, show, setShow }) => {
                         <Form.Control type="file" onChange={(e) => setBukti(e.target.files[0])} required />
                     </Form.Group>
 
-                    {/* ID Keuangan */}
+                    {/* Event */}
                     <Form.Group className="mb-3">
-                        <Form.Label>ID Keuangan</Form.Label>
-                        <Form.Control type="text" value={idKeuangan} onChange={(e) => setIdKeuangan(e.target.value)} required />
+                        <Form.Label>Event</Form.Label>
+                        <Form.Select name="event_id" value={idKeuangan} onChange={(e) => setIdKeuangan(e.target.value)}>
+                            <option value="">Pilih Event</option>
+                            {events.map((event) => (
+                                <option value={event.id} key={event.id}>
+                                    {event.nama_event}
+                                </option>
+                            ))}
+                        </Form.Select>
                     </Form.Group>
                 </Modal.Body>
 
