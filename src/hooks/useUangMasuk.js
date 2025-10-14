@@ -22,15 +22,15 @@ const useUangMasuk = () => {
     }, []);
 
     const create = useCallback(async (data) => {
-        keuanganService.createUangMasuk(data, token);
+        return await keuanganService.createUangMasuk(data, token);
     }, []);
 
     const update = useCallback(async (id, data) => {
-        // Update data logic here
+        return await keuanganService.updateUangMasuk(id, data, token);
     });
 
     const deleteById = useCallback(async (id) => {
-        // Delete data logic here
+        return await keuanganService.deleteUangMasuk(id, token);
     });
 
     useEffect(() => {

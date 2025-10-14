@@ -27,7 +27,6 @@ export const getKeuangan = async (token) => {
             Authorization: `Bearer ${token}`,
         },
     });
-
     return response.data;
 };
 
@@ -42,7 +41,6 @@ export const getAllUangMasuk = async (token) => {
             Authorization: `Bearer ${token}`,
         },
     });
-
     return response.data;
 };
 
@@ -56,7 +54,6 @@ export const getAllUangKeluar = (token) => {
             Authorization: `Bearer ${token}`,
         },
     });
-
     return response.data;
 };
 
@@ -66,14 +63,12 @@ export const getAllUangKeluar = (token) => {
  * @param {string} token
  */
 export const createUangMasuk = async (data, token) => {
-    console.log(data);
     const response = await axios.post(`${BASE_URL_API}/uang-masuk/add`, data, {
         headers: {
             Authorization: `Bearer ${token}`,
             "Content-Type": "multipart/form-data",
         },
     });
-
     return response.data;
 };
 
@@ -81,8 +76,13 @@ export const createUangKeluar = (data, token) => {
     //
 };
 
-export const updateUangMasuk = (id, { data }, token) => {
-    //
+export const updateUangMasuk = async (id, data, token) => {
+    const response = await axios.put(`${BASE_URL_API}/uang-masuk/update/${id}`, data, {
+        headers: {
+            Authorization: `Bearer ${token}`,
+        },
+    });
+    return response.data;
 };
 
 export const updateUangKeluar = (id, { data }, token) => {
@@ -90,7 +90,12 @@ export const updateUangKeluar = (id, { data }, token) => {
 };
 
 export const deleteUangMasuk = (id, token) => {
-    //
+    const response = axios.delete(`${BASE_URL_API}/uang-masuk/delete/${id}`, {
+        headers: {
+            Authorization: `Bearer ${token}`,
+        },
+    });
+    return response.data;
 };
 
 export const deleteUangKeluar = (id, token) => {
