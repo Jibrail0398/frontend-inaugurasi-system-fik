@@ -7,6 +7,7 @@ const AddEventModal = ({ handleAdd, show, setShow }) => {
         const data = new FormData(e.target);
 
         handleAdd({
+            kode_event: data.get("kode_event"),
             nama_event: data.get("nama_event"),
             jenis: data.get("jenis"),
             tema: data.get("tema"),
@@ -25,6 +26,12 @@ const AddEventModal = ({ handleAdd, show, setShow }) => {
             </Modal.Header>
             <Form onSubmit={handleSubmit}>
                 <Modal.Body>
+                    {/* Kode Event */}
+                    <Form.Group className="mb-3">
+                        <Form.Label>Kode Event</Form.Label>
+                        <Form.Control type="text" name="kode_event" required />
+                    </Form.Group>
+
                     {/* Nama Event */}
                     <Form.Group className="mb-3">
                         <Form.Label>Nama Event</Form.Label>
@@ -34,7 +41,10 @@ const AddEventModal = ({ handleAdd, show, setShow }) => {
                     {/* Jenis */}
                     <Form.Group className="mb-3">
                         <Form.Label>Jenis</Form.Label>
-                        <Form.Control type="text" name="jenis" required />
+                        <Form.Select name="jenis" required>
+                            <option value="">Pilih Jenis</option>
+                            <option value="inaugurasi">Inaugurasi</option>
+                        </Form.Select>
                     </Form.Group>
 
                     {/* Tema */}
