@@ -1,54 +1,82 @@
 import { useState } from "react";
 import { Button, Form, Modal } from "react-bootstrap";
 
-const AddEventModal = ({ handleAdd }) => {
-    const [show, setShow] = useState(false);
-
-    const handleClose = () => setShow(false);
-    const handleShow = () => setShow(true);
-
+const AddEventModal = ({ handleAdd, show, setShow }) => {
     const handleSubmit = (e) => {
         e.preventDefault();
         const data = new FormData(e.target);
-        console.log("Nama:", data.get("nama"));
-        console.log("Email:", data.get("email"));
-        handleClose();
-        handleAdd({ nama: data.get("nama"), email: data.get("email") });
+
+        handleAdd({
+            nama_event: data.get("nama_event"),
+            jenis: data.get("jenis"),
+            tema: data.get("tema"),
+            tempat: data.get("tempat"),
+            status_pendaftaran_panitia: data.get("status_pendaftaran_panitia"),
+            status_pendaftaran_peserta: data.get("status_pendaftaran_peserta"),
+        });
+
+        setShow(false);
     };
 
     return (
-        <div className="p-3">
-            <Button variant="primary" onClick={handleShow}>
-                Tambah Event
-            </Button>
+        <Modal show={show} onHide={() => setShow(false)}>
+            <Modal.Header closeButton>
+                <Modal.Title>Tambah Event</Modal.Title>
+            </Modal.Header>
+            <Form onSubmit={handleSubmit}>
+                <Modal.Body>
+                    {/* Nama Event */}
+                    <Form.Group className="mb-3">
+                        <Form.Label>Nama Event</Form.Label>
+                        <Form.Control type="text" name="nama_event" required />
+                    </Form.Group>
 
-            <Modal show={show} onHide={handleClose}>
-                <Modal.Header closeButton>
-                    <Modal.Title>Form Pendaftaran</Modal.Title>
-                </Modal.Header>
-                <Form onSubmit={handleSubmit}>
-                    <Modal.Body>
-                        <Form.Group className="mb-3">
-                            <Form.Label>Nama</Form.Label>
-                            <Form.Control type="text" name="nama" required />
-                        </Form.Group>
+                    {/* Jenis */}
+                    <Form.Group className="mb-3">
+                        <Form.Label>Jenis</Form.Label>
+                        <Form.Control type="text" name="jenis" required />
+                    </Form.Group>
 
-                        <Form.Group className="mb-3">
-                            <Form.Label>Email</Form.Label>
-                            <Form.Control type="email" name="email" required />
-                        </Form.Group>
-                    </Modal.Body>
-                    <Modal.Footer>
-                        <Button variant="secondary" onClick={handleClose}>
-                            Batal
-                        </Button>
-                        <Button variant="primary" type="submit">
-                            Simpan
-                        </Button>
-                    </Modal.Footer>
-                </Form>
-            </Modal>
-        </div>
+                    {/* Tema */}
+                    <Form.Group className="mb-3">
+                        <Form.Label>Tema</Form.Label>
+                        <Form.Control type="text" name="tema" required />
+                    </Form.Group>
+
+                    {/* Tempat */}
+                    <Form.Group className="mb-3">
+                        <Form.Label>Tempat</Form.Label>
+                        <Form.Control type="text" name="tempat" required />
+                    </Form.Group>
+
+                    {/* Status Pendaftaran Panitia Select */}
+                    <Form.Group className="mb-3">
+                        <Form.Label>Status Pendaftaran Panitia</Form.Label>
+                        <Form.Select name="status_pendaftaran_panitia" required>
+                            <option value="buka">Buka</option>
+                            <option value="tutup">Tutup</option>
+                        </Form.Select>
+                    </Form.Group>
+
+                    {/* Status Pendaftaran Peserta Select */}
+                    <Form.Group className="mb-3">
+                        <Form.Label>Status Pendaftaran Peserta</Form.Label>
+                        <Form.Select name="status_pendaftaran_peserta" required>
+                            <option value="buka">Buka</option>
+                            <option value="tutup">Tutup</option>
+                        </Form.Select>
+                    </Form.Group>
+                </Modal.Body>
+                <Modal.Footer>
+                    <Button variant="secondary" onClick={() => setShow(false)}>
+                        Batal
+                    </Button>
+                    <Button variant="primary" type="submit">
+                        Simpan
+                    </Button>
+                </Modal.Footer>
+            </Form>
+        </Modal>
     );
 };
 

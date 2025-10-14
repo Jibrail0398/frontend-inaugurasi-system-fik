@@ -13,10 +13,12 @@
   "dependencies": {
     "@fortawesome/fontawesome-free": "^7.0.1",
     "apexcharts": "^5.3.5",
+    "axios": "^1.12.2",
     "bootstrap": "^5.3.8",
     "chart.js": "^4.5.0",
     "datatables.net": "^2.3.4",
     "datatables.net-bs4": "^2.3.4",
+    "datatables.net-bs5": "^2.3.4",
     "framer-motion": "^12.23.15",
     "html5-qrcode": "^2.3.8",
     "jquery": "^3.7.1",
