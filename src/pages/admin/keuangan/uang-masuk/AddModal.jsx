@@ -5,6 +5,7 @@ import Swal from "sweetalert2";
 
 const AddModal = ({ handleAdd, show, setShow }) => {
     const { events } = useEvent();
+    const [loading, setLoading] = useState(false);
 
     // 🧾 State form
     const [form, setForm] = useState({
@@ -29,6 +30,7 @@ const AddModal = ({ handleAdd, show, setShow }) => {
 
     // 🚀 Submit form
     const handleSubmit = async (e) => {
+        setLoading(true);
         e.preventDefault();
 
         const data = new FormData();
@@ -56,6 +58,8 @@ const AddModal = ({ handleAdd, show, setShow }) => {
             });
         } catch (err) {
             setErrors(err.response?.data?.errors || {});
+        } finally {
+            setLoading(false);
         }
     };
 
@@ -117,8 +121,8 @@ const AddModal = ({ handleAdd, show, setShow }) => {
                     <Button variant="secondary" onClick={() => setShow(false)}>
                         Batal
                     </Button>
-                    <Button variant="primary" type="submit">
-                        Simpan
+                    <Button variant="primary" type="submit" disabled={loading}>
+                        {loading ? <span className="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> : <span>Simpan</span>}
                     </Button>
                 </Modal.Footer>
             </Form>
