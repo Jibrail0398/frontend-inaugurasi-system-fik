@@ -3,21 +3,20 @@ import { create } from 'zustand';
 const useFormPesertaStore = create((set, get) => ({
   // State
   formData: {
-    name: '',
-    nim: '',
+    nama: '',
+    NIM: '',
+    program_studi:'',
+    email: '',
+    nomor_whatapp: '',
     angkatan: '',
     kelas: '',
-    programStudi: '',
-    tanggalLahir: '',
-    whatsapp: '',
-    email: '',
-    ukuranKaos: 'L',
-    nomorDarurat: '',
-    tipeNomorDarurat: 'Ayah',
-    riwayatPenyakit: '',
-    pembayaran: 'Belum',
-    buktiPembayaran: null,
-    buktiPembayaranName: '' // Tambahan untuk menyimpan nama file
+    tanggal_lahir: '',
+    ukuran_kaos: '',
+    nomor_darurat: '',
+    tipe_nomor_darurat: '',
+    riwayat_penyakit: '',
+    bukti_pembayaran: null,
+    buktiPembayaranName: '',
   },
 
   participants: [],
@@ -35,57 +34,30 @@ const useFormPesertaStore = create((set, get) => ({
     set((state) => ({
       formData: {
         ...state.formData,
-        buktiPembayaran: file,
-        buktiPembayaranName: file ? file.name : '', // Simpan nama file
-        pembayaran: file ? 'Sudah' : 'Belum'
+        bukti_pembayaran: file,
+        buktiPembayaranName: file ? file.name : '' // ← Simpan nama file
+      
       }
     })),
 
-  addParticipant: (participant) =>
-    set((state) => ({
-      participants: [...state.participants, participant],
-      formData: {
-        name: '',
-        nim: '',
-        angkatan: '',
-        kelas: '',
-        programStudi: '',
-        tanggalLahir: '',
-        whatsapp: '',
-        email: '',
-        ukuranKaos: 'L',
-        nomorDarurat: '',
-        tipeNomorDarurat: 'Ayah',
-        riwayatPenyakit: '',
-        pembayaran: 'Belum',
-        buktiPembayaran: null,
-        buktiPembayaranName: '' // Reset juga nama file
-      }
-    })),
-
-  removeParticipant: (id) =>
-    set((state) => ({
-      participants: state.participants.filter(p => p.id !== id)
-    })),
 
   resetForm: () =>
     set({
       formData: {
-        name: '',
-        nim: '',
+        nama: '',
+        NIM: '',
+        program_studi:'',
+        email: '',
+        nomor_whatapp: '',
         angkatan: '',
         kelas: '',
-        programStudi: '',
-        tanggalLahir: '',
-        whatsapp: '',
-        email: '',
-        ukuranKaos: 'L',
-        nomorDarurat: '',
-        tipeNomorDarurat: 'Ayah',
-        riwayatPenyakit: '',
-        pembayaran: 'Belum',
-        buktiPembayaran: null,
-        buktiPembayaranName: '' // Reset juga nama file
+        tanggal_lahir: '',
+        ukuran_kaos: '',
+        nomor_darurat: '',
+        tipe_nomor_darurat: '',
+        riwayat_penyakit: '',
+        bukti_pembayaran: null,
+        buktiPembayaranName: '', // ← Reset nama file juga
       }
     }),
 
@@ -93,30 +65,22 @@ const useFormPesertaStore = create((set, get) => ({
   validateForm: () => {
     const { formData } = get();
     return (
-      formData.name && 
-      formData.nim && 
+      formData.nama && 
+      formData.NIM && 
+      formData.email && 
+      formData.nomor_whatapp && 
       formData.angkatan && 
       formData.kelas && 
-      formData.programStudi && 
-      formData.tanggalLahir && 
-      formData.whatsapp && 
-      formData.email && 
-      formData.riwayatPenyakit &&
-      formData.buktiPembayaran // Hanya bukti pembayaran yang wajib, nomor darurat tidak
+      formData.tanggal_lahir && 
+      formData.ukuran_kaos &&
+      formData.nomor_darurat &&
+      formData.tipe_nomor_darurat &&
+      formData.riwayat_penyakit &&
+      formData.bukti_pembayaran  
     );
   },
 
-  // Statistics
-  getStats: () => {
-    const { participants } = get();
-    const totalParticipants = participants.length;
-    const sudahBayar = participants.filter(p => p.pembayaran === 'Sudah').length;
-    const persentaseBayar = totalParticipants > 0 
-      ? ((sudahBayar / totalParticipants) * 100).toFixed(0) 
-      : 0;
-
-    return { totalParticipants, sudahBayar, persentaseBayar };
-  }
+ 
 }));
 
 export default useFormPesertaStore;

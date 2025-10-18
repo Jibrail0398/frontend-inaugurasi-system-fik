@@ -1,13 +1,49 @@
-import { checkingEventCode } from "../../services/checkKodeEvent";
+import { showEventbyCode } from "../../services/eventService";
 
 export async function CheckEventCode({params}){
-    const {kodeEvent}=params;
-    const eventStatus = await checkingEventCode(kodeEvent);
-    if(!eventStatus){
-        throw new Error(`Kode Event kodeEvent tidak ditemukan`);
-    }
-    return eventStatus;
+    const { kodeEvent } = params;
+    const location = new URL(window.location.href);
+    
+    let eventDetails;
 
+    
+    try {
+        
+        eventDetails = await showEventbyCode(kodeEvent); 
+    } catch (e) {
+        
+        if (e.response && e.response.status === 404) {
+            console.log(`Event inaugurasi ini tidak ditemukan (404)`);
+            throw new Error(`Event inaugurasi ini tidak ditemukan`);
+        }
+        
+        console.error(`Gagal mengambil data event: ${e.message}`);
+        throw new Error(`Gagal mengambil data event.`);
+    }
+
+    
+    let registerStatus = null;
+
+    
+    if(location.pathname.includes('pendaftaranPeserta')){
+        registerStatus = eventDetails.data.event.status_pendaftaran_peserta;
+        
+    } else if(location.pathname.includes('pendaftaranPanitia')){
+        
+        console.log(`Register Status (sebelum): ${registerStatus}`); 
+        
+        registerStatus = eventDetails.data.event.status_pendaftaran_panitia;
+        
+    
+        console.log(`Register Status (sesudah): ${registerStatus}`);
+    }
+
+    if(registerStatus === 'tutup'){
+        throw new Error(`Pendaftaran telah ditutup`);
+    }
+    
+    
+    return eventDetails;
 }
 
-export default CheckEventCode
+export default CheckEventCode;

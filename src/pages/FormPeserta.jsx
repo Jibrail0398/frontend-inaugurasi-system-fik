@@ -2,6 +2,8 @@ import { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import useFormPesertaStore from '../stores/useFormPesertaStore';
 import '../style/FormPeserta.css';
+import { create } from '../services/persertaService';
+
 
 const FormPeserta = () => {
   const { kodeEvent } = useParams();
@@ -10,24 +12,16 @@ const FormPeserta = () => {
     formData,
     setFormData,
     setFileUpload,
-    addParticipant,
     validateForm,
+    resetForm,
   } = useFormPesertaStore();
 
   const [isLoading, setIsLoading] = useState(false);
-
-  const FIXED_EVENT_CODE = "INAU2025";
-  const FIXED_EVENT_NAME = "Inaugurasi Mahasiswa Fakultas Ilmu Komputer 2025";
-
+  
+  
   const ukuranKaosOptions = ['S', 'M', 'L', 'XL', 'XXL'];
   const tipeDaruratOptions = ['Ayah', 'Ibu', 'Saudara', 'Lainnya'];
   const programStudiOptions = ['Teknik Informatika', 'Sistem Informasi'];
-
-  useEffect(() => {
-    const finalEventCode = kodeEvent || FIXED_EVENT_CODE;
-    setFormData('eventCode', finalEventCode);
-    setFormData('eventName', FIXED_EVENT_NAME);
-  }, [kodeEvent, setFormData]);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -37,7 +31,6 @@ const FormPeserta = () => {
   const handleFileChange = (e) => {
     const file = e.target.files[0];
     if (file) {
-      // Validasi ukuran file (maksimal 5MB)
       if (file.size > 5 * 1024 * 1024) {
         alert('Ukuran file terlalu besar. Maksimal 5MB.');
         e.target.value = ''; // Reset input file
@@ -50,6 +43,7 @@ const FormPeserta = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     
+    
     if (!validateForm()) {
       alert('Harap isi semua field yang wajib diisi!');
       return;
@@ -58,56 +52,48 @@ const FormPeserta = () => {
     setIsLoading(true);
     
     try {
-      const finalEventCode = kodeEvent || FIXED_EVENT_CODE;
       
-      // Prepare data untuk API
-      const submitData = {
-        ...formData,
-        eventCode: finalEventCode,
-        eventName: FIXED_EVENT_NAME,
-        registered: new Date().toISOString()
-      };
+      
+      const formDataToSend = new FormData();
+      formDataToSend.append('nama', formData.nama);                   
+      formDataToSend.append('NIM', formData.NIM);
+      formDataToSend.append('email', formData.email);
+      formDataToSend.append('nomor_whatapp', formData.nomor_whatapp); 
+      formDataToSend.append('angkatan', formData.angkatan);
+      formDataToSend.append('kelas', formData.kelas);
+      formDataToSend.append('program_studi', formData.program_studi);
+      formDataToSend.append('tanggal_lahir', formData.tanggal_lahir);
+      formDataToSend.append('ukuran_kaos', formData.ukuran_kaos);
+      formDataToSend.append('nomor_darurat', formData.nomor_darurat || '');
+      formDataToSend.append('tipe_nomor_darurat', formData.tipe_nomor_darurat || '');
+      formDataToSend.append('riwayat_penyakit', formData.riwayat_penyakit);
+      
+      if (formData.bukti_pembayaran) {
+      
+        const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png'];
+        if (!allowedTypes.includes(formData.bukti_pembayaran.type)) {
+          alert('Format file tidak didukung. Harus JPG, JPEG, atau PNG.');
+          setIsLoading(false);
+          return;
+        }
+        formDataToSend.append('bukti_pembayaran', formData.bukti_pembayaran);
 
-      // ✅ KONEKSI KE API
-      const response = await fetch('https://apiinaugurasi.newhimatif.com/v1/pendaftaran-peserta', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(submitData),
-      });
-
-      if (!response.ok) {
-        throw new Error('Gagal mendaftarkan peserta');
       }
-
-      const result = await response.json();
+      const response = await create(kodeEvent, formDataToSend);
       
-      // Simpan ke local state juga
-      addParticipant({
-        id: result.data?.id || Date.now(),
-        ...submitData,
-        registered: new Date().toLocaleDateString('id-ID') // Format untuk display
-      });
-
-      alert(`Pendaftaran berhasil untuk event: ${FIXED_EVENT_NAME}`);
+      
+      
+      await alert("Pendaftaran Berhasil");
+      
+      
+      await resetForm();
+      
+     
       
     } catch (err) {
-      console.error('Error submitting form:', err);
       
-      // Fallback: Simpan ke local storage jika API error
-      const finalEventCode = kodeEvent || FIXED_EVENT_CODE;
-      const newParticipant = {
-        id: Date.now(),
-        ...formData,
-        eventCode: finalEventCode,
-        eventName: FIXED_EVENT_NAME,
-        registered: new Date().toLocaleDateString('id-ID')
-      };
-
-      addParticipant(newParticipant);
-      alert('Pendaftaran berhasil! Data tersimpan.');
-      
+      const errorMessage = err.response?.data?.error || 'Terjadi kesalahan saat mendaftar';
+      alert(`Pendaftaran gagal: ${errorMessage}`);
     } finally {
       setIsLoading(false);
     }
@@ -127,9 +113,9 @@ const FormPeserta = () => {
               <label>Nama <span className="required">*</span></label>
               <input 
                 type="text" 
-                name="name"
+                name="nama"
                 placeholder="Nama lengkap..." 
-                value={formData.name}
+                value={formData.nama}
                 onChange={handleInputChange}
                 required
                 disabled={isLoading}
@@ -140,9 +126,9 @@ const FormPeserta = () => {
               <label>NIM <span className="required">*</span></label>
               <input 
                 type="text" 
-                name="nim"
+                name="NIM"
                 placeholder="Nomor Induk Mahasiswa..." 
-                value={formData.nim}
+                value={formData.NIM}
                 onChange={handleInputChange}
                 required
                 disabled={isLoading}
@@ -184,8 +170,8 @@ const FormPeserta = () => {
           <div className="form-group">
             <label>Program Studi <span className="required">*</span></label>
             <select 
-              name="programStudi"
-              value={formData.programStudi}
+              name="program_studi"
+              value={formData.program_studi}
               onChange={handleInputChange}
               required
               disabled={isLoading}
@@ -202,8 +188,8 @@ const FormPeserta = () => {
               <label>Tanggal Lahir <span className="required">*</span></label>
               <input 
                 type="date" 
-                name="tanggalLahir"
-                value={formData.tanggalLahir}
+                name="tanggal_lahir"
+                value={formData.tanggal_lahir}
                 onChange={handleInputChange}
                 required
                 disabled={isLoading}
@@ -216,9 +202,9 @@ const FormPeserta = () => {
               <label>Nomor WhatsApp <span className="required">*</span></label>
               <input 
                 type="tel" 
-                name="whatsapp"
+                name="nomor_whatapp"
                 placeholder="Contoh: 08123456789" 
-                value={formData.whatsapp}
+                value={formData.nomor_whatapp}
                 onChange={handleInputChange}
                 required
                 disabled={isLoading}
@@ -246,9 +232,9 @@ const FormPeserta = () => {
                 <label key={ukuran} className="radio-label">
                   <input 
                     type="radio" 
-                    name="ukuranKaos"
+                    name="ukuran_kaos"
                     value={ukuran}
-                    checked={formData.ukuranKaos === ukuran}
+                    checked={formData.ukuran_kaos === ukuran}
                     onChange={handleInputChange}
                     required
                     disabled={isLoading}
@@ -261,25 +247,28 @@ const FormPeserta = () => {
           
           <div className="form-row">
             <div className="form-group">
-              <label>Nomor Darurat</label>
+              <label>Nomor Darurat <span className="required">*</span></label> 
               <input 
                 type="tel" 
-                name="nomorDarurat"
+                name="nomor_darurat"
                 placeholder="Nomor telepon darurat..." 
-                value={formData.nomorDarurat}
+                value={formData.nomor_darurat}
                 onChange={handleInputChange}
                 disabled={isLoading}
               />
             </div>
             
             <div className="form-group">
-              <label>Tipe Nomor Darurat</label>
+              <label>Tipe Nomor Darurat <span className="required">*</span></label>
               <select 
-                name="tipeNomorDarurat"
-                value={formData.tipeNomorDarurat}
+                name="tipe_nomor_darurat"
+                value={formData.tipe_nomor_darurat}
                 onChange={handleInputChange}
                 disabled={isLoading}
               >
+                <option value="" disabled>
+                  nomor darurat siapa?
+                </option>
                 {tipeDaruratOptions.map(tipe => (
                   <option key={tipe} value={tipe}>{tipe}</option>
                 ))}
@@ -290,9 +279,9 @@ const FormPeserta = () => {
           <div className="form-group">
             <label>Riwayat Penyakit <span className="required">*</span></label>
             <textarea 
-              name="riwayatPenyakit"
+              name="riwayat_penyakit"
               placeholder="Jelaskan riwayat penyakit yang pernah diderita (jika tidak ada, tulis 'Tidak Ada')..." 
-              value={formData.riwayatPenyakit}
+              value={formData.riwayat_penyakit}
               onChange={handleInputChange}
               rows="3"
               required
@@ -315,8 +304,8 @@ const FormPeserta = () => {
               <label className="upload-label">
                 <input
                   type="file"
-                  name="buktiPembayaran"
-                  accept="image/*,.pdf,.doc,.docx"
+                  name="bukti_pembayaran"
+                  accept=".jpeg,.jpg,.png"
                   onChange={handleFileChange}
                   className="file-input"
                   required
@@ -326,7 +315,7 @@ const FormPeserta = () => {
                   <div className="upload-icon">📁</div>
                   <p>Upload Bukti Transfer</p>
                   <small>Format: JPG, PNG, PDF (Maks. 5MB)</small>
-                  {formData.buktiPembayaranName && (
+                  {formData.bukti_pembayaran && (
                     <div className="file-preview">
                       <strong>File terpilih:</strong> {formData.buktiPembayaranName}
                     </div>

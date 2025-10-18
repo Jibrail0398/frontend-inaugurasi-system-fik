@@ -51,9 +51,17 @@ export const getAll = async () => {
 export const create = async (kodeEvent, data) => {
     try {
         const token = getToken();
-        const response = await axios.post(`${BASE_URL_API}/pendaftaran-peserta/${kodeEvent}`, data, {
-            headers: { Authorization: `Bearer ${token}` },
-        });
+        
+        const response = await axios.post(
+            `${BASE_URL_API}/pendaftaran-peserta/${kodeEvent}`, 
+            data, 
+            {
+                headers: { 
+                    Authorization: `Bearer ${token}`,
+                    'Content-Type': 'multipart/form-data', // Penting untuk file upload
+                },
+            }
+        );
         return response.data;
     } catch (error) {
         console.error("❌ Gagal mendaftarkan peserta:", error.response?.data || error.message);

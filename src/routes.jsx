@@ -21,7 +21,7 @@ import IsLoginMiddleware from "./components/middlewares/IsLoginMiddleware.jsx";
 import UangMasukPage from "./pages/admin/keuangan/uang-masuk/UangMasukPage.jsx";
 import LaporanKeuanganPage from "./pages/admin/keuangan/laporan/LaporanKeuanganPage.jsx";
 import UangKeluarPage from "./pages/admin/keuangan/uang-keluar/UangKeluarPage.jsx";
-import CheckEventCode from "./components/middlewares/checkEventCode.jsx";
+import CheckEventCode from "./components/middlewares/CheckEventCode";
 
 const router = createBrowserRouter([
     {

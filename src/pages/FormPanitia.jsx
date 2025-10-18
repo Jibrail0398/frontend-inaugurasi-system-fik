@@ -10,6 +10,8 @@ const FormPanitia = () => {
 
   const [isLoading, setIsLoading] = useState(false);
 
+  console.log(`Kode event : ${kodeEvent}`);
+
   const FIXED_EVENT_CODE = "INAU2025";
   const FIXED_EVENT_NAME = "Inaugurasi Mahasiswa Fakultas Ilmu Komputer 2025";
 
@@ -17,6 +19,7 @@ const FormPanitia = () => {
     const finalEventCode = kodeEvent || FIXED_EVENT_CODE;
     setFormData('eventCode', finalEventCode);
     setFormData('eventName', FIXED_EVENT_NAME);
+    
   }, [kodeEvent, setFormData]);
 
   const handleInputChange = (e) => {
