@@ -79,9 +79,9 @@ const SidebarAdmin = ({ show = true }) => {
                 icon="fas fa-fw fa-coins"
                 active={location.pathname.startsWith("/admin/keuangan")}
                 childs={[
+                    { text: "Laporan Keuangan", to: "/admin/keuangan/laporan" },
                     { text: "Pemasukan", to: "/admin/keuangan/uang-masuk" },
                     { text: "Pengeluaran", to: "/admin/keuangan/uang-keluar" },
-                    { text: "Laporan Keuangan", to: "/admin/keuangan/laporan" },
                 ]}
             />
 
