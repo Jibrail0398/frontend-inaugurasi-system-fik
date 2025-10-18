@@ -1,9 +1,9 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { Button, Form, Modal, Alert } from "react-bootstrap";
-import Swal from "sweetalert2";
 import useEvent from "../../../../hooks/useEvent";
+import Swal from "sweetalert2";
 
-const EditModal = ({ show, setShow, handleUpdate, selectedData }) => {
+const AddModalPengeluaran = ({ handleAdd, show, setShow }) => {
     const { events } = useEvent();
     const [loading, setLoading] = useState(false);
 
@@ -12,46 +12,47 @@ const EditModal = ({ show, setShow, handleUpdate, selectedData }) => {
         jumlah_pengeluaran: "",
         alasan_pengeluaran: "",
         tanggal_pengeluaran: "",
+        bukti_pengeluaran: null,
         keuangan_id: "",
     });
 
-    // ⚠️ State error validasi
+    // ⚠️ State error validasi dari backend
     const [errors, setErrors] = useState({});
 
-    // 🧠 Update form saat modal dibuka atau data berubah
-    useEffect(() => {
-        if (selectedData) {
-            setForm({
-                jumlah_pengeluaran: selectedData.jumlah_pengeluaran || "",
-                alasan_pengeluaran: selectedData.alasan_pengeluaran || "",
-                tanggal_pengeluaran: selectedData.tanggal_pengeluaran || "",
-                keuangan_id: selectedData.keuangan_id || "",
-            });
-        }
-    }, [selectedData, show]);
-
-    // 🧩 Handle input
+    // 🧠 Helper ubah input
     const handleChange = (e) => {
         const { name, value, files } = e.target;
-        setForm((prev) => ({
-            ...prev,
+        setForm({
+            ...form,
             [name]: files ? files[0] : value,
-        }));
+        });
     };
 
-    // 🚀 Submit update
+    // 🚀 Submit form
     const handleSubmit = async (e) => {
         setLoading(true);
         e.preventDefault();
 
+        const data = new FormData();
+        Object.entries(form).forEach(([key, val]) => data.append(key, val));
+
         try {
-            await handleUpdate(selectedData.id, form);
+            await handleAdd(data);
+
+            // Reset form & tutup modal
+            setForm({
+                jumlah_pengeluaran: "",
+                alasan_pengeluaran: "",
+                tanggal_pengeluaran: "",
+                bukti_pengeluaran: null,
+                keuangan_id: "",
+            });
             setErrors({});
             setShow(false);
 
             Swal.fire({
-                title: "Berhasil!",
-                text: "Data Uang Keluar berhasil diperbarui.",
+                title: "Success",
+                text: "Uang Keluar berhasil ditambahkan",
                 icon: "success",
                 confirmButtonText: "OK",
             });
@@ -65,38 +66,49 @@ const EditModal = ({ show, setShow, handleUpdate, selectedData }) => {
     return (
         <Modal show={show} onHide={() => setShow(false)}>
             <Modal.Header closeButton>
-                <Modal.Title>Edit Uang Keluar</Modal.Title>
+                <Modal.Title>Tambah Uang Keluar</Modal.Title>
             </Modal.Header>
 
             <Form onSubmit={handleSubmit}>
                 <Modal.Body>
-                    {/* Global Error */}
+                    {/* ⚠️ Alert global error */}
                     {errors.global && <Alert variant="danger">{errors.global[0]}</Alert>}
 
+                    {/* Nominal */}
                     <Form.Group className="mb-3">
                         <Form.Label>Nominal</Form.Label>
-                        <Form.Control type="number" name="jumlah_pengeluaran" min="1" value={form.jumlah_pengeluaran} onChange={handleChange} isInvalid={!!errors.jumlah_pengeluaran} />
+                        <Form.Control type="number" min="1" name="jumlah_pengeluaran" value={form.jumlah_pengeluaran} onChange={handleChange} isInvalid={!!errors.jumlah_pengeluaran} />
                         <Form.Control.Feedback type="invalid">{errors.jumlah_pengeluaran?.[0]}</Form.Control.Feedback>
                     </Form.Group>
 
+                    {/* Tujuan Pengeluaran */}
                     <Form.Group className="mb-3">
-                        <Form.Label>alasan_pengeluaran</Form.Label>
+                        <Form.Label>Tujuan Pengeluaran</Form.Label>
                         <Form.Control type="text" name="alasan_pengeluaran" value={form.alasan_pengeluaran} onChange={handleChange} isInvalid={!!errors.alasan_pengeluaran} />
                         <Form.Control.Feedback type="invalid">{errors.alasan_pengeluaran?.[0]}</Form.Control.Feedback>
                     </Form.Group>
 
+                    {/* Tanggal */}
                     <Form.Group className="mb-3">
                         <Form.Label>Tanggal</Form.Label>
                         <Form.Control type="date" name="tanggal_pengeluaran" value={form.tanggal_pengeluaran} onChange={handleChange} isInvalid={!!errors.tanggal_pengeluaran} />
                         <Form.Control.Feedback type="invalid">{errors.tanggal_pengeluaran?.[0]}</Form.Control.Feedback>
                     </Form.Group>
 
+                    {/* Bukti */}
+                    <Form.Group className="mb-3">
+                        <Form.Label>Bukti</Form.Label>
+                        <Form.Control type="file" name="bukti_pengeluaran" onChange={handleChange} isInvalid={!!errors.bukti_pengeluaran} />
+                        <Form.Control.Feedback type="invalid">{errors.bukti_pengeluaran?.[0]}</Form.Control.Feedback>
+                    </Form.Group>
+
+                    {/* Event */}
                     <Form.Group className="mb-3">
                         <Form.Label>Event</Form.Label>
                         <Form.Select name="keuangan_id" value={form.keuangan_id} onChange={handleChange} isInvalid={!!errors.keuangan_id}>
                             <option value="">Pilih Event</option>
                             {events.map((event) => (
-                                <option key={event.id} value={event.id}>
+                                <option value={event.id} key={event.id}>
                                     {event.nama_event}
                                 </option>
                             ))}
@@ -110,7 +122,7 @@ const EditModal = ({ show, setShow, handleUpdate, selectedData }) => {
                         Batal
                     </Button>
                     <Button variant="primary" type="submit" disabled={loading}>
-                        Simpan
+                        {loading ? <span className="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> : <span>Simpan</span>}
                     </Button>
                 </Modal.Footer>
             </Form>
@@ -118,4 +130,4 @@ const EditModal = ({ show, setShow, handleUpdate, selectedData }) => {
     );
 };
 
-export default EditModal;
+export default AddModalPengeluaran;
