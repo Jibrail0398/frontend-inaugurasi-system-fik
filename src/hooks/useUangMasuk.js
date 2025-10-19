@@ -22,7 +22,13 @@ const useUangMasuk = () => {
     }, []);
 
     const create = useCallback(async (data) => {
-        return await keuanganService.createUangMasuk(data, token);
+        try {
+            const response = await keuanganService.createUangMasuk(data, token);
+            getAll();
+            return response;
+        } catch (error) {
+            throw error;
+        }
     }, []);
 
     const update = useCallback(async (id, data) => {

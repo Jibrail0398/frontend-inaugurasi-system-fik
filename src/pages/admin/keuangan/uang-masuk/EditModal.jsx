@@ -5,6 +5,7 @@ import useEvent from "../../../../hooks/useEvent";
 
 const EditModal = ({ show, setShow, handleUpdate, selectedData }) => {
     const { events } = useEvent();
+    const [loading, setLoading] = useState(false);
 
     // 🧾 State form
     const [form, setForm] = useState({
@@ -40,6 +41,7 @@ const EditModal = ({ show, setShow, handleUpdate, selectedData }) => {
 
     // 🚀 Submit update
     const handleSubmit = async (e) => {
+        setLoading(true);
         e.preventDefault();
 
         try {
@@ -56,6 +58,8 @@ const EditModal = ({ show, setShow, handleUpdate, selectedData }) => {
             });
         } catch (err) {
             setErrors(err.response?.data?.errors || {});
+        } finally {
+            setLoading(false);
         }
     };
 
@@ -106,8 +110,8 @@ const EditModal = ({ show, setShow, handleUpdate, selectedData }) => {
                     <Button variant="secondary" onClick={() => setShow(false)}>
                         Batal
                     </Button>
-                    <Button variant="primary" type="submit">
-                        Simpan Perubahan
+                    <Button variant="primary" type="submit" disabled={loading}>
+                        Simpan
                     </Button>
                 </Modal.Footer>
             </Form>

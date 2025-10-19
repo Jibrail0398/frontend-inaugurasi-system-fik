@@ -3,16 +3,16 @@ import { Button, Form, Modal, Alert } from "react-bootstrap";
 import useEvent from "../../../../hooks/useEvent";
 import Swal from "sweetalert2";
 
-const AddModal = ({ handleAdd, show, setShow }) => {
+const AddModalPengeluaran = ({ handleAdd, show, setShow }) => {
     const { events } = useEvent();
     const [loading, setLoading] = useState(false);
 
     // 🧾 State form
     const [form, setForm] = useState({
-        jumlah_uang_masuk: "",
-        asal_pemasukan: "",
-        tanggal_pemasukan: "",
-        bukti_pemasukan: null,
+        jumlah_pengeluaran: "",
+        alasan_pengeluaran: "",
+        tanggal_pengeluaran: "",
+        bukti_pengeluaran: null,
         keuangan_id: "",
     });
 
@@ -41,10 +41,10 @@ const AddModal = ({ handleAdd, show, setShow }) => {
 
             // Reset form & tutup modal
             setForm({
-                jumlah_uang_masuk: "",
-                asal_pemasukan: "",
-                tanggal_pemasukan: "",
-                bukti_pemasukan: null,
+                jumlah_pengeluaran: "",
+                alasan_pengeluaran: "",
+                tanggal_pengeluaran: "",
+                bukti_pengeluaran: null,
                 keuangan_id: "",
             });
             setErrors({});
@@ -52,7 +52,7 @@ const AddModal = ({ handleAdd, show, setShow }) => {
 
             Swal.fire({
                 title: "Success",
-                text: "Uang Masuk berhasil ditambahkan",
+                text: "Uang Keluar berhasil ditambahkan",
                 icon: "success",
                 confirmButtonText: "OK",
             });
@@ -66,7 +66,7 @@ const AddModal = ({ handleAdd, show, setShow }) => {
     return (
         <Modal show={show} onHide={() => setShow(false)}>
             <Modal.Header closeButton>
-                <Modal.Title>Tambah Uang Masuk</Modal.Title>
+                <Modal.Title>Tambah Uang Keluar</Modal.Title>
             </Modal.Header>
 
             <Form onSubmit={handleSubmit}>
@@ -74,32 +74,32 @@ const AddModal = ({ handleAdd, show, setShow }) => {
                     {/* ⚠️ Alert global error */}
                     {errors.global && <Alert variant="danger">{errors.global[0]}</Alert>}
 
-                    {/* Jumlah Uang Masuk */}
+                    {/* Nominal */}
                     <Form.Group className="mb-3">
                         <Form.Label>Nominal</Form.Label>
-                        <Form.Control type="number" min="1" name="jumlah_uang_masuk" value={form.jumlah_uang_masuk} onChange={handleChange} isInvalid={!!errors.jumlah_uang_masuk} />
-                        <Form.Control.Feedback type="invalid">{errors.jumlah_uang_masuk?.[0]}</Form.Control.Feedback>
+                        <Form.Control type="number" min="1" name="jumlah_pengeluaran" value={form.jumlah_pengeluaran} onChange={handleChange} isInvalid={!!errors.jumlah_pengeluaran} />
+                        <Form.Control.Feedback type="invalid">{errors.jumlah_pengeluaran?.[0]}</Form.Control.Feedback>
                     </Form.Group>
 
-                    {/* Asal Pemasukan */}
+                    {/* Tujuan Pengeluaran */}
                     <Form.Group className="mb-3">
-                        <Form.Label>Asal Pemasukan</Form.Label>
-                        <Form.Control type="text" name="asal_pemasukan" value={form.asal_pemasukan} onChange={handleChange} isInvalid={!!errors.asal_pemasukan} />
-                        <Form.Control.Feedback type="invalid">{errors.asal_pemasukan?.[0]}</Form.Control.Feedback>
+                        <Form.Label>Tujuan Pengeluaran</Form.Label>
+                        <Form.Control type="text" name="alasan_pengeluaran" value={form.alasan_pengeluaran} onChange={handleChange} isInvalid={!!errors.alasan_pengeluaran} />
+                        <Form.Control.Feedback type="invalid">{errors.alasan_pengeluaran?.[0]}</Form.Control.Feedback>
                     </Form.Group>
 
                     {/* Tanggal */}
                     <Form.Group className="mb-3">
                         <Form.Label>Tanggal</Form.Label>
-                        <Form.Control type="date" name="tanggal_pemasukan" value={form.tanggal_pemasukan} onChange={handleChange} isInvalid={!!errors.tanggal_pemasukan} />
-                        <Form.Control.Feedback type="invalid">{errors.tanggal_pemasukan?.[0]}</Form.Control.Feedback>
+                        <Form.Control type="date" name="tanggal_pengeluaran" value={form.tanggal_pengeluaran} onChange={handleChange} isInvalid={!!errors.tanggal_pengeluaran} />
+                        <Form.Control.Feedback type="invalid">{errors.tanggal_pengeluaran?.[0]}</Form.Control.Feedback>
                     </Form.Group>
 
                     {/* Bukti */}
                     <Form.Group className="mb-3">
                         <Form.Label>Bukti</Form.Label>
-                        <Form.Control type="file" name="bukti_pemasukan" onChange={handleChange} isInvalid={!!errors.bukti_pemasukan} />
-                        <Form.Control.Feedback type="invalid">{errors.bukti_pemasukan?.[0]}</Form.Control.Feedback>
+                        <Form.Control type="file" name="bukti_pengeluaran" onChange={handleChange} isInvalid={!!errors.bukti_pengeluaran} />
+                        <Form.Control.Feedback type="invalid">{errors.bukti_pengeluaran?.[0]}</Form.Control.Feedback>
                     </Form.Group>
 
                     {/* Event */}
@@ -130,4 +130,4 @@ const AddModal = ({ handleAdd, show, setShow }) => {
     );
 };
 
-export default AddModal;
+export default AddModalPengeluaran;
