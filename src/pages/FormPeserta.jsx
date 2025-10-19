@@ -83,9 +83,7 @@ const FormPeserta = () => {
       
       
       
-      await alert("Pendaftaran Berhasil");
-      
-      
+      alert("Pendaftaran Berhasil");
       await resetForm();
       
      

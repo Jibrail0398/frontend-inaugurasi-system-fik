@@ -30,12 +30,7 @@ export async function CheckEventCode({params}){
         
     } else if(location.pathname.includes('pendaftaranPanitia')){
         
-        console.log(`Register Status (sebelum): ${registerStatus}`); 
-        
         registerStatus = eventDetails.data.event.status_pendaftaran_panitia;
-        
-    
-        console.log(`Register Status (sesudah): ${registerStatus}`);
     }
 
     if(registerStatus === 'tutup'){

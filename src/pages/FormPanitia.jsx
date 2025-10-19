@@ -1,26 +1,14 @@
 import { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import useFormPanitiaStore from '../stores/useFormPanitiaStore';
+import { registerPanitia } from '../services/panitiaService';
 import '../style/FormPeserta.css'; 
 
 const FormPanitia = () => {
   const { kodeEvent } = useParams();
-  
-  const { formData, setFormData, validateForm, addParticipant } = useFormPanitiaStore();
-
+  const tipeDaruratOptions = ['Ayah', 'Ibu', 'Saudara', 'Lainnya'];
+  const { formData, setFormData, validateForm,resetForm } = useFormPanitiaStore();
   const [isLoading, setIsLoading] = useState(false);
-
-  console.log(`Kode event : ${kodeEvent}`);
-
-  const FIXED_EVENT_CODE = "INAU2025";
-  const FIXED_EVENT_NAME = "Inaugurasi Mahasiswa Fakultas Ilmu Komputer 2025";
-
-  useEffect(() => {
-    const finalEventCode = kodeEvent || FIXED_EVENT_CODE;
-    setFormData('eventCode', finalEventCode);
-    setFormData('eventName', FIXED_EVENT_NAME);
-    
-  }, [kodeEvent, setFormData]);
 
   const handleInputChange = (e) => {
     const { name, value, type, checked } = e.target;
@@ -38,55 +26,31 @@ const FormPanitia = () => {
     setIsLoading(true);
     
     try {
-      const finalEventCode = kodeEvent || FIXED_EVENT_CODE;
-      
       const submitData = {
-        ...formData,
-        eventCode: finalEventCode,
-        eventName: FIXED_EVENT_NAME,
-        registered: new Date().toISOString(),
-        role: 'panitia'
-      };
-
-      const response = await fetch('https://apiinaugurasi.newhimatif.com/api/v1/panitia/pendaftaran', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(submitData),
-      });
-
-      if (!response.ok) {
-        throw new Error('Gagal mendaftarkan panitia');
+        'nama':formData.name,
+        'NIM' : formData.nim,
+        'email':formData.email,
+        'nomor_whatapp':formData.whatsapp,
+        'angkatan':formData.angkatan,
+        'kelas':formData.kelas,
+        'tanggal_lahir':formData.tanggalLahir,
+        'ukuran_kaos':formData.ukuranKaos,
+        'divisi':formData.divisi,
+        'nomor_darurat':formData.nomor_darurat,
+        'tipe_nomor_darurat':formData.tipe_nomor_darurat,
+        'riwayat_penyakit':formData.riwayatPenyakit,
+        'komitmen1':formData.komitmenAcara? "ya":"tidak",
+        'komitmen2':formData.komitmenDivisi? "ya":"tidak",
       }
-
-      const result = await response.json();
+      const response = await registerPanitia(submitData,kodeEvent);
+      alert("Pendaftaran Berhasil");
+      resetForm();
+    
       
-      // Simpan ke local state
-      addParticipant({
-        id: result.data?.id || Date.now(),
-        ...submitData,
-        registered: new Date().toLocaleDateString('id-ID')
-      });
-
-      alert(`Pendaftaran panitia berhasil untuk event: ${FIXED_EVENT_NAME}`);
       
     } catch (err) {
-      console.error('Error submitting form:', err);
+      alert(err.response?.data?.error || 'Terjadi kesalahan saat mendaftar');
       
-      // Fallback: Simpan ke local storage jika API error
-      const finalEventCode = kodeEvent || FIXED_EVENT_CODE;
-      const newPanitia = {
-        id: Date.now(),
-        ...formData,
-        eventCode: finalEventCode,
-        eventName: FIXED_EVENT_NAME,
-        role: 'panitia',
-        registered: new Date().toLocaleDateString('id-ID')
-      };
-      
-      addParticipant(newPanitia);
-      alert('Pendaftaran panitia berhasil! Data tersimpan.');
       
     } finally {
       setIsLoading(false);
@@ -95,7 +59,7 @@ const FormPanitia = () => {
 
   const ukuranKaosOptions = ['S', 'M', 'L', 'XL', 'XXL'];
   const divisiOptions = ['PDD', 'Humas', 'Konsumsi', 'Logistik/Peralatan'];
-  const programStudiOptions = ['Teknik Informatika', 'Sistem Informasi'];
+  
 
   return (
     <div className='pendaftaran-page'>
@@ -163,22 +127,6 @@ const FormPanitia = () => {
                 disabled={isLoading}
               />
             </div>
-          </div>
-          
-          <div className="form-group">
-            <label>Program Studi <span className="required">*</span></label>
-            <select 
-              name="programStudi"
-              value={formData.programStudi}
-              onChange={handleInputChange}
-              required
-              disabled={isLoading}
-            >
-              <option value="">Pilih Program Studi</option>
-              {programStudiOptions.map(prodi => (
-                <option key={prodi} value={prodi}>{prodi}</option>
-              ))}
-            </select>
           </div>
           
           <div className="form-row">
@@ -297,6 +245,36 @@ const FormPanitia = () => {
             </div>
           </div>
           
+          <div className="form-row">
+            <div className="form-group">
+              <label>Nomor Darurat <span className="required">*</span></label> 
+              <input 
+                type="tel" 
+                name="nomor_darurat"
+                placeholder="Nomor telepon darurat..." 
+                value={formData.nomor_darurat}
+                onChange={handleInputChange}
+                disabled={isLoading}
+              />
+            </div>
+            
+            <div className="form-group">
+              <label>Tipe Nomor Darurat <span className="required">*</span></label>
+              <select 
+                name="tipe_nomor_darurat"
+                value={formData.tipe_nomor_darurat}
+                onChange={handleInputChange}
+                disabled={isLoading}
+              >
+                <option value="" disabled>
+                  nomor darurat siapa?
+                </option>
+                {tipeDaruratOptions.map(tipe => (
+                  <option key={tipe} value={tipe}>{tipe}</option>
+                ))}
+              </select>
+            </div>
+          </div>
           {/* Informasi Kesehatan */}
           <div className="form-section">
             <h4>Informasi Kesehatan</h4>

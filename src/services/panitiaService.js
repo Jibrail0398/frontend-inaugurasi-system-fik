@@ -120,5 +120,16 @@ export const verifyPanitia = async (penerimaanId, status) => {
     }
 };
 
+export const registerPanitia = async(data,kodeEvent) =>{
+    try{
+        const response = await axios.post(`${BASE_URL_API}/pendaftaran-panitia/${kodeEvent}`,data);
+
+        return response.data;
+    }catch(e){
+        
+        throw error;
+    }
+}
+
 // Alias supaya nama fungsi sama dengan yang dipanggil di komponen React
 export const verifyPanitiaById = verifyPanitia;

@@ -58,7 +58,7 @@ export const create = async (kodeEvent, data) => {
             {
                 headers: { 
                     Authorization: `Bearer ${token}`,
-                    'Content-Type': 'multipart/form-data', // Penting untuk file upload
+                    'Content-Type': 'multipart/form-data', 
                 },
             }
         );
