@@ -5,7 +5,6 @@ const useFormPesertaStore = create((set, get) => ({
   formData: {
     nama: '',
     NIM: '',
-    program_studi:'',
     email: '',
     nomor_whatapp: '',
     angkatan: '',
@@ -46,7 +45,6 @@ const useFormPesertaStore = create((set, get) => ({
       formData: {
         nama: '',
         NIM: '',
-        program_studi:'',
         email: '',
         nomor_whatapp: '',
         angkatan: '',

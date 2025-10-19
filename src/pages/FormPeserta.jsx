@@ -21,7 +21,7 @@ const FormPeserta = () => {
   
   const ukuranKaosOptions = ['S', 'M', 'L', 'XL', 'XXL'];
   const tipeDaruratOptions = ['Ayah', 'Ibu', 'Saudara', 'Lainnya'];
-  const programStudiOptions = ['Teknik Informatika', 'Sistem Informasi'];
+  
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -61,7 +61,6 @@ const FormPeserta = () => {
       formDataToSend.append('nomor_whatapp', formData.nomor_whatapp); 
       formDataToSend.append('angkatan', formData.angkatan);
       formDataToSend.append('kelas', formData.kelas);
-      formDataToSend.append('program_studi', formData.program_studi);
       formDataToSend.append('tanggal_lahir', formData.tanggal_lahir);
       formDataToSend.append('ukuran_kaos', formData.ukuran_kaos);
       formDataToSend.append('nomor_darurat', formData.nomor_darurat || '');
@@ -165,22 +164,7 @@ const FormPeserta = () => {
             </div>
           </div>
           
-          <div className="form-group">
-            <label>Program Studi <span className="required">*</span></label>
-            <select 
-              name="program_studi"
-              value={formData.program_studi}
-              onChange={handleInputChange}
-              required
-              disabled={isLoading}
-            >
-              <option value="">Pilih Program Studi</option>
-              {programStudiOptions.map(prodi => (
-                <option key={prodi} value={prodi}>{prodi}</option>
-              ))}
-            </select>
-          </div>
-          
+       
           <div className="form-row">
             <div className="form-group">
               <label>Tanggal Lahir <span className="required">*</span></label>
