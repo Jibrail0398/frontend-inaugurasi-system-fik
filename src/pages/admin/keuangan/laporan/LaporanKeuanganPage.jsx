@@ -72,8 +72,8 @@ const LaporanKeuanganPage = () => {
             ...filteredKeluar.map((item) => ({
                 Tanggal: formatDateID(item.tanggal_pengeluaran),
                 Jenis: "Pengeluaran",
-                Keterangan: item.keterangan_pengeluaran,
-                Nominal: item.jumlah_uang_keluar,
+                Keterangan: item.alasan_pengeluaran,
+                Nominal: item.jumlah_pengeluaran,
                 "Keuangan ID": item.keuangan_id,
             })),
         ];
