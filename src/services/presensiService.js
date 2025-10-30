@@ -73,3 +73,18 @@ export const updatePresensiPanitia = async (token, id, status) => {
         throw error;
     }
 };
+
+export async function scanPresensi(requestData){
+    const response = await fetch('https://apiinaugurasi.newhimatif.com/api/v1/presensi/scan', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(requestData),
+      });
+
+    const result = await response.json();
+    return result;
+}
+
+
