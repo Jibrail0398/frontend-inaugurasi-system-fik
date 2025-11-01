@@ -57,6 +57,31 @@ export default function DaftarPanitia() {
         }
     };
 
+    // --- HANDLE HAPUS PANITIA ---
+    const handleHapusPanitia = async (id) => {
+        if (!id) {
+            return alert("⚠️ ID panitia tidak ditemukan.");
+        }
+
+        if (!window.confirm("🗑️ Yakin ingin menghapus panitia ini? Data akan hilang permanen.")) {
+            return;
+        }
+
+        try {
+            const res = await panitiaService.deletePanitiaById(id);
+            alert(`✅ ${res?.message || "Panitia berhasil dihapus"}`);
+            setSelectedRow(null);
+            fetchPanitia();
+        } catch (err) {
+            console.error(err);
+            const serverMsg =
+                err?.response?.data?.message ||
+                JSON.stringify(err?.response?.data) ||
+                err.message;
+            alert(`❌ Gagal menghapus panitia:\n${serverMsg}`);
+        }
+    };
+
     // Filter data panitia
     const filteredData = panitia.filter(
         (p) =>
@@ -232,8 +257,6 @@ export default function DaftarPanitia() {
                             </div>
 
                             <div className="mt-4 d-flex justify-content-center gap-3">
-                                {/* <-- PENTING: Gunakan penerimaan_id, bukan id pendaftar -->
-                                    Tombol Setujui/Tolak sudah benar pakai selectedRow.penerimaan_id */}
                                 <button
                                     className="btn btn-success"
                                     onClick={() => handleVerifikasi(selectedRow.penerimaan_id, "diterima")}
@@ -243,10 +266,9 @@ export default function DaftarPanitia() {
                                 </button>
                                 <button
                                     className="btn btn-danger"
-                                    onClick={() => handleVerifikasi(selectedRow.penerimaan_id, "ditolak")}
-                                    disabled={selectedRow.status_penerimaan === "ditolak"}
+                                    onClick={() => handleHapusPanitia(selectedRow.id)}
                                 >
-                                    ❌ Tolak
+                                    🗑️ Hapus
                                 </button>
                             </div>
                         </div>
