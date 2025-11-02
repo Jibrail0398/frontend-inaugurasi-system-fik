@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from "react";
-import { FaEye, FaSort } from "react-icons/fa";
+import { FaEye, FaSort, FaFileExcel } from "react-icons/fa";
 import { createPortal } from "react-dom";
 import * as pesertaService from "../../services/persertaService";
+import * as XLSX from "xlsx";
 
 export default function DaftarPeserta() {
     const [peserta, setPeserta] = useState([]);
@@ -17,7 +18,11 @@ export default function DaftarPeserta() {
     const [selectedRow, setSelectedRow] = useState(null);
     const [showFilterModal, setShowFilterModal] = useState(false);
 
-    // --- Ambil peserta + mapping status terbaru + log
+    // Pagination
+    const [currentPage, setCurrentPage] = useState(1);
+    const [rowsPerPage, setRowsPerPage] = useState(10);
+
+    // --- Ambil peserta
     const fetchPeserta = async () => {
         try {
             setLoading(true);
@@ -26,8 +31,6 @@ export default function DaftarPeserta() {
             const pesertaWithStatus = data.map((p) => {
                 const latest = p.penerimaan_peserta?.[0] || null;
                 const status = latest?.status_pembayaran || "belum lunas";
-
-                console.log(`Peserta: ${p.nama} | NIM: ${p.NIM} | Status: ${status}`);
 
                 return {
                     ...p,
@@ -57,10 +60,7 @@ export default function DaftarPeserta() {
         try {
             if (!window.confirm("Yakin ingin memverifikasi peserta ini?")) return;
 
-            console.log("🔹 Memverifikasi Penerimaan ID:", penerimaanId);
             await pesertaService.verifyById(penerimaanId);
-            console.log("✅ Verifikasi berhasil untuk ID:", penerimaanId);
-
             alert("✅ Status peserta berhasil diperbarui");
             setSelectedRow(null);
             fetchPeserta();
@@ -73,7 +73,6 @@ export default function DaftarPeserta() {
     // --- Filter peserta
     const filteredData = peserta.filter((p) => {
         const status = p.status_pembayaran ?? "belum lunas";
-
         return (
             (p.nama?.toLowerCase().includes(filterText.toLowerCase()) ||
                 p.NIM?.toString().includes(filterText)) &&
@@ -85,6 +84,46 @@ export default function DaftarPeserta() {
         );
     });
 
+    // --- Pagination logic
+    const totalPages = Math.ceil(filteredData.length / rowsPerPage);
+    const indexOfLast = currentPage * rowsPerPage;
+    const indexOfFirst = indexOfLast - rowsPerPage;
+    const currentData = filteredData.slice(indexOfFirst, indexOfLast);
+
+    const handleRowsPerPageChange = (e) => {
+        setRowsPerPage(Number(e.target.value));
+        setCurrentPage(1);
+    };
+
+    const handlePageChange = (page) => {
+        if (page >= 1 && page <= totalPages) {
+            setCurrentPage(page);
+        }
+    };
+
+    // --- Export ke Excel
+    const handleExportExcel = () => {
+        if (filteredData.length === 0) {
+            alert("⚠️ Tidak ada data untuk diekspor!");
+            return;
+        }
+
+        const exportData = filteredData.map((p, index) => ({
+            No: index + 1,
+            Nama: p.nama,
+            NIM: p.NIM,
+            Angkatan: p.angkatan,
+            Kelas: p.kelas,
+            Prodi: p.divisi,
+            Status: p.status_pembayaran === "lunas" ? "Terverifikasi" : "Belum Diverifikasi",
+        }));
+
+        const worksheet = XLSX.utils.json_to_sheet(exportData);
+        const workbook = XLSX.utils.book_new();
+        XLSX.utils.book_append_sheet(workbook, worksheet, "Data Peserta");
+        XLSX.writeFile(workbook, "Data_Peserta_Inaugurasi.xlsx");
+    };
+
     if (loading) return <p>Loading data peserta...</p>;
     if (error) return <p className="text-danger">{error}</p>;
 
@@ -94,18 +133,28 @@ export default function DaftarPeserta() {
             <p className="mb-4">Berikut adalah daftar peserta inaugurasi yang sudah terdaftar.</p>
 
             <div className="card shadow mb-4">
-                <div className="card-header py-3 d-flex justify-content-between">
-                    <button
-                        className="btn btn-outline-primary btn-sm"
-                        onClick={() => setShowFilterModal(true)}
-                    >
-                        <FaSort /> Filter
-                    </button>
+                <div className="card-header py-3 d-flex justify-content-between align-items-center flex-wrap gap-2">
+                    <div className="d-flex gap-2">
+                        <button
+                            className="btn btn-outline-primary btn-sm"
+                            onClick={() => setShowFilterModal(true)}
+                        >
+                            <FaSort /> Filter
+                        </button>
+
+                        <button className="btn btn-success btn-sm" onClick={handleExportExcel}>
+                            <FaFileExcel /> Export Excel
+                        </button>
+                    </div>
+
                     <input
                         type="text"
                         placeholder="Cari nama atau NIM..."
                         value={filterText}
-                        onChange={(e) => setFilterText(e.target.value)}
+                        onChange={(e) => {
+                            setFilterText(e.target.value);
+                            setCurrentPage(1);
+                        }}
                         className="form-control form-control-sm w-25"
                     />
                 </div>
@@ -113,8 +162,9 @@ export default function DaftarPeserta() {
                 <div className="card-body">
                     <div className="table-responsive">
                         <table className="table table-bordered table-striped w-100">
-                            <thead className="thead-light">
+                            <thead className="thead-light text-center">
                                 <tr>
+                                    <th style={{ width: "50px" }}>No</th>
                                     <th>Nama</th>
                                     <th>NIM</th>
                                     <th>Angkatan</th>
@@ -124,11 +174,12 @@ export default function DaftarPeserta() {
                                     <th>Aksi</th>
                                 </tr>
                             </thead>
-                            <tbody>
-                                {filteredData.length > 0 ? (
-                                    filteredData.map((row) => (
+                            <tbody className="align-middle text-center">
+                                {currentData.length > 0 ? (
+                                    currentData.map((row, index) => (
                                         <tr key={row.id}>
-                                            <td>{row.nama}</td>
+                                            <td>{indexOfFirst + index + 1}</td>
+                                            <td className="text-start">{row.nama}</td>
                                             <td>{row.NIM}</td>
                                             <td>{row.angkatan}</td>
                                             <td>{row.kelas}</td>
@@ -146,7 +197,7 @@ export default function DaftarPeserta() {
                                                         : "Belum Diverifikasi"}
                                                 </span>
                                             </td>
-                                            <td className="text-center">
+                                            <td>
                                                 <button
                                                     className="btn btn-sm btn-info"
                                                     onClick={() => setSelectedRow(row)}
@@ -158,7 +209,7 @@ export default function DaftarPeserta() {
                                     ))
                                 ) : (
                                     <tr>
-                                        <td colSpan="7" className="text-center">
+                                        <td colSpan="8" className="text-center">
                                             Tidak ada data
                                         </td>
                                     </tr>
@@ -166,6 +217,72 @@ export default function DaftarPeserta() {
                             </tbody>
                         </table>
                     </div>
+
+                    {/* Pagination + Rows per page */}
+                    {filteredData.length > 0 && (
+                        <div className="d-flex justify-content-between align-items-center mt-3 flex-wrap gap-2">
+                            <div className="d-flex align-items-center">
+                                <label htmlFor="rowsPerPage" className="me-2 mb-0 text-sm text-gray-700">
+                                    Tampilkan
+                                </label>
+                                <select
+                                    id="rowsPerPage"
+                                    className="form-select form-select-sm w-auto"
+                                    value={rowsPerPage}
+                                    onChange={handleRowsPerPageChange}
+                                >
+                                    <option value={10}>10</option>
+                                    <option value={20}>20</option>
+                                    <option value={50}>50</option>
+                                </select>
+                                <span className="ms-2 text-sm text-gray-700">data per halaman</span>
+                            </div>
+
+                            <p className="mb-0 text-sm text-gray-600">
+                                Menampilkan {currentData.length} dari {filteredData.length} data
+                            </p>
+
+                            <nav>
+                                <ul className="pagination mb-0">
+                                    <li className={`page-item ${currentPage === 1 ? "disabled" : ""}`}>
+                                        <button
+                                            className="page-link"
+                                            onClick={() => handlePageChange(currentPage - 1)}
+                                        >
+                                            Previous
+                                        </button>
+                                    </li>
+
+                                    {Array.from({ length: totalPages }, (_, i) => (
+                                        <li
+                                            key={i}
+                                            className={`page-item ${currentPage === i + 1 ? "active" : ""}`}
+                                        >
+                                            <button
+                                                className="page-link"
+                                                onClick={() => handlePageChange(i + 1)}
+                                            >
+                                                {i + 1}
+                                            </button>
+                                        </li>
+                                    ))}
+
+                                    <li
+                                        className={`page-item ${
+                                            currentPage === totalPages ? "disabled" : ""
+                                        }`}
+                                    >
+                                        <button
+                                            className="page-link"
+                                            onClick={() => handlePageChange(currentPage + 1)}
+                                        >
+                                            Next
+                                        </button>
+                                    </li>
+                                </ul>
+                            </nav>
+                        </div>
+                    )}
                 </div>
             </div>
 
@@ -300,7 +417,6 @@ export default function DaftarPeserta() {
                                     </span>
                                 </p>
 
-                                {/* Bukti pembayaran */}
                                 {selectedRow.bukti_pembayaran ? (
                                     <div className="mt-3 text-center">
                                         <p><b>Bukti Pembayaran:</b></p>
