@@ -30,7 +30,7 @@ const LaporanKeuanganPage = () => {
 
     useEffect(() => {
         const masuk = filteredMasuk.reduce((acc, cur) => acc + Number(cur.jumlah_uang_masuk || 0), 0);
-        const keluar = filteredKeluar.reduce((acc, cur) => acc + Number(cur.jumlah_uang_keluar || 0), 0);
+        const keluar = filteredKeluar.reduce((acc, cur) => acc + Number(cur.jumlah_pengeluaran || 0), 0);
         setTotalMasuk(masuk);
         setTotalKeluar(keluar);
         setSaldo(masuk - keluar);
@@ -72,8 +72,8 @@ const LaporanKeuanganPage = () => {
             ...filteredKeluar.map((item) => ({
                 Tanggal: formatDateID(item.tanggal_pengeluaran),
                 Jenis: "Pengeluaran",
-                Keterangan: item.keterangan_pengeluaran,
-                Nominal: item.jumlah_uang_keluar,
+                Keterangan: item.alasan_pengeluaran,
+                Nominal: item.jumlah_pengeluaran,
                 "Keuangan ID": item.keuangan_id,
             })),
         ];
@@ -215,8 +215,8 @@ const LaporanKeuanganPage = () => {
                             <tr key={`keluar-${item.id}`}>
                                 <td>{formatDateID(item.tanggal_pengeluaran)}</td>
                                 <td className="text-danger">Pengeluaran</td>
-                                <td>{item.keterangan_pengeluaran}</td>
-                                <td className="text-danger">{formatCurrency(item.jumlah_uang_keluar)}</td>
+                                <td>{item.alasan_pengeluaran}</td>
+                                <td className="text-danger">{formatCurrency(item.jumlah_pengeluaran)}</td>
                                 <td>{item.keuangan_id}</td>
                             </tr>
                         ))}
