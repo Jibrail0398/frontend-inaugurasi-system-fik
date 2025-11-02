@@ -5,54 +5,20 @@ const useFormPanitiaStore = create((set, get) => ({
   formData: {
     name: '',
     nim: '',
+    email: '',
+    whatsapp: '',
     angkatan: '',
     kelas: '',
-    programStudi: '',
-    tempatLahir: '',
     tanggalLahir: '',
-    whatsapp: '',
-    email: '',
+    ukuranKaos: '',
     divisi: '',
     komitmenAcara: false,
     komitmenDivisi: false,
+    nomor_darurat: '',
+    tipe_nomor_darurat: '',
     riwayatPenyakit: ''
   },
 
-  participants: [],
-
-  // Actions
-  setFormData: (field, value) => 
-    set((state) => ({
-      formData: {
-        ...state.formData,
-        [field]: value
-      }
-    })),
-
-  addParticipant: (participant) =>
-    set((state) => ({
-      participants: [...state.participants, participant],
-      formData: {
-        name: '',
-        nim: '',
-        angkatan: '',
-        kelas: '',
-        programStudi: '',
-        tempatLahir: '',
-        tanggalLahir: '',
-        whatsapp: '',
-        email: '',
-        divisi: '',
-        komitmenAcara: false,
-        komitmenDivisi: false,
-        riwayatPenyakit: ''
-      }
-    })),
-
-  removeParticipant: (id) =>
-    set((state) => ({
-      participants: state.participants.filter(p => p.id !== id)
-    })),
 
   resetForm: () =>
     set({
@@ -61,14 +27,15 @@ const useFormPanitiaStore = create((set, get) => ({
         nim: '',
         angkatan: '',
         kelas: '',
-        programStudi: '',
-        tempatLahir: '',
         tanggalLahir: '',
         whatsapp: '',
         email: '',
+        ukuranKaos: '',
         divisi: '',
         komitmenAcara: false,
         komitmenDivisi: false,
+        nomor_darurat: '',
+        tipe_nomor_darurat: '',
         riwayatPenyakit: ''
       }
     }),
@@ -81,12 +48,15 @@ const useFormPanitiaStore = create((set, get) => ({
       formData.nim,
       formData.angkatan,
       formData.kelas,
-      formData.programStudi,
-      formData.tempatLahir,
       formData.tanggalLahir,
       formData.whatsapp,
       formData.email,
       formData.divisi,
+      formData.ukuranKaos,
+      formData.komitmenAcara,
+      formData.komitmenDivisi,
+      formData.nomor_darurat,
+      formData.tipe_nomor_darurat,
       formData.riwayatPenyakit
     ];
 
@@ -99,13 +69,14 @@ const useFormPanitiaStore = create((set, get) => ({
     return allFieldsFilled && komitmenValid;
   },
 
-  // Statistics
-  getStats: () => {
-    const { participants } = get();
-    const totalParticipants = participants.length;
-    
-    return { totalParticipants };
-  }
+  setFormData: (field, value) => 
+    set((state) => ({
+      formData: {
+        ...state.formData,
+        [field]: value
+      }
+    })),
+
 }));
 
 export default useFormPanitiaStore;

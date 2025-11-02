@@ -9,45 +9,74 @@ const useAuth = () => {
 
     /**
      * Fungsi login
-     * @returns {Promise<void> | Promise<never>}
+     * @param {object} credentials - { nim, password }
+     * @param {boolean} remember - simpan token di localStorage
      */
-    const login = useCallback(async (credentials, remember) => {
+    const login = useCallback(async (credentials, remember = false) => {
         const response = await authService.login(credentials);
 
         if (!response.success) {
-            throw new Error(response.message);
+        throw new Error(response.message);
         }
 
-        const tokenResponse = response.token.split(" ")[1];
-
-        setToken(tokenResponse);
+        // Simpan token apa adanya dari backend
+        setToken(response.token);
         setUser(response.user);
-    }, []);
 
-    // Fungsi logout
-    const logout = useCallback(() => {
-        authService.logout(token);
+        // Jika ingin implementasi "remember me", bisa pakai cookie/session
+        // Saat ini token tetap di localStorage
+    }, [setToken]);
+
+    /**
+     * Fungsi logout
+     */
+    const logout = useCallback(async () => {
+        if (token) {
+        try {
+            await authService.logout(token);
+        } catch (error) {
+            console.warn("Logout gagal:", error.message);
+        }
+        }
+
         setUser(null);
         setToken(null);
-    }, []);
+        window.location.href = "/admin/auth/login"; // redirect ke login setelah logout
+    }, [token, setToken]);
 
-    // Cek apakah user sudah login (token ada)
+    /**
+     * Auto-fetch user saat token berubah
+     */
     useEffect(() => {
-        (async () => {
-            try {
-                const response = await authService.user(token ?? "");
+        const fetchUser = async () => {
+        if (!token) {
+            setLoading(false);
+            return;
+        }
 
-                setUser(response.user);
-                setLoading(false);
-            } catch (error) {
-                setUser(null);
-                setToken(null);
-                setLoading(false);
-            }
-        })();
-    }, []);
+        try {
+            const response = await authService.user(token);
+            setUser(response.user);
+        } catch (error) {
+            console.warn("Token invalid atau expired:", error.message);
+            setUser(null);
+            setToken(null);
+        } finally {
+            setLoading(false);
+        }
+        };
 
-    return { user, loading, login, logout, isAuthenticated: !!user, token };
+        fetchUser();
+    }, [token, setToken]);
+
+    return {
+        user,
+        loading,
+        login,
+        logout,
+        isAuthenticated: !!user,
+        token,
+    };
 };
 
 export default useAuth;

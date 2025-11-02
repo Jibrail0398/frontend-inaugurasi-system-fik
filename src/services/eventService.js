@@ -24,6 +24,7 @@
  */
 
 import axios from "axios";
+import { error } from "jquery";
 
 const BASE_URL_API = import.meta.env.VITE_BASE_URL_API;
 
@@ -41,6 +42,21 @@ export const getEvents = async (token) => {
 
     return response.data;
 };
+
+/**
+ * get Detail of Event by kode_event
+ * @param {*string} kode_event 
+ * @returns {Promis<Object>}
+ */
+
+export const showEventbyCode = async (kode_event) =>{
+    try{
+        const response = await axios.get(`${BASE_URL_API}/event/showbycode/${kode_event}`);
+        return response.data;
+    }catch(e){
+        console.error(`Error: ${e.error}`)
+    }
+}
 
 /**
  * Get event by id
@@ -106,3 +122,5 @@ export const deleteEvent = (id, token) => {
 
     return response.data;
 };
+
+

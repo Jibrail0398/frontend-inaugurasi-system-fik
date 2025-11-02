@@ -1,14 +1,16 @@
 import { useCallback, useEffect, useState } from "react";
 import * as keuanganService from "../services/keuanganService";
+import { useLocalStorage } from "react-use";
 
 const useUangMasuk = () => {
     const [loading, setLoading] = useState(true);
     const [uangMasuk, setUangMasuk] = useState([]);
+    const [token, _] = useLocalStorage("token");
 
     const getAll = useCallback(async () => {
         setLoading(true);
 
-        const response = await keuanganService.getAllUangMasuk();
+        const response = await keuanganService.getAllUangMasuk(token);
         setUangMasuk(response.data);
 
         setLoading(false);
@@ -20,15 +22,21 @@ const useUangMasuk = () => {
     }, []);
 
     const create = useCallback(async (data) => {
-        // Create data logic here
+        try {
+            const response = await keuanganService.createUangMasuk(data, token);
+            getAll();
+            return response;
+        } catch (error) {
+            throw error;
+        }
     }, []);
 
     const update = useCallback(async (id, data) => {
-        // Update data logic here
+        return await keuanganService.updateUangMasuk(id, data, token);
     });
 
     const deleteById = useCallback(async (id) => {
-        // Delete data logic here
+        return await keuanganService.deleteUangMasuk(id, token);
     });
 
     useEffect(() => {

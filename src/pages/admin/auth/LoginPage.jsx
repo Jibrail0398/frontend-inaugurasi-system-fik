@@ -9,6 +9,7 @@ export default function LoginPage() {
     const navigate = useNavigate();
 
     const [alert, setAlert] = useState(null);
+    const [loading, setLoading] = useState(false);
     const { login } = useAuth();
 
     // input
@@ -17,6 +18,7 @@ export default function LoginPage() {
     const [rememberMe, setRememberMe] = useState(false);
 
     const handleSubmit = async () => {
+        setLoading(true);
         try {
             await login({ nim, password }, rememberMe);
         } catch (error) {
@@ -26,6 +28,8 @@ export default function LoginPage() {
                 text: error.response?.data?.message || error.message,
             });
             return;
+        } finally {
+            setLoading(false);
         }
 
         navigate("/admin");
@@ -53,8 +57,14 @@ export default function LoginPage() {
                         </label>
                     </div>
                 </div>
-                <button type="button" onClick={handleSubmit} className="btn btn-primary btn-user btn-block">
-                    Login
+                <button type="button" onClick={handleSubmit} disabled={loading} className="btn btn-primary btn-user btn-block">
+                    {loading ? (
+                        <div className="spinner-border text-light" role="status">
+                            <span className="visually-hidden">Loading...</span>
+                        </div>
+                    ) : (
+                        <span>Login</span>
+                    )}
                 </button>
             </form>
             <hr />

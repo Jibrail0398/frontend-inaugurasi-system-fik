@@ -21,8 +21,6 @@ const EditEventModal = ({ event, show, setShow, handleSubmitEdit }) => {
     const handleSubmit = (e) => {
         e.preventDefault();
 
-        console.log(event);
-
         handleSubmitEdit({
             id: event.id,
             nama_event: namaEvent,
@@ -50,7 +48,12 @@ const EditEventModal = ({ event, show, setShow, handleSubmitEdit }) => {
 
                     <Form.Group className="mb-3">
                         <Form.Label>Jenis</Form.Label>
-                        <Form.Control type="text" name="jenis" value={jenis} onChange={(e) => setJenis(e.target.value)} />
+                        <Form.Select name="jenis" value={jenis} onChange={(e) => setJenis(e.target.value)}>
+                            <option value="">Pilih Jenis</option>
+                            <option value="inaugurasi" selected={jenis === "inaugurasi"}>
+                                Inaugurasi
+                            </option>
+                        </Form.Select>
                     </Form.Group>
 
                     <Form.Group className="mb-3">
