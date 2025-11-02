@@ -13,7 +13,7 @@ import FormPeserta from "./pages/FormPeserta";
 import FormPanitia from "./pages/FormPanitia";
 import FormPresensi from "./pages/FormPresensi";
 import FormDokumentasi from "./pages/admin/FormDokumentasi.jsx";
-import FormSertifikat from "./pages/admin/FormSertifikat";
+import FormSertifikat from "./pages/admin/Sertifikat/SertifikatPage.jsx";
 import TestPage from "./pages/TestPage.jsx";
 import ComingSoonPage from "./pages/ComingSoonPage.jsx";
 import NotLoginMiddleware from "./components/middlewares/NotLoginMiddleware.jsx";
