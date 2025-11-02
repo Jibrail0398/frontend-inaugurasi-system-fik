@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
-import { FaEye, FaSort } from "react-icons/fa";
+import { FaEye, FaSort, FaFileExcel } from "react-icons/fa";
 import { createPortal } from "react-dom";
+import * as XLSX from "xlsx";
 import * as panitiaService from "../../services/panitiaService";
 
 export default function DaftarPanitia() {
@@ -12,6 +13,10 @@ export default function DaftarPanitia() {
     const [filterAngkatan, setFilterAngkatan] = useState("");
     const [selectedRow, setSelectedRow] = useState(null);
     const [showFilterModal, setShowFilterModal] = useState(false);
+
+    // Pagination
+    const [currentPage, setCurrentPage] = useState(1);
+    const [rowsPerPage, setRowsPerPage] = useState(10);
 
     // Ambil data panitia + penerimaan
     const fetchPanitia = async () => {
@@ -31,7 +36,7 @@ export default function DaftarPanitia() {
         fetchPanitia();
     }, []);
 
-    // --- HANDLE VERIFIKASI (pakai penerimaan_id) ---
+    // --- HANDLE VERIFIKASI ---
     const handleVerifikasi = async (penerimaanId, status) => {
         if (!penerimaanId) {
             return alert("⚠️ Data penerimaan panitia belum tersedia. Hubungi admin.");
@@ -57,7 +62,26 @@ export default function DaftarPanitia() {
         }
     };
 
-    // Filter data panitia
+    // --- HANDLE HAPUS PANITIA ---
+    const handleHapusPanitia = async (id) => {
+        if (!id) return alert("⚠️ ID panitia tidak ditemukan.");
+        if (!window.confirm("🗑️ Yakin ingin menghapus panitia ini? Data akan hilang permanen.")) return;
+
+        try {
+            const res = await panitiaService.deletePanitiaById(id);
+            alert(`✅ ${res?.message || "Panitia berhasil dihapus"}`);
+            setSelectedRow(null);
+            fetchPanitia();
+        } catch (err) {
+            const serverMsg =
+                err?.response?.data?.message ||
+                JSON.stringify(err?.response?.data) ||
+                err.message;
+            alert(`❌ Gagal menghapus panitia:\n${serverMsg}`);
+        }
+    };
+
+    // --- FILTER DATA ---
     const filteredData = panitia.filter(
         (p) =>
             (p.nama?.toLowerCase().includes(filterText.toLowerCase()) ||
@@ -66,30 +90,83 @@ export default function DaftarPanitia() {
             (filterAngkatan === "" || p.angkatan?.toString() === filterAngkatan)
     );
 
+    // --- EXPORT KE EXCEL ---
+    const handleExportExcel = () => {
+        if (filteredData.length === 0) {
+            alert("⚠️ Tidak ada data untuk diekspor!");
+            return;
+        }
+
+        const exportData = filteredData.map((p, index) => ({
+            No: index + 1,
+            Nama: p.nama || "-",
+            NIM: p.NIM || "-",
+            Angkatan: p.angkatan || "-",
+            Kelas: p.kelas || "-",
+            Divisi: p.divisi || "-",
+            Status:
+                p.status_penerimaan === "diterima"
+                    ? "Diterima"
+                    : p.status_penerimaan === "ditolak"
+                    ? "Ditolak"
+                    : "Menunggu",
+        }));
+
+        const worksheet = XLSX.utils.json_to_sheet(exportData);
+        const workbook = XLSX.utils.book_new();
+        XLSX.utils.book_append_sheet(workbook, worksheet, "Data Panitia");
+        // Nama file sesuai pola: Data_Panitia_Inaugurasi.xlsx
+        XLSX.writeFile(workbook, "Data_Panitia_Inaugurasi.xlsx");
+    };
+
+    // --- PAGINATION ---
+    const totalPages = Math.ceil(filteredData.length / rowsPerPage) || 1;
+    const indexOfLast = currentPage * rowsPerPage;
+    const indexOfFirst = indexOfLast - rowsPerPage;
+    const currentData = filteredData.slice(indexOfFirst, indexOfLast);
+
+    const handleRowsPerPageChange = (e) => {
+        setRowsPerPage(Number(e.target.value));
+        setCurrentPage(1);
+    };
+
+    const handlePageChange = (page) => {
+        if (page >= 1 && page <= totalPages) {
+            setCurrentPage(page);
+        }
+    };
+
     if (loading) return <p>Loading data panitia...</p>;
     if (error) return <p className="text-danger">{error}</p>;
 
     return (
         <div className="container-fluid">
             <h1 className="h3 mb-2 text-gray-800">Daftar Panitia</h1>
-            <p className="mb-4">
-                Berikut adalah daftar panitia inaugurasi yang sudah terdaftar.
-            </p>
+            <p className="mb-4">Berikut adalah daftar panitia inaugurasi yang sudah terdaftar.</p>
 
             <div className="card shadow mb-4">
-                <div className="card-header py-3 d-flex justify-content-between">
-                    <button
-                        className="btn btn-outline-primary btn-sm"
-                        onClick={() => setShowFilterModal(true)}
-                    >
-                        <FaSort /> Filter
-                    </button>
+                <div className="card-header py-3 d-flex justify-content-between align-items-center flex-wrap gap-2">
+                    <div className="d-flex gap-2">
+                        <button
+                            className="btn btn-outline-primary btn-sm"
+                            onClick={() => setShowFilterModal(true)}
+                        >
+                            <FaSort /> Filter
+                        </button>
+
+                        <button className="btn btn-success btn-sm" onClick={handleExportExcel}>
+                            <FaFileExcel /> Export Excel
+                        </button>
+                    </div>
 
                     <input
                         type="text"
                         placeholder="Cari nama atau NIM..."
                         value={filterText}
-                        onChange={(e) => setFilterText(e.target.value)}
+                        onChange={(e) => {
+                            setFilterText(e.target.value);
+                            setCurrentPage(1);
+                        }}
                         className="form-control form-control-sm w-25"
                     />
                 </div>
@@ -99,7 +176,7 @@ export default function DaftarPanitia() {
                         <table className="table table-bordered table-striped w-100">
                             <thead className="thead-light">
                                 <tr>
-                                    <th>ID</th>
+                                    <th>No</th>
                                     <th>Nama</th>
                                     <th>NIM</th>
                                     <th>Angkatan</th>
@@ -110,10 +187,10 @@ export default function DaftarPanitia() {
                                 </tr>
                             </thead>
                             <tbody>
-                                {filteredData.length > 0 ? (
-                                    filteredData.map((row) => (
-                                        <tr key={row.id}>
-                                            <td>{row.id}</td>
+                                {currentData.length > 0 ? (
+                                    currentData.map((row, index) => (
+                                        <tr key={row.id || index}>
+                                            <td>{indexOfFirst + index + 1}</td>
                                             <td>{row.nama}</td>
                                             <td>{row.NIM}</td>
                                             <td>{row.angkatan}</td>
@@ -152,6 +229,71 @@ export default function DaftarPanitia() {
                             </tbody>
                         </table>
                     </div>
+
+                    {/* Pagination (style seperti peserta) */}
+                    {filteredData.length > 0 && (
+                        <div className="d-flex justify-content-between align-items-center mt-3 flex-wrap gap-2">
+                            {/* Jumlah data per halaman */}
+                            <div className="d-flex align-items-center">
+                                <label htmlFor="rowsPerPage" className="me-2 mb-0 text-sm text-gray-700">
+                                    Tampilkan
+                                </label>
+                                <select
+                                    id="rowsPerPage"
+                                    className="form-select form-select-sm w-auto"
+                                    value={rowsPerPage}
+                                    onChange={handleRowsPerPageChange}
+                                >
+                                    <option value={10}>10</option>
+                                    <option value={20}>20</option>
+                                    <option value={50}>50</option>
+                                </select>
+                                <span className="ms-2 text-sm text-gray-700">data per halaman</span>
+                            </div>
+
+                            {/* Info jumlah data */}
+                            <p className="mb-0 text-sm text-gray-600">
+                                Menampilkan {currentData.length} dari {filteredData.length} data
+                            </p>
+
+                            {/* Tombol pagination */}
+                            <nav>
+                                <ul className="pagination mb-0">
+                                    <li className={`page-item ${currentPage === 1 ? "disabled" : ""}`}>
+                                        <button
+                                            className="page-link"
+                                            onClick={() => handlePageChange(currentPage - 1)}
+                                        >
+                                            Previous
+                                        </button>
+                                    </li>
+
+                                    {Array.from({ length: totalPages }, (_, i) => (
+                                        <li
+                                            key={i}
+                                            className={`page-item ${currentPage === i + 1 ? "active" : ""}`}
+                                        >
+                                            <button
+                                                className="page-link"
+                                                onClick={() => handlePageChange(i + 1)}
+                                            >
+                                                {i + 1}
+                                            </button>
+                                        </li>
+                                    ))}
+
+                                    <li className={`page-item ${currentPage === totalPages ? "disabled" : ""}`}>
+                                        <button
+                                            className="page-link"
+                                            onClick={() => handlePageChange(currentPage + 1)}
+                                        >
+                                            Next
+                                        </button>
+                                    </li>
+                                </ul>
+                            </nav>
+                        </div>
+                    )}
                 </div>
             </div>
 
@@ -159,8 +301,13 @@ export default function DaftarPanitia() {
             {showFilterModal &&
                 createPortal(
                     <div className="modal-overlay" onClick={() => setShowFilterModal(false)}>
-                        <div className="modal-content animate-bounceIn" onClick={(e) => e.stopPropagation()}>
-                            <span className="modal-close" onClick={() => setShowFilterModal(false)}>✖</span>
+                        <div
+                            className="modal-content animate-bounceIn"
+                            onClick={(e) => e.stopPropagation()}
+                        >
+                            <span className="modal-close" onClick={() => setShowFilterModal(false)}>
+                                ✖
+                            </span>
                             <h5 className="modal-header">Filter Panitia</h5>
                             <div className="modal-details">
                                 <div className="mb-2">
@@ -171,8 +318,10 @@ export default function DaftarPanitia() {
                                         className="form-control"
                                     >
                                         <option value="">Semua Divisi</option>
-                                        {[...new Set(panitia.map(p => p.divisi))].map((d) => (
-                                            <option key={d} value={d}>{d}</option>
+                                        {[...new Set(panitia.map((p) => p.divisi))].map((d) => (
+                                            <option key={d || "null-divisi"} value={d}>
+                                                {d}
+                                            </option>
                                         ))}
                                     </select>
                                 </div>
@@ -185,16 +334,28 @@ export default function DaftarPanitia() {
                                         className="form-control"
                                     >
                                         <option value="">Semua Angkatan</option>
-                                        {[...new Set(panitia.map(p => p.angkatan))].map((a) => (
-                                            <option key={a} value={a}>{a}</option>
+                                        {[...new Set(panitia.map((p) => p.angkatan))].map((a) => (
+                                            <option key={String(a)} value={a}>
+                                                {a}
+                                            </option>
                                         ))}
                                     </select>
                                 </div>
                             </div>
 
                             <div className="mt-4 d-flex justify-content-end gap-2">
-                                <button className="btn btn-secondary" onClick={() => setShowFilterModal(false)}>Tutup</button>
-                                <button className="btn btn-primary" onClick={() => setShowFilterModal(false)}>Terapkan</button>
+                                <button
+                                    className="btn btn-secondary"
+                                    onClick={() => setShowFilterModal(false)}
+                                >
+                                    Tutup
+                                </button>
+                                <button
+                                    className="btn btn-primary"
+                                    onClick={() => setShowFilterModal(false)}
+                                >
+                                    Terapkan
+                                </button>
                             </div>
                         </div>
                     </div>,
@@ -205,8 +366,13 @@ export default function DaftarPanitia() {
             {selectedRow &&
                 createPortal(
                     <div className="modal-overlay" onClick={() => setSelectedRow(null)}>
-                        <div className="modal-content animate-bounceIn" onClick={(e) => e.stopPropagation()}>
-                            <span className="modal-close" onClick={() => setSelectedRow(null)}>✖</span>
+                        <div
+                            className="modal-content animate-bounceIn"
+                            onClick={(e) => e.stopPropagation()}
+                        >
+                            <span className="modal-close" onClick={() => setSelectedRow(null)}>
+                                ✖
+                            </span>
                             <h5 className="modal-header">Detail Panitia</h5>
                             <div className="modal-details">
                                 <p><b>Nama:</b> {selectedRow.nama}</p>
@@ -216,7 +382,8 @@ export default function DaftarPanitia() {
                                 <p><b>Kelas:</b> {selectedRow.kelas}</p>
                                 <p><b>Angkatan:</b> {selectedRow.angkatan}</p>
                                 <p><b>Divisi:</b> {selectedRow.divisi}</p>
-                                <p><b>Status:</b>{" "}
+                                <p>
+                                    <b>Status:</b>{" "}
                                     <span
                                         className={`badge ${
                                             selectedRow.status_penerimaan === "diterima"
@@ -232,21 +399,20 @@ export default function DaftarPanitia() {
                             </div>
 
                             <div className="mt-4 d-flex justify-content-center gap-3">
-                                {/* <-- PENTING: Gunakan penerimaan_id, bukan id pendaftar -->
-                                    Tombol Setujui/Tolak sudah benar pakai selectedRow.penerimaan_id */}
                                 <button
                                     className="btn btn-success"
-                                    onClick={() => handleVerifikasi(selectedRow.penerimaan_id, "diterima")}
+                                    onClick={() =>
+                                        handleVerifikasi(selectedRow.penerimaan_id, "diterima")
+                                    }
                                     disabled={selectedRow.status_penerimaan === "diterima"}
                                 >
                                     ✅ Setujui
                                 </button>
                                 <button
                                     className="btn btn-danger"
-                                    onClick={() => handleVerifikasi(selectedRow.penerimaan_id, "ditolak")}
-                                    disabled={selectedRow.status_penerimaan === "ditolak"}
+                                    onClick={() => handleHapusPanitia(selectedRow.id)}
                                 >
-                                    ❌ Tolak
+                                    🗑️ Hapus
                                 </button>
                             </div>
                         </div>

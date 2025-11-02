@@ -23,7 +23,7 @@ const getToken = () => {
 };
 
 /**
- * Ambil semua Peserta
+ * Ambil semua Peserta beserta relasi penerimaanPeserta terbaru
  * @returns {Promise<Array>} Data peserta (array)
  */
 export const getAll = async () => {
@@ -33,12 +33,31 @@ export const getAll = async () => {
             headers: { Authorization: `Bearer ${token}` },
         });
 
-        // Kembalikan array peserta sesuai format API
-        if (Array.isArray(response.data)) return response.data;
-        if (response.data?.data && Array.isArray(response.data.data)) return response.data.data;
-        if (response.data?.peserta && Array.isArray(response.data.peserta)) return response.data.peserta;
+        // Ambil array peserta
+        let pesertaArray = [];
+        if (Array.isArray(response.data)) pesertaArray = response.data;
+        else if (response.data?.data && Array.isArray(response.data.data)) pesertaArray = response.data.data;
+        else if (response.data?.peserta && Array.isArray(response.data.peserta)) pesertaArray = response.data.peserta;
 
-        return [];
+        // Pastikan setiap peserta punya field penerimaanPeserta
+        pesertaArray = pesertaArray.map((p) => {
+            // Ambil penerimaanPeserta terbaru (urut dari tanggal_penerimaan desc)
+            const sortedPenerimaan = Array.isArray(p.penerimaanPeserta)
+                ? [...p.penerimaanPeserta].sort(
+                      (a, b) => new Date(b.tanggal_penerimaan) - new Date(a.tanggal_penerimaan)
+                  )
+                : [];
+
+            return {
+                ...p,
+                penerimaanPeserta: sortedPenerimaan,
+            };
+        });
+
+        // Debug: cek status pembayaran
+        // console.log(pesertaArray.map(p => ({ nama: p.nama, status: p.penerimaanPeserta?.[0]?.status_pembayaran })));
+
+        return pesertaArray;
     } catch (error) {
         console.error("❌ Gagal mengambil data peserta:", error.response?.data || error.message);
         throw error;
@@ -102,17 +121,17 @@ export const deleteById = async (idPeserta) => {
 };
 
 /**
- * Verifikasi Peserta berdasarkan ID
- * (Tambahan agar tombol verifikasi bisa berfungsi)
+ * ✅ Verifikasi Peserta berdasarkan ID penerimaan
  */
-export const verifyById = async (idPeserta) => {
+export const verifyById = async (idPenerimaan) => {
     try {
         const token = getToken();
-        const response = await axios.post(
-            `${BASE_URL_API}/peserta/pendaftaran/verify/${idPeserta}`,
-            {},
+        const response = await axios.put(
+            `${BASE_URL_API}/penerimaan-peserta/update/${idPenerimaan}`,
+            { status_pembayaran: "lunas" },
             { headers: { Authorization: `Bearer ${token}` } }
         );
+        console.log("✅ Verifikasi berhasil:", response.data);
         return response.data;
     } catch (error) {
         console.error("❌ Gagal memverifikasi peserta:", error.response?.data || error.message);

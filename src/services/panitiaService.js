@@ -133,3 +133,30 @@ export const registerPanitia = async(data,kodeEvent) =>{
 
 // Alias supaya nama fungsi sama dengan yang dipanggil di komponen React
 export const verifyPanitiaById = verifyPanitia;
+
+/**
+ * Hapus data panitia — menggunakan ID panitia (tabel pendaftar_panitia)
+ *
+ * @param {number} id - id dari tabel panitia
+ */
+export const deletePanitiaById = async (id) => {
+    if (!id) throw new Error("⚠️ ID panitia tidak ditemukan.");
+
+    const token = getToken();
+
+    try {
+        const response = await axios.delete(`${BASE_URL_API}/panitia/pendaftaran/delete/${id}`, {
+            headers: { Authorization: `Bearer ${token}` },
+        });
+
+        if (response.data?.success) {
+            console.log("🗑️ Panitia berhasil dihapus:", response.data);
+            return response.data;
+        } else {
+            throw new Error(response.data?.message || "Hapus gagal tanpa pesan");
+        }
+    } catch (error) {
+        console.error("❌ Gagal menghapus panitia:", error.response?.data || error.message);
+        throw error;
+    }
+};

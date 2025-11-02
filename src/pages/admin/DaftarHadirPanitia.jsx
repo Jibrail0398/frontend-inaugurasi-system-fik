@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from "react";
-import { FaEye, FaSort } from "react-icons/fa";
+import { FaEye, FaSort, FaFileExcel } from "react-icons/fa";
 import { createPortal } from "react-dom";
 import Swal from "sweetalert2";
+import * as XLSX from "xlsx";
 import {
     getDaftarHadirPanitia,
-    updatePresensiPanitia, // ✅ diganti ke fungsi yang benar
+    updatePresensiPanitia,
 } from "../../services/presensiService";
 
 export default function DaftarKehadiran() {
@@ -19,7 +20,10 @@ export default function DaftarKehadiran() {
     const [panitia, setPanitia] = useState([]);
     const [loading, setLoading] = useState(true);
 
-    // 🔹 Ambil data dari backend saat pertama kali load
+    // Pagination state
+    const [currentPage, setCurrentPage] = useState(1);
+    const [rowsPerPage, setRowsPerPage] = useState(10);
+
     useEffect(() => {
         const fetchData = async () => {
             try {
@@ -37,7 +41,6 @@ export default function DaftarKehadiran() {
                     ? response
                     : response?.data ?? [];
 
-                // 🔹 Format ulang data agar seragam
                 const formatted = data.map((item, index) => {
                     const penerimaan = item.penerimaan_panitia || {};
                     const p = penerimaan.pendaftar_panitia || {};
@@ -81,11 +84,13 @@ export default function DaftarKehadiran() {
                 return;
             }
 
-            // 🔹 Gunakan service yang benar
-            const response = await updatePresensiPanitia(token, id, newStatus.toLowerCase());
+            const response = await updatePresensiPanitia(
+                token,
+                id,
+                newStatus.toLowerCase()
+            );
             console.log("✅ Presensi panitia berhasil diperbarui:", response);
 
-            // Update data di tabel frontend
             setPanitia((prev) =>
                 prev.map((p) =>
                     p.id === id ? { ...p, kehadiran: newStatus } : p
@@ -120,6 +125,63 @@ export default function DaftarKehadiran() {
         return matchText && matchDivisi && matchAngkatan && matchKehadiran;
     });
 
+    // Pagination logic
+    const totalPages = Math.ceil(filteredData.length / rowsPerPage);
+    const indexOfLast = currentPage * rowsPerPage;
+    const indexOfFirst = indexOfLast - rowsPerPage;
+    const currentData = filteredData.slice(indexOfFirst, indexOfLast);
+
+    const handlePageChange = (pageNumber) => setCurrentPage(pageNumber);
+
+    const handleRowsPerPageChange = (e) => {
+        setRowsPerPage(Number(e.target.value));
+        setCurrentPage(1);
+    };
+
+    // ✅ Export ke Excel
+    const handleExportExcel = () => {
+        if (filteredData.length === 0) {
+            Swal.fire("⚠️", "Tidak ada data untuk diekspor!", "warning");
+            return;
+        }
+
+        const exportData = filteredData.map((p, index) => ({
+            No: index + 1,
+            Nama: p.nama,
+            NIM: p.nim,
+            Divisi: p.divisi,
+            Angkatan: p.angkatan,
+            Kelas: p.kelas,
+            Email: p.email,
+            Event: p.event,
+            Kehadiran: p.kehadiran,
+            "Waktu Presensi": p.waktu_presensi
+                ? new Date(p.waktu_presensi).toLocaleString("id-ID")
+                : "-",
+        }));
+
+        const worksheet = XLSX.utils.json_to_sheet(exportData);
+        const workbook = XLSX.utils.book_new();
+        XLSX.utils.book_append_sheet(workbook, worksheet, "Daftar Kehadiran Panitia");
+
+        // Auto-width kolom
+        const colWidths = Object.keys(exportData[0]).map((key) => ({
+            wch: Math.max(
+                key.length,
+                ...exportData.map((row) => String(row[key] || "").length)
+            ) + 2,
+        }));
+        worksheet["!cols"] = colWidths;
+
+        const fileName = `Daftar_Kehadiran_Panitia_${new Date()
+            .toLocaleDateString("id-ID")
+            .replace(/\//g, "-")}.xlsx`;
+
+        XLSX.writeFile(workbook, fileName);
+
+        Swal.fire("✅", "Data berhasil diekspor ke Excel!", "success");
+    };
+
     return (
         <div className="container-fluid">
             <h1 className="h3 mb-2 text-gray-800">Daftar Kehadiran Panitia</h1>
@@ -128,12 +190,21 @@ export default function DaftarKehadiran() {
             {/* Card Table */}
             <div className="card shadow mb-4">
                 <div className="card-header py-3 d-flex justify-content-between align-items-center">
-                    <button
-                        className="btn btn-outline-primary btn-sm"
-                        onClick={() => setShowFilterModal(true)}
-                    >
-                        <FaSort /> Filter
-                    </button>
+                    <div className="d-flex gap-2">
+                        <button
+                            className="btn btn-outline-primary btn-sm"
+                            onClick={() => setShowFilterModal(true)}
+                        >
+                            <FaSort /> Filter
+                        </button>
+                        <button
+                            className="btn btn-success btn-sm"
+                            onClick={handleExportExcel}
+                        >
+                            <FaFileExcel /> Export Excel
+                        </button>
+                    </div>
+
                     <input
                         type="text"
                         placeholder="Cari nama atau NIM..."
@@ -147,63 +218,139 @@ export default function DaftarKehadiran() {
                     {loading ? (
                         <p className="text-center">Memuat data...</p>
                     ) : (
-                        <div className="table-responsive">
-                            <table className="table table-bordered table-striped w-100 mb-0">
-                                <thead className="thead-light">
-                                    <tr>
-                                        <th>ID</th>
-                                        <th>Nama</th>
-                                        <th>Divisi</th>
-                                        <th>Angkatan</th>
-                                        <th>NIM</th>
-                                        <th>Kelas</th>
-                                        <th>Kehadiran</th>
-                                        <th>Aksi</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    {filteredData.length > 0 ? (
-                                        filteredData.map((row) => (
-                                            <tr key={row.id}>
-                                                <td>{row.id}</td>
-                                                <td>{row.nama}</td>
-                                                <td>{row.divisi}</td>
-                                                <td>{row.angkatan}</td>
-                                                <td>{row.nim}</td>
-                                                <td>{row.kelas}</td>
-                                                <td>
-                                                    <span
-                                                        className={`badge ${
-                                                            row.kehadiran === "Hadir"
-                                                                ? "badge-success"
-                                                                : row.kehadiran === "Tidak Hadir"
-                                                                ? "badge-danger"
-                                                                : "badge-warning"
-                                                        }`}
-                                                    >
-                                                        {row.kehadiran}
-                                                    </span>
-                                                </td>
-                                                <td>
-                                                    <button
-                                                        className="btn btn-sm btn-info"
-                                                        onClick={() => setSelectedRow(row)}
-                                                    >
-                                                        <FaEye /> Detail
-                                                    </button>
+                        <>
+                            <div className="table-responsive">
+                                <table className="table table-bordered table-striped w-100 mb-0">
+                                    <thead className="thead-light">
+                                        <tr>
+                                            <th>No</th>
+                                            <th>Nama</th>
+                                            <th>Divisi</th>
+                                            <th>Angkatan</th>
+                                            <th>NIM</th>
+                                            <th>Kelas</th>
+                                            <th>Kehadiran</th>
+                                            <th>Aksi</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {currentData.length > 0 ? (
+                                            currentData.map((row, index) => (
+                                                <tr key={row.id}>
+                                                    <td>
+                                                        {(currentPage - 1) * rowsPerPage + index + 1}
+                                                    </td>
+                                                    <td>{row.nama}</td>
+                                                    <td>{row.divisi}</td>
+                                                    <td>{row.angkatan}</td>
+                                                    <td>{row.nim}</td>
+                                                    <td>{row.kelas}</td>
+                                                    <td>
+                                                        <span
+                                                            className={`badge ${
+                                                                row.kehadiran === "Hadir"
+                                                                    ? "bg-success"
+                                                                    : row.kehadiran === "Tidak Hadir"
+                                                                    ? "bg-danger"
+                                                                    : "bg-warning text-dark"
+                                                            }`}
+                                                        >
+                                                            {row.kehadiran}
+                                                        </span>
+                                                    </td>
+                                                    <td>
+                                                        <button
+                                                            className="btn btn-sm btn-info"
+                                                            onClick={() => setSelectedRow(row)}
+                                                        >
+                                                            <FaEye /> Detail
+                                                        </button>
+                                                    </td>
+                                                </tr>
+                                            ))
+                                        ) : (
+                                            <tr>
+                                                <td colSpan="8" className="text-center">
+                                                    Tidak ada data ditemukan
                                                 </td>
                                             </tr>
-                                        ))
-                                    ) : (
-                                        <tr>
-                                            <td colSpan="8" className="text-center">
-                                                Tidak ada data ditemukan
-                                            </td>
-                                        </tr>
-                                    )}
-                                </tbody>
-                            </table>
-                        </div>
+                                        )}
+                                    </tbody>
+                                </table>
+                            </div>
+
+                            {/* Pagination + Rows per page */}
+                            {filteredData.length > 0 && (
+                                <div className="d-flex justify-content-between align-items-center mt-3 flex-wrap">
+                                    <div className="d-flex align-items-center mb-2 mb-md-0">
+                                        <label htmlFor="rowsPerPage" className="me-2 mb-0">
+                                            Tampilkan
+                                        </label>
+                                        <select
+                                            id="rowsPerPage"
+                                            className="form-select form-select-sm w-auto"
+                                            value={rowsPerPage}
+                                            onChange={handleRowsPerPageChange}
+                                        >
+                                            <option value={10}>10</option>
+                                            <option value={20}>20</option>
+                                            <option value={50}>50</option>
+                                        </select>
+                                        <span className="ms-2">data per halaman</span>
+                                    </div>
+
+                                    <p className="mb-2 mb-md-0">
+                                        Menampilkan {currentData.length} dari {filteredData.length} data
+                                    </p>
+
+                                    <nav>
+                                        <ul className="pagination mb-0">
+                                            <li
+                                                className={`page-item ${
+                                                    currentPage === 1 ? "disabled" : ""
+                                                }`}
+                                            >
+                                                <button
+                                                    className="page-link"
+                                                    onClick={() => handlePageChange(currentPage - 1)}
+                                                >
+                                                    Previous
+                                                </button>
+                                            </li>
+
+                                            {Array.from({ length: totalPages }, (_, i) => (
+                                                <li
+                                                    key={i}
+                                                    className={`page-item ${
+                                                        currentPage === i + 1 ? "active" : ""
+                                                    }`}
+                                                >
+                                                    <button
+                                                        className="page-link"
+                                                        onClick={() => handlePageChange(i + 1)}
+                                                    >
+                                                        {i + 1}
+                                                    </button>
+                                                </li>
+                                            ))}
+
+                                            <li
+                                                className={`page-item ${
+                                                    currentPage === totalPages ? "disabled" : ""
+                                                }`}
+                                            >
+                                                <button
+                                                    className="page-link"
+                                                    onClick={() => handlePageChange(currentPage + 1)}
+                                                >
+                                                    Next
+                                                </button>
+                                            </li>
+                                        </ul>
+                                    </nav>
+                                </div>
+                            )}
+                        </>
                     )}
                 </div>
             </div>
@@ -211,10 +358,7 @@ export default function DaftarKehadiran() {
             {/* Filter Modal */}
             {showFilterModal &&
                 createPortal(
-                    <div
-                        className="modal-overlay"
-                        onClick={() => setShowFilterModal(false)}
-                    >
+                    <div className="modal-overlay" onClick={() => setShowFilterModal(false)}>
                         <div
                             className="modal-content animate-bounceIn"
                             onClick={(e) => e.stopPropagation()}
@@ -295,10 +439,7 @@ export default function DaftarKehadiran() {
             {/* Detail Modal */}
             {selectedRow &&
                 createPortal(
-                    <div
-                        className="modal-overlay"
-                        onClick={() => setSelectedRow(null)}
-                    >
+                    <div className="modal-overlay" onClick={() => setSelectedRow(null)}>
                         <div
                             className="modal-content animate-bounceIn"
                             onClick={(e) => e.stopPropagation()}
@@ -310,9 +451,7 @@ export default function DaftarKehadiran() {
                                 ✖
                             </span>
 
-                            <h5 className="modal-header">
-                                Detail Kehadiran Panitia
-                            </h5>
+                            <h5 className="modal-header">Detail Kehadiran Panitia</h5>
 
                             <div className="modal-details">
                                 <p><b>Nama:</b> {selectedRow.nama}</p>
@@ -327,10 +466,10 @@ export default function DaftarKehadiran() {
                                     <span
                                         className={
                                             selectedRow.kehadiran === "Hadir"
-                                                ? "text-success font-weight-bold"
+                                                ? "text-success fw-bold"
                                                 : selectedRow.kehadiran === "Tidak Hadir"
-                                                ? "text-danger font-weight-bold"
-                                                : "text-warning font-weight-bold"
+                                                ? "text-danger fw-bold"
+                                                : "text-warning fw-bold"
                                         }
                                     >
                                         {selectedRow.kehadiran}
@@ -342,10 +481,7 @@ export default function DaftarKehadiran() {
                                 <button
                                     className="btn btn-success"
                                     onClick={() =>
-                                        handleKehadiranChange(
-                                            selectedRow.id,
-                                            "Hadir"
-                                        )
+                                        handleKehadiranChange(selectedRow.id, "Hadir")
                                     }
                                 >
                                     Tandai Hadir
@@ -353,10 +489,7 @@ export default function DaftarKehadiran() {
                                 <button
                                     className="btn btn-danger"
                                     onClick={() =>
-                                        handleKehadiranChange(
-                                            selectedRow.id,
-                                            "Tidak Hadir"
-                                        )
+                                        handleKehadiranChange(selectedRow.id, "Tidak Hadir")
                                     }
                                 >
                                     Tandai Tidak Hadir
