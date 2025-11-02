@@ -12,7 +12,6 @@ import DaftarHadirPanitia from "./pages/admin/DaftarHadirPanitia.jsx";
 import FormPeserta from "./pages/FormPeserta";
 import FormPanitia from "./pages/FormPanitia";
 import FormPresensi from "./pages/FormPresensi";
-import FormDokumentasi from "./pages/admin/FormDokumentasi.jsx";
 import FormSertifikat from "./pages/admin/Sertifikat/SertifikatPage.jsx";
 import TestPage from "./pages/TestPage.jsx";
 import ComingSoonPage from "./pages/ComingSoonPage.jsx";
@@ -22,6 +21,7 @@ import UangMasukPage from "./pages/admin/keuangan/uang-masuk/UangMasukPage.jsx";
 import LaporanKeuanganPage from "./pages/admin/keuangan/laporan/LaporanKeuanganPage.jsx";
 import UangKeluarPage from "./pages/admin/keuangan/uang-keluar/UangKeluarPage.jsx";
 import CheckEventCode from "./components/middlewares/CheckEventCode";
+import Dokumentasi from "./pages/admin/Dokumentasi/Dokumentasi.jsx";
 
 const router = createBrowserRouter([
     {
@@ -93,7 +93,7 @@ const router = createBrowserRouter([
             },
             {
                 path:"dokumentasi",
-                element:<FormDokumentasi/>
+                element:<Dokumentasi/>
             },
 
             {

@@ -44,14 +44,7 @@ const handleSubmit = async(e) => {
         !formData.jenis_sertifikat ||
         !formData.link_drive
     ) {
-        toast.error('Harap isi semua field!', {
-            position: "top-right",
-            autoClose: 3000,
-            hideProgressBar: false,
-            closeOnClick: true,
-            pauseOnHover: true,
-            draggable: true,
-        });
+        alert("Harap isi semua Field");
         return;
     }
 
