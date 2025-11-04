@@ -36,16 +36,19 @@ export const getAll = async () => {
         // Ambil array peserta
         let pesertaArray = [];
         if (Array.isArray(response.data)) pesertaArray = response.data;
-        else if (response.data?.data && Array.isArray(response.data.data)) pesertaArray = response.data.data;
-        else if (response.data?.peserta && Array.isArray(response.data.peserta)) pesertaArray = response.data.peserta;
+        else if (response.data?.data && Array.isArray(response.data.data))
+            pesertaArray = response.data.data;
+        else if (response.data?.peserta && Array.isArray(response.data.peserta))
+            pesertaArray = response.data.peserta;
 
         // Pastikan setiap peserta punya field penerimaanPeserta
         pesertaArray = pesertaArray.map((p) => {
-            // Ambil penerimaanPeserta terbaru (urut dari tanggal_penerimaan desc)
             const sortedPenerimaan = Array.isArray(p.penerimaanPeserta)
-                ? [...p.penerimaanPeserta].sort(
-                      (a, b) => new Date(b.tanggal_penerimaan) - new Date(a.tanggal_penerimaan)
-                  )
+                    ? [...p.penerimaanPeserta].sort(
+                        (a, b) =>
+                            new Date(b.tanggal_penerimaan) -
+                            new Date(a.tanggal_penerimaan)
+                    )
                 : [];
 
             return {
@@ -54,12 +57,12 @@ export const getAll = async () => {
             };
         });
 
-        // Debug: cek status pembayaran
-        // console.log(pesertaArray.map(p => ({ nama: p.nama, status: p.penerimaanPeserta?.[0]?.status_pembayaran })));
-
         return pesertaArray;
     } catch (error) {
-        console.error("❌ Gagal mengambil data peserta:", error.response?.data || error.message);
+        console.error(
+            "❌ Gagal mengambil data peserta:",
+            error.response?.data || error.message
+        );
         throw error;
     }
 };
@@ -70,12 +73,17 @@ export const getAll = async () => {
 export const create = async (kodeEvent, data) => {
     try {
         const token = getToken();
-        const response = await axios.post(`${BASE_URL_API}/pendaftaran-peserta/${kodeEvent}`, data, {
-            headers: { Authorization: `Bearer ${token}` },
-        });
+        const response = await axios.post(
+            `${BASE_URL_API}/pendaftaran-peserta/${kodeEvent}`,
+            data,
+            { headers: { Authorization: `Bearer ${token}` } }
+        );
         return response.data;
     } catch (error) {
-        console.error("❌ Gagal mendaftarkan peserta:", error.response?.data || error.message);
+        console.error(
+            "❌ Gagal mendaftarkan peserta:",
+            error.response?.data || error.message
+        );
         throw error;
     }
 };
@@ -86,12 +94,17 @@ export const create = async (kodeEvent, data) => {
 export const updateById = async (idPeserta, data) => {
     try {
         const token = getToken();
-        const response = await axios.put(`${BASE_URL_API}/peserta/pendaftaran/update/${idPeserta}`, data, {
-            headers: { Authorization: `Bearer ${token}` },
-        });
+        const response = await axios.put(
+            `${BASE_URL_API}/peserta/pendaftaran/update/${idPeserta}`,
+            data,
+            { headers: { Authorization: `Bearer ${token}` } }
+        );
         return response.data;
     } catch (error) {
-        console.error("❌ Gagal memperbarui data peserta:", error.response?.data || error.message);
+        console.error(
+            "❌ Gagal memperbarui data peserta:",
+            error.response?.data || error.message
+        );
         throw error;
     }
 };
@@ -102,31 +115,46 @@ export const updateById = async (idPeserta, data) => {
 export const deleteById = async (idPeserta) => {
     try {
         const token = getToken();
-        const response = await axios.delete(`${BASE_URL_API}/peserta/pendaftaran/delete/${idPeserta}`, {
-            headers: { Authorization: `Bearer ${token}` },
-        });
+        const response = await axios.delete(
+            `${BASE_URL_API}/peserta/pendaftaran/delete/${idPeserta}`,
+            { headers: { Authorization: `Bearer ${token}` } }
+        );
         return response.data;
     } catch (error) {
-        console.error("❌ Gagal menghapus peserta:", error.response?.data || error.message);
+        console.error(
+            "❌ Gagal menghapus peserta:",
+            error.response?.data || error.message
+        );
         throw error;
     }
 };
 
 /**
- * ✅ Verifikasi Peserta berdasarkan ID penerimaan
+ * ✅ Verifikasi atau Batalkan Verifikasi Peserta berdasarkan ID penerimaan
+ * @param {number|string} idPenerimaan - ID penerimaan peserta
+ * @param {"lunas"|"belum lunas"} [status="lunas"] - Status pembayaran yang ingin diubah
+ * @returns {Promise<Object>} Respons dari server
  */
-export const verifyById = async (idPenerimaan) => {
+export const verifyById = async (idPenerimaan, status = "lunas") => {
     try {
         const token = getToken();
+
+        // body dikirim sesuai kebutuhan backend
+        const payload = { status_pembayaran: status };
+
         const response = await axios.put(
             `${BASE_URL_API}/penerimaan-peserta/update/${idPenerimaan}`,
-            { status_pembayaran: "lunas" },
+            payload,
             { headers: { Authorization: `Bearer ${token}` } }
         );
-        console.log("✅ Verifikasi berhasil:", response.data);
+
+        console.log(`✅ Status peserta diperbarui ke "${status}":`, response.data);
         return response.data;
     } catch (error) {
-        console.error("❌ Gagal memverifikasi peserta:", error.response?.data || error.message);
+        console.error(
+            "❌ Gagal memverifikasi peserta:",
+            error.response?.data || error.message
+        );
         throw error;
     }
 };
