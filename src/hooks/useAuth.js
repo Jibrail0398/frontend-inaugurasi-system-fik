@@ -44,7 +44,7 @@ const useAuth = () => {
 
     setUser(null);
     setToken(null);
-    window.location.href = "/admin/auth/login"; // redirect ke login setelah logout
+    window.location.href = "/"; // redirect ke landing page setelah logout
   }, [token, setToken]);
 
   /**
