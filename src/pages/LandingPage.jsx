@@ -1,9 +1,12 @@
 import { Link } from "react-router-dom";
 import { useEffect, useState } from "react";
+import { getPublicEvents } from "../services/eventService";
 import "../style/LandingPage.css";
 
 const LandingPage = () => {
   const [isScrolled, setIsScrolled] = useState(false);
+  const [events, setEvents] = useState([]);
+  const [loadingEvents, setLoadingEvents] = useState(true);
 
   useEffect(() => {
     // Scroll to top on mount
@@ -16,6 +19,49 @@ const LandingPage = () => {
 
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+
+  // Fetch events from API
+  useEffect(() => {
+    const fetchEvents = async () => {
+      try {
+        const response = await getPublicEvents();
+        console.log("=== API Response ===");
+        console.log("Full response:", response);
+        console.log("Response data:", response.data);
+
+        // Get all events data
+        const allEvents = response.data || [];
+        console.log("All events count:", allEvents.length);
+        console.log("All events:", allEvents);
+
+        // Filter only events with open registration status for peserta
+        // Check for "buka" status (Indonesian) - case insensitive
+        const openEvents = allEvents.filter((event) => {
+          const status = event.status_pendaftaran_peserta?.toLowerCase();
+          console.log(
+            `Event "${event.nama_event}" - Status: "${event.status_pendaftaran_peserta}"`
+          );
+          return status === "buka" || status === "open";
+        });
+
+        console.log("=== Filtered Events ===");
+        console.log("Open events count:", openEvents.length);
+        console.log("Open events:", openEvents);
+
+        setEvents(openEvents);
+      } catch (error) {
+        console.error("=== Error Fetching Events ===");
+        console.error("Error:", error);
+        console.error("Error response:", error.response?.data);
+        console.error("Error status:", error.response?.status);
+        setEvents([]);
+      } finally {
+        setLoadingEvents(false);
+      }
+    };
+
+    fetchEvents();
   }, []);
 
   // Function to scroll to top
@@ -43,6 +89,9 @@ const LandingPage = () => {
               </a>
               <a href="#features" className="nav-link">
                 Fitur
+              </a>
+              <a href="#events" className="nav-link">
+                Events
               </a>
               <a href="#how-it-works" className="nav-link">
                 Cara Kerja
@@ -369,6 +418,109 @@ const LandingPage = () => {
               <div className="stat-decoration"></div>
             </div>
           </div>
+        </div>
+      </section>
+
+      {/* Events Section - Modern Cards */}
+      <section id="events" className="events-section-modern">
+        <div className="container">
+          <div className="text-center mb-5">
+            <div className="section-badge">
+              <i className="fas fa-calendar-alt me-2"></i>
+              Event Terbaru
+            </div>
+            <h2 className="section-title-modern">
+              Daftar Event
+              <span className="text-gradient-modern"> Inaugurasi</span>
+            </h2>
+            <p className="section-subtitle-modern">
+              Pilih event yang ingin Anda ikuti dan daftar sekarang
+            </p>
+          </div>
+
+          {loadingEvents ? (
+            <div className="events-loading">
+              <div className="spinner-modern"></div>
+              <p>Memuat event...</p>
+            </div>
+          ) : events.length === 0 ? (
+            <div className="no-events">
+              <div className="no-events-icon">
+                <i className="fas fa-calendar-times"></i>
+              </div>
+              <h3>Belum Ada Event Tersedia</h3>
+              <p>Silakan cek kembali nanti untuk event terbaru</p>
+              <div style={{ marginTop: "24px" }}>
+                <Link
+                  to="/admin/auth/login"
+                  className="btn-modern btn-primary-modern"
+                >
+                  <span>Login Admin</span>
+                  <i className="fas fa-arrow-right ms-2"></i>
+                </Link>
+              </div>
+            </div>
+          ) : (
+            <div className="row g-4">
+              {events.map((event) => (
+                <div className="col-md-6 col-lg-4" key={event.id}>
+                  <Link
+                    to={`/pendaftaranPeserta/${event.kode_event}`}
+                    className="event-card-link"
+                  >
+                    <div className="event-card-modern">
+                      <div className="event-card-header">
+                        <div className="event-badge-status">
+                          <i className="fas fa-check-circle"></i>
+                          <span>Pendaftaran Dibuka</span>
+                        </div>
+                        <div className="event-type-badge">
+                          <i className="fas fa-tag"></i>
+                          <span>{event.jenis || "Event"}</span>
+                        </div>
+                      </div>
+
+                      <div className="event-card-body">
+                        <h3 className="event-title">{event.nama_event}</h3>
+                        <p className="event-theme">
+                          <i className="fas fa-lightbulb"></i>
+                          Tema: {event.tema || "Belum ditentukan"}
+                        </p>
+
+                        <div className="event-details">
+                          <div className="event-detail-item">
+                            <i className="fas fa-code"></i>
+                            <span>
+                              Kode: <strong>{event.kode_event}</strong>
+                            </span>
+                          </div>
+                          <div className="event-detail-item">
+                            <i className="fas fa-money-bill-wave"></i>
+                            <span>
+                              {event.harga_pendaftaran_peserta
+                                ? `Rp ${parseInt(
+                                    event.harga_pendaftaran_peserta
+                                  ).toLocaleString("id-ID")}`
+                                : "Gratis"}
+                            </span>
+                          </div>
+                        </div>
+                      </div>
+
+                      <div className="event-card-footer">
+                        <button className="btn-daftar-event">
+                          <span>Daftar Sekarang</span>
+                          <i className="fas fa-arrow-right"></i>
+                        </button>
+                      </div>
+
+                      <div className="event-card-glow"></div>
+                    </div>
+                  </Link>
+                </div>
+              ))}
+            </div>
+          )}
         </div>
       </section>
 
