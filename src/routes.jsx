@@ -23,114 +23,119 @@ import UangKeluarPage from "./pages/admin/keuangan/uang-keluar/UangKeluarPage.js
 import CheckEventCode from "./components/middlewares/CheckEventCode";
 import Dokumentasi from "./pages/admin/Dokumentasi/Dokumentasi.jsx";
 
-const router = createBrowserRouter([
-    {
-        path: "/admin/auth",
-        element: (
-            <NotLoginMiddleware>
-                <AdminAuthLayout />
-            </NotLoginMiddleware>
-        ),
-        children: [
-            {
-                path: "login",
-                element: <LoginPage />,
-            },
-        ],
-    },
-    {
-        path: "/admin",
-        element: (
-            <IsLoginMiddleware>
-                <AdminLayout />
-            </IsLoginMiddleware>
-        ),
-        children: [
-            {
-                index: true,
-                element: <DashboardPage />,
-            },
-            {
-                path: "users",
-                element: <ComingSoonPage />,
-            },
-            {
-                path: "events",
-                element: <EventPage />,
-            },
-            {
-                path: "keuangan",
-                children: [
-                    {
-                        path: "uang-masuk",
-                        element: <UangMasukPage />,
-                    },
-                    {
-                        path: "uang-keluar",
-                        element: <UangKeluarPage />,
-                    },
-                    {
-                        path: "laporan",
-                        element: <LaporanKeuanganPage />,
-                    },
-                ],
-            },
-            {
-                path: "listpeserta",
-                element: <DaftarPeserta />,
-            },
-            {
-                path: "listpanitia",
-                element: <DaftarPanitia />,
-            },
-            {
-                path: "presensipeserta",
-                element: <DaftarHadirPeserta />,
-            },
-            {
-                path: "presensipanitia",
-                element: <DaftarHadirPanitia />,
-            },
-            {
-                path:"dokumentasi",
-                element:<Dokumentasi/>
-            },
+import LandingPage from "./pages/LandingPage.jsx";
 
-            {
-                path:"sertifikat",
-                element:<FormSertifikat/>
-            },
-            
-        ],
-    },
-    {
-        path: "/pendaftaranPeserta/:kodeEvent",
-        loader:CheckEventCode,
-        errorElement:<NotFoundPage/>,
-        element: <FormPeserta />,
-    },
-    {
-        path: "/pendaftaranPanitia/:kodeEvent",
-        loader:CheckEventCode,
-        errorElement:<NotFoundPage/>,
-        element: <FormPanitia />,
-    },
-    {
-        path: "/presensi/:kodeEvent",
-        element: <FormPresensi />,
-    },
-    {
-        path: "/test",
-        element: <TestPage />,
-    },
-    {
-        path: "/comingsoon",
+const router = createBrowserRouter([
+  {
+    path: "/",
+    element: <LandingPage />,
+  },
+  {
+    path: "/admin/auth",
+    element: (
+      <NotLoginMiddleware>
+        <AdminAuthLayout />
+      </NotLoginMiddleware>
+    ),
+    children: [
+      {
+        path: "login",
+        element: <LoginPage />,
+      },
+    ],
+  },
+  {
+    path: "/admin",
+    element: (
+      <IsLoginMiddleware>
+        <AdminLayout />
+      </IsLoginMiddleware>
+    ),
+    children: [
+      {
+        index: true,
+        element: <DashboardPage />,
+      },
+      {
+        path: "users",
         element: <ComingSoonPage />,
-    },
-    {
-        path: "*",
-        element: <NotFoundPage />,
-    },
+      },
+      {
+        path: "events",
+        element: <EventPage />,
+      },
+      {
+        path: "keuangan",
+        children: [
+          {
+            path: "uang-masuk",
+            element: <UangMasukPage />,
+          },
+          {
+            path: "uang-keluar",
+            element: <UangKeluarPage />,
+          },
+          {
+            path: "laporan",
+            element: <LaporanKeuanganPage />,
+          },
+        ],
+      },
+      {
+        path: "listpeserta",
+        element: <DaftarPeserta />,
+      },
+      {
+        path: "listpanitia",
+        element: <DaftarPanitia />,
+      },
+      {
+        path: "presensipeserta",
+        element: <DaftarHadirPeserta />,
+      },
+      {
+        path: "presensipanitia",
+        element: <DaftarHadirPanitia />,
+      },
+      {
+        path: "dokumentasi",
+        element: <Dokumentasi />,
+      },
+
+      {
+        path: "sertifikat",
+        element: <FormSertifikat />,
+      },
+    ],
+  },
+  {
+    path: "/pendaftaranPeserta/:kodeEvent",
+    loader: CheckEventCode,
+    errorElement: <NotFoundPage />,
+    element: <FormPeserta />,
+  },
+  {
+    path: "/pendaftaranPanitia/:kodeEvent",
+    loader: CheckEventCode,
+    errorElement: <NotFoundPage />,
+    element: <FormPanitia />,
+  },
+  {
+    path: "/presensi/:kodeEvent",
+    element: <FormPresensi />,
+  },
+  {
+    path: "/test",
+    element: <TestPage />,
+  },
+  {
+    path: "/comingsoon",
+    element: <ComingSoonPage />,
+  },
+  {
+    path: "*",
+    element: <NotFoundPage />,
+  },
 ]);
 
 export default router;

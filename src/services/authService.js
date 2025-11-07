@@ -15,8 +15,8 @@ const BASE_URL_API = import.meta.env.VITE_BASE_URL_API;
  * @returns {Promise<Object>} Response
  */
 export const login = async (data) => {
-    const response = await axios.post(`${BASE_URL_API}/login`, data);
-    return response.data;
+  const response = await axios.post(`${BASE_URL_API}/login`, data);
+  return response.data;
 };
 
 /**
@@ -25,17 +25,17 @@ export const login = async (data) => {
  * @returns {Promise<Object>} success
  */
 export const logout = async () => {
-    const response = await axios.post(
-        `${BASE_URL_API}/logout`,
-        {},
-        {
-            headers: {
-                Authorization: `Bearer ${token}`,
-            },
-        }
-    );
+  const response = await axios.post(
+    `${BASE_URL_API}/logout`,
+    {},
+    {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    }
+  );
 
-    return response.data?.success ?? false;
+  return response.data?.success ?? false;
 };
 
 /**
@@ -44,11 +44,11 @@ export const logout = async () => {
  * @returns {Promise<Object>} user
  */
 export const user = async (token) => {
-    const response = await axios.get(`${BASE_URL_API}/me`, {
-        headers: {
-            Authorization: `Bearer ${token}`,
-        },
-    });
+  const response = await axios.get(`${BASE_URL_API}/me`, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
 
-    return response.data;
+  return response.data;
 };
