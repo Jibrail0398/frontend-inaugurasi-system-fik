@@ -2,38 +2,56 @@ import { useState, useEffect, useCallback } from "react";
 import { useLocalStorage } from "react-use";
 import * as authService from "../services/authService";
 
+/**
+ * ============================================
+ * 🔐 CUSTOM HOOK: useAuth
+ * ============================================
+ * Hook untuk mengelola authentication & authorization
+ * 
+ * Features:
+ * - Login/Logout user
+ * - Auto-fetch user data dari token
+ * - Persist token di localStorage
+ * - Validasi token expired
+ * ============================================
+ */
+
 const useAuth = () => {
+  // ========== State Management ==========
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [token, setToken] = useLocalStorage("token");
+  const [token, setToken] = useLocalStorage("token"); // 🔑 Token disimpan di localStorage
 
+  // ========== Login Function ==========
   /**
-   * Fungsi login
+   * 🔓 Login user dan simpan token
    * @param {object} credentials - { nim, password }
-   * @param {boolean} remember - simpan token di localStorage
+   * @returns {Promise<object>} User data
    */
   const login = useCallback(
-    async (credentials, remember = false) => {
+    async (credentials) => {
       const response = await authService.login(credentials);
 
       if (!response.success) {
         throw new Error(response.message);
       }
 
-      // Simpan token apa adanya dari backend
+      // Simpan token & user data
       setToken(response.token);
       setUser(response.user);
 
-      // Return user data untuk keperluan redirect
       return response.user;
     },
     [setToken]
   );
 
+  // ========== Logout Function ==========
   /**
-   * Fungsi logout
+   * 🔒 Logout user dan redirect ke landing page
+   * ⚠️ PENTING: Redirect ke "/" (landing page) bukan login page
    */
   const logout = useCallback(async () => {
+    // Hapus token di backend jika ada
     if (token) {
       try {
         await authService.logout(token);
@@ -42,13 +60,18 @@ const useAuth = () => {
       }
     }
 
+    // Clear user & token
     setUser(null);
     setToken(null);
-    window.location.href = "/"; // redirect ke landing page setelah logout
+    
+    // ⚠️ REDIRECT ke landing page setelah logout
+    window.location.href = "/";
   }, [token, setToken]);
 
+  // ========== Auto Fetch User ==========
   /**
-   * Auto-fetch user saat token berubah
+   * 🔄 Auto-fetch user data saat token berubah
+   * Validasi token dan ambil data user dari backend
    */
   useEffect(() => {
     const fetchUser = async () => {
@@ -61,6 +84,7 @@ const useAuth = () => {
         const response = await authService.user(token);
         setUser(response.user);
       } catch (error) {
+        // Token invalid/expired, clear data
         console.warn("Token invalid atau expired:", error.message);
         setUser(null);
         setToken(null);
@@ -72,13 +96,14 @@ const useAuth = () => {
     fetchUser();
   }, [token, setToken]);
 
+  // ========== Return Values ==========
   return {
-    user,
-    loading,
-    login,
-    logout,
-    isAuthenticated: !!user,
-    token,
+    user,              // 👤 Data user
+    loading,           // ⏳ Loading state
+    login,             // 🔓 Function login
+    logout,            // 🔒 Function logout
+    isAuthenticated: !!user, // ✅ Status autentikasi
+    token,             // 🔑 Token JWT
   };
 };
 
