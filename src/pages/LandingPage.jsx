@@ -1,12 +1,16 @@
 import { Link } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { getPublicEvents } from "../services/eventService";
+import useAuth from "../hooks/useAuth";
 import "../style/LandingPage.css";
 
 const LandingPage = () => {
+  const { user, isAuthenticated, logout } = useAuth();
   const [isScrolled, setIsScrolled] = useState(false);
   const [events, setEvents] = useState([]);
   const [loadingEvents, setLoadingEvents] = useState(true);
+  const [showUserMenu, setShowUserMenu] = useState(false);
+  const [showMobileMenu, setShowMobileMenu] = useState(false);
 
   useEffect(() => {
     // Scroll to top on mount
@@ -17,9 +21,21 @@ const LandingPage = () => {
       setIsScrolled(window.scrollY > 50);
     };
 
+    // Close user menu when clicking outside
+    const handleClickOutside = (e) => {
+      if (showUserMenu && !e.target.closest(".user-menu-wrapper")) {
+        setShowUserMenu(false);
+      }
+    };
+
     window.addEventListener("scroll", handleScroll);
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, []);
+    document.addEventListener("mousedown", handleClickOutside);
+
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [showUserMenu]);
 
   // Fetch events from API
   useEffect(() => {
@@ -35,21 +51,18 @@ const LandingPage = () => {
         console.log("All events count:", allEvents.length);
         console.log("All events:", allEvents);
 
-        // Filter only events with open registration status for peserta
-        // Check for "buka" status (Indonesian) - case insensitive
-        const openEvents = allEvents.filter((event) => {
-          const status = event.status_pendaftaran_peserta?.toLowerCase();
+        // Show all events (both open and closed)
+        // Don't filter, just set all events
+        allEvents.forEach((event) => {
           console.log(
             `Event "${event.nama_event}" - Status: "${event.status_pendaftaran_peserta}"`
           );
-          return status === "buka" || status === "open";
         });
 
-        console.log("=== Filtered Events ===");
-        console.log("Open events count:", openEvents.length);
-        console.log("Open events:", openEvents);
+        console.log("=== All Events to Display ===");
+        console.log("Total events:", allEvents.length);
 
-        setEvents(openEvents);
+        setEvents(allEvents);
       } catch (error) {
         console.error("=== Error Fetching Events ===");
         console.error("Error:", error);
@@ -64,9 +77,28 @@ const LandingPage = () => {
     fetchEvents();
   }, []);
 
+  // Close mobile menu when clicking outside
+  useEffect(() => {
+    const handleClickOutsideMobileMenu = (event) => {
+      const navbar = document.querySelector(".modern-navbar");
+      if (showMobileMenu && navbar && !navbar.contains(event.target)) {
+        setShowMobileMenu(false);
+      }
+    };
+
+    if (showMobileMenu) {
+      document.addEventListener("mousedown", handleClickOutsideMobileMenu);
+    }
+
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutsideMobileMenu);
+    };
+  }, [showMobileMenu]);
+
   // Function to scroll to top
   const scrollToTop = (e) => {
     e.preventDefault();
+    setShowMobileMenu(false); // Close mobile menu
     window.scrollTo({
       top: 0,
       behavior: "smooth",
@@ -83,23 +115,123 @@ const LandingPage = () => {
               <i className="fas fa-graduation-cap me-2"></i>
               <span className="brand-text">Inaugurasi FIK</span>
             </div>
-            <div className="navbar-menu">
+
+            {/* Hamburger Menu - Mobile */}
+            <button
+              className="hamburger-menu"
+              onClick={() => setShowMobileMenu(!showMobileMenu)}
+              aria-label="Toggle menu"
+            >
+              <i
+                className={`fas ${showMobileMenu ? "fa-times" : "fa-bars"}`}
+              ></i>
+            </button>
+
+            {/* Desktop Menu */}
+            <div
+              className={`navbar-menu ${showMobileMenu ? "mobile-active" : ""}`}
+            >
               <a href="#home" className="nav-link" onClick={scrollToTop}>
                 Home
               </a>
-              <a href="#features" className="nav-link">
+              <a
+                href="#features"
+                className="nav-link"
+                onClick={() => setShowMobileMenu(false)}
+              >
                 Fitur
               </a>
-              <a href="#events" className="nav-link">
+              <a
+                href="#events"
+                className="nav-link"
+                onClick={() => setShowMobileMenu(false)}
+              >
                 Events
               </a>
-              <a href="#how-it-works" className="nav-link">
+              <a
+                href="#how-it-works"
+                className="nav-link"
+                onClick={() => setShowMobileMenu(false)}
+              >
                 Cara Kerja
               </a>
-              <Link to="/admin/auth/login" className="btn-nav-login">
-                <i className="fas fa-sign-in-alt me-2"></i>
-                Login
-              </Link>
+              {isAuthenticated &&
+                user?.role &&
+                (user.role === "admin" ||
+                  user.role === "panitia" ||
+                  user.role === "mentor") && (
+                  <Link
+                    to="/presensi"
+                    className="nav-link"
+                    onClick={() => setShowMobileMenu(false)}
+                  >
+                    <i className="fas fa-clipboard-check me-1"></i>
+                    Form Presensi
+                  </Link>
+                )}
+              {isAuthenticated ? (
+                user?.role === "mentor" ? (
+                  <div className="user-menu-wrapper">
+                    <button
+                      className="btn-nav-user"
+                      onClick={() => setShowUserMenu(!showUserMenu)}
+                    >
+                      <i className="fas fa-user-circle me-2"></i>
+                      {user.name || "Mentor"}
+                      <i
+                        className={`fas fa-chevron-down ms-2 ${
+                          showUserMenu ? "rotate" : ""
+                        }`}
+                      ></i>
+                    </button>
+                    {showUserMenu && (
+                      <div className="user-dropdown">
+                        <div className="dropdown-header">
+                          <strong>{user.name || "Mentor"}</strong>
+                          <span className="user-role">{user.role}</span>
+                        </div>
+                        <div className="dropdown-divider"></div>
+                        <Link
+                          to="/presensi"
+                          className="dropdown-item"
+                          onClick={() => setShowMobileMenu(false)}
+                        >
+                          <i className="fas fa-clipboard-check me-2"></i>
+                          Form Presensi
+                        </Link>
+                        <button
+                          onClick={() => {
+                            logout();
+                            setShowMobileMenu(false);
+                          }}
+                          className="dropdown-item logout-btn"
+                        >
+                          <i className="fas fa-sign-out-alt me-2"></i>
+                          Logout
+                        </button>
+                      </div>
+                    )}
+                  </div>
+                ) : (
+                  <Link
+                    to="/admin"
+                    className="btn-nav-login"
+                    onClick={() => setShowMobileMenu(false)}
+                  >
+                    <i className="fas fa-tachometer-alt me-2"></i>
+                    Dashboard
+                  </Link>
+                )
+              ) : (
+                <Link
+                  to="/admin/auth/login"
+                  className="btn-nav-login"
+                  onClick={() => setShowMobileMenu(false)}
+                >
+                  <i className="fas fa-sign-in-alt me-2"></i>
+                  Login
+                </Link>
+              )}
             </div>
           </div>
         </div>
@@ -113,33 +245,71 @@ const LandingPage = () => {
           <div className="row align-items-center">
             <div className="col-lg-6">
               <div className="hero-content-left">
+                {isAuthenticated && user?.role === "mentor" && (
+                  <div className="welcome-mentor-badge animate-fade-in">
+                    <i className="fas fa-user-check me-2"></i>
+                    Selamat datang, {user.name || "Mentor"}!
+                  </div>
+                )}
                 <div className="hero-badge animate-fade-in">
                   <i className="fas fa-sparkles me-2"></i>
                   Platform Modern untuk Event Management
                 </div>
                 <h1 className="hero-title-modern animate-fade-in-delay">
-                  Kelola Event
-                  <span className="text-gradient-modern"> Inaugurasi</span>
+                  {isAuthenticated && user?.role === "mentor"
+                    ? "Kelola Presensi dengan Mudah"
+                    : "Kelola Event"}
+                  <span className="text-gradient-modern">
+                    {isAuthenticated && user?.role === "mentor"
+                      ? " Inaugurasi"
+                      : " Inaugurasi"}
+                  </span>
                   <br />
-                  dengan Mudah
+                  {isAuthenticated && user?.role === "mentor"
+                    ? ""
+                    : "dengan Mudah"}
                 </h1>
                 <p className="hero-subtitle-modern animate-fade-in-delay-2">
-                  Sistem manajemen event all-in-one yang powerful, modern, dan
-                  user-friendly. Dari pendaftaran hingga sertifikat digital,
-                  semua dalam satu platform.
+                  {isAuthenticated && user?.role === "mentor"
+                    ? "Scan QR Code peserta dan panitia dengan cepat dan mudah. Mulai presensi sekarang juga!"
+                    : "Sistem manajemen event all-in-one yang powerful, modern, dan user-friendly. Dari pendaftaran hingga sertifikat digital, semua dalam satu platform."}
                 </p>
                 <div className="hero-buttons-modern animate-fade-in-delay-3">
-                  <Link
-                    to="/admin/auth/login"
-                    className="btn-modern btn-primary-modern"
-                  >
-                    <span>Mulai Sekarang</span>
-                    <i className="fas fa-arrow-right ms-2"></i>
-                  </Link>
-                  <a href="#features" className="btn-modern btn-outline-modern">
-                    <i className="fas fa-play-circle me-2"></i>
-                    <span>Lihat Fitur</span>
-                  </a>
+                  {isAuthenticated && user?.role === "mentor" ? (
+                    <>
+                      <Link
+                        to="/presensi"
+                        className="btn-modern btn-primary-modern"
+                      >
+                        <i className="fas fa-clipboard-check me-2"></i>
+                        <span>Mulai Presensi</span>
+                      </Link>
+                      <a
+                        href="#events"
+                        className="btn-modern btn-outline-modern"
+                      >
+                        <i className="fas fa-calendar me-2"></i>
+                        <span>Lihat Events</span>
+                      </a>
+                    </>
+                  ) : (
+                    <>
+                      <Link
+                        to="/admin/auth/login"
+                        className="btn-modern btn-primary-modern"
+                      >
+                        <span>Mulai Sekarang</span>
+                        <i className="fas fa-arrow-right ms-2"></i>
+                      </Link>
+                      <a
+                        href="#features"
+                        className="btn-modern btn-outline-modern"
+                      >
+                        <i className="fas fa-play-circle me-2"></i>
+                        <span>Lihat Fitur</span>
+                      </a>
+                    </>
+                  )}
                 </div>
                 <div className="hero-stats animate-fade-in-delay-4">
                   <div className="stat-item-small">
@@ -462,63 +632,125 @@ const LandingPage = () => {
             </div>
           ) : (
             <div className="row g-4">
-              {events.map((event) => (
-                <div className="col-md-6 col-lg-4" key={event.id}>
-                  <Link
-                    to={`/pendaftaranPeserta/${event.kode_event}`}
-                    className="event-card-link"
-                  >
-                    <div className="event-card-modern">
-                      <div className="event-card-header">
-                        <div className="event-badge-status">
-                          <i className="fas fa-check-circle"></i>
-                          <span>Pendaftaran Dibuka</span>
-                        </div>
-                        <div className="event-type-badge">
-                          <i className="fas fa-tag"></i>
-                          <span>{event.jenis || "Event"}</span>
-                        </div>
-                      </div>
+              {events.map((event) => {
+                const isOpen =
+                  event.status_pendaftaran_peserta?.toLowerCase() === "buka" ||
+                  event.status_pendaftaran_peserta?.toLowerCase() === "open";
 
-                      <div className="event-card-body">
-                        <h3 className="event-title">{event.nama_event}</h3>
-                        <p className="event-theme">
-                          <i className="fas fa-lightbulb"></i>
-                          Tema: {event.tema || "Belum ditentukan"}
-                        </p>
-
-                        <div className="event-details">
-                          <div className="event-detail-item">
-                            <i className="fas fa-code"></i>
-                            <span>
-                              Kode: <strong>{event.kode_event}</strong>
-                            </span>
+                return (
+                  <div className="col-md-6 col-lg-4" key={event.id}>
+                    {isOpen ? (
+                      <Link
+                        to={`/pendaftaranPeserta/${event.kode_event}`}
+                        className="event-card-link"
+                      >
+                        <div className="event-card-modern">
+                          <div className="event-card-header">
+                            <div className="event-badge-status open">
+                              <i className="fas fa-check-circle"></i>
+                              <span>Pendaftaran Dibuka</span>
+                            </div>
+                            <div className="event-type-badge">
+                              <i className="fas fa-tag"></i>
+                              <span>{event.jenis || "Event"}</span>
+                            </div>
                           </div>
-                          <div className="event-detail-item">
-                            <i className="fas fa-money-bill-wave"></i>
-                            <span>
-                              {event.harga_pendaftaran_peserta
-                                ? `Rp ${parseInt(
-                                    event.harga_pendaftaran_peserta
-                                  ).toLocaleString("id-ID")}`
-                                : "Gratis"}
-                            </span>
+
+                          <div className="event-card-body">
+                            <h3 className="event-title">{event.nama_event}</h3>
+                            <p className="event-theme">
+                              <i className="fas fa-lightbulb"></i>
+                              Tema: {event.tema || "Belum ditentukan"}
+                            </p>
+
+                            <div className="event-details">
+                              <div className="event-detail-item">
+                                <i className="fas fa-code"></i>
+                                <span>
+                                  Kode: <strong>{event.kode_event}</strong>
+                                </span>
+                              </div>
+                              <div className="event-detail-item">
+                                <i className="fas fa-money-bill-wave"></i>
+                                <span>
+                                  {event.harga_pendaftaran_peserta
+                                    ? `Rp ${parseInt(
+                                        event.harga_pendaftaran_peserta
+                                      ).toLocaleString("id-ID")}`
+                                    : "Gratis"}
+                                </span>
+                              </div>
+                            </div>
                           </div>
+
+                          <div className="event-card-footer">
+                            <button className="btn-daftar-event">
+                              <span>Daftar Sekarang</span>
+                              <i className="fas fa-arrow-right"></i>
+                            </button>
+                          </div>
+
+                          <div className="event-card-glow"></div>
+                        </div>
+                      </Link>
+                    ) : (
+                      <div className="event-card-link disabled">
+                        <div className="event-card-modern closed">
+                          <div className="event-card-header">
+                            <div className="event-badge-status closed">
+                              <i className="fas fa-times-circle"></i>
+                              <span>Pendaftaran Ditutup</span>
+                            </div>
+                            <div className="event-type-badge">
+                              <i className="fas fa-tag"></i>
+                              <span>{event.jenis || "Event"}</span>
+                            </div>
+                          </div>
+
+                          <div className="event-card-body">
+                            <h3 className="event-title">{event.nama_event}</h3>
+                            <p className="event-theme">
+                              <i className="fas fa-lightbulb"></i>
+                              Tema: {event.tema || "Belum ditentukan"}
+                            </p>
+
+                            <div className="event-details">
+                              <div className="event-detail-item">
+                                <i className="fas fa-code"></i>
+                                <span>
+                                  Kode: <strong>{event.kode_event}</strong>
+                                </span>
+                              </div>
+                              <div className="event-detail-item">
+                                <i className="fas fa-money-bill-wave"></i>
+                                <span>
+                                  {event.harga_pendaftaran_peserta
+                                    ? `Rp ${parseInt(
+                                        event.harga_pendaftaran_peserta
+                                      ).toLocaleString("id-ID")}`
+                                    : "Gratis"}
+                                </span>
+                              </div>
+                            </div>
+                          </div>
+
+                          <div className="event-card-footer">
+                            <button
+                              className="btn-daftar-event disabled"
+                              disabled
+                            >
+                              <span>Pendaftaran Ditutup</span>
+                              <i className="fas fa-lock"></i>
+                            </button>
+                          </div>
+
+                          <div className="event-card-overlay"></div>
                         </div>
                       </div>
-
-                      <div className="event-card-footer">
-                        <button className="btn-daftar-event">
-                          <span>Daftar Sekarang</span>
-                          <i className="fas fa-arrow-right"></i>
-                        </button>
-                      </div>
-
-                      <div className="event-card-glow"></div>
-                    </div>
-                  </Link>
-                </div>
-              ))}
+                    )}
+                  </div>
+                );
+              })}
             </div>
           )}
         </div>

@@ -12,6 +12,7 @@ import DaftarHadirPanitia from "./pages/admin/DaftarHadirPanitia.jsx";
 import FormPeserta from "./pages/FormPeserta";
 import FormPanitia from "./pages/FormPanitia";
 import FormPresensi from "./pages/FormPresensi";
+import PresensiRolePage from "./pages/PresensiRolePage.jsx";
 import FormSertifikat from "./pages/admin/Sertifikat/SertifikatPage.jsx";
 import TestPage from "./pages/TestPage.jsx";
 import ComingSoonPage from "./pages/ComingSoonPage.jsx";
@@ -119,6 +120,14 @@ const router = createBrowserRouter([
     loader: CheckEventCode,
     errorElement: <NotFoundPage />,
     element: <FormPanitia />,
+  },
+  {
+    path: "/presensi-role",
+    element: <PresensiRolePage />,
+  },
+  {
+    path: "/presensi",
+    element: <FormPresensi />,
   },
   {
     path: "/presensi/:kodeEvent",

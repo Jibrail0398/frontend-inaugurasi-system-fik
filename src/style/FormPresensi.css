@@ -48,7 +48,7 @@
 
 .attendance-toggle button:hover {
   transform: translateY(-2px);
-  box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
 }
 
 .attendance-toggle button.active {
@@ -68,11 +68,11 @@
 
 .stat-card {
   background: white;
-  color:  #3498db;
+  color: #3498db;
   padding: 25px;
   border-radius: 15px;
   text-align: center;
-  box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
 }
 
 .stat-icon {
@@ -98,7 +98,7 @@
   padding: 30px;
   border-radius: 15px;
   margin-bottom: 30px;
-  box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
   text-align: center;
 }
 
@@ -172,24 +172,26 @@
     flex-direction: column;
     align-items: center;
   }
-  
+
   .attendance-toggle button {
     max-width: 100%;
   }
-  
+
   .attendance-stats {
     grid-template-columns: 1fr;
   }
-  
+
   .records-grid {
     grid-template-columns: 1fr;
   }
-  
+
   .quick-actions {
     flex-direction: column;
   }
-  
-  .scanner-section, .manual-section, .attendance-records {
+
+  .scanner-section,
+  .manual-section,
+  .attendance-records {
     padding: 20px;
   }
 }
@@ -198,11 +200,11 @@
   .attendance-header h1 {
     font-size: 2rem;
   }
-  
+
   .stat-card {
     padding: 20px;
   }
-  
+
   .stat-number {
     font-size: 2rem;
   }
@@ -275,7 +277,7 @@
   min-height: 100vh;
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   padding: 20px;
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
 }
 
 .attendance-container {
@@ -326,7 +328,7 @@
 }
 
 .attendance-toggle button.active {
-  background: #4CAF50;
+  background: #4caf50;
   color: white;
   transform: translateY(-2px);
   box-shadow: 0 5px 15px rgba(76, 175, 80, 0.3);
@@ -392,8 +394,9 @@
   margin-bottom: 20px;
 }
 
-.scan-button, .stop-scan-button {
-  background: linear-gradient(135deg, #4CAF50 0%, #45a049 100%);
+.scan-button,
+.stop-scan-button {
+  background: linear-gradient(135deg, #4caf50 0%, #45a049 100%);
   color: white;
   border: none;
   padding: 15px 30px;
@@ -405,12 +408,14 @@
   margin-top: 20px;
 }
 
-.scan-button:hover, .stop-scan-button:hover {
+.scan-button:hover,
+.stop-scan-button:hover {
   transform: translateY(-2px);
   box-shadow: 0 10px 20px rgba(76, 175, 80, 0.3);
 }
 
-.scan-button:disabled, .stop-scan-button:disabled {
+.scan-button:disabled,
+.stop-scan-button:disabled {
   opacity: 0.6;
   cursor: not-allowed;
   transform: none;
@@ -488,23 +493,23 @@
   .pendaftaran-page {
     padding: 10px;
   }
-  
+
   .attendance-container {
     padding: 20px;
   }
-  
+
   .attendance-header h1 {
     font-size: 2rem;
   }
-  
+
   .attendance-toggle {
     flex-direction: column;
   }
-  
+
   .attendance-stats {
     grid-template-columns: 1fr;
   }
-  
+
   .qr-scanner {
     max-width: 100%;
   }

@@ -24,8 +24,8 @@ const useAuth = () => {
       setToken(response.token);
       setUser(response.user);
 
-      // Jika ingin implementasi "remember me", bisa pakai cookie/session
-      // Saat ini token tetap di localStorage
+      // Return user data untuk keperluan redirect
+      return response.user;
     },
     [setToken]
   );

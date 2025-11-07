@@ -1,95 +1,118 @@
-import { useState, useEffect } from 'react';
-import { useParams } from 'react-router-dom';
-import useFormPanitiaStore from '../stores/useFormPanitiaStore';
-import { registerPanitia } from '../services/panitiaService';
-import '../style/FormPeserta.css'; 
+import { useState } from "react";
+import { useParams, useNavigate } from "react-router";
+import useFormPanitiaStore from "../stores/useFormPanitiaStore";
+import { registerPanitia } from "../services/panitiaService";
+import "../style/FormPeserta.css";
+import Swal from "sweetalert2";
 
 const FormPanitia = () => {
   const { kodeEvent } = useParams();
-  const tipeDaruratOptions = ['Ayah', 'Ibu', 'Saudara', 'Lainnya'];
-  const { formData, setFormData, validateForm,resetForm } = useFormPanitiaStore();
+  const navigate = useNavigate();
+  const tipeDaruratOptions = ["Ayah", "Ibu", "Saudara", "Lainnya"];
+  const { formData, setFormData, validateForm, resetForm } =
+    useFormPanitiaStore();
   const [isLoading, setIsLoading] = useState(false);
 
   const handleInputChange = (e) => {
     const { name, value, type, checked } = e.target;
-    setFormData(name, type === 'checkbox' ? checked : value);
+    setFormData(name, type === "checkbox" ? checked : value);
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
+
     if (!validateForm()) {
-      alert('Harap isi semua field yang wajib diisi!');
+      Swal.fire({
+        icon: "warning",
+        title: "Data Tidak Lengkap",
+        text: "Harap isi semua field yang wajib diisi!",
+        confirmButtonColor: "#667eea",
+      });
       return;
     }
-    
+
     setIsLoading(true);
-    
+
     try {
       const submitData = {
-        'nama':formData.name,
-        'NIM' : formData.nim,
-        'email':formData.email,
-        'nomor_whatapp':formData.whatsapp,
-        'angkatan':formData.angkatan,
-        'kelas':formData.kelas,
-        'tanggal_lahir':formData.tanggalLahir,
-        'ukuran_kaos':formData.ukuranKaos,
-        'divisi':formData.divisi,
-        'nomor_darurat':formData.nomor_darurat,
-        'tipe_nomor_darurat':formData.tipe_nomor_darurat,
-        'riwayat_penyakit':formData.riwayatPenyakit,
-        'komitmen1':formData.komitmenAcara? "ya":"tidak",
-        'komitmen2':formData.komitmenDivisi? "ya":"tidak",
-      }
-      const response = await registerPanitia(submitData,kodeEvent);
-      alert("Pendaftaran Berhasil");
-      resetForm();
-    
-      
-      
+        nama: formData.name,
+        NIM: formData.nim,
+        email: formData.email,
+        nomor_whatapp: formData.whatsapp,
+        angkatan: formData.angkatan,
+        kelas: formData.kelas,
+        tanggal_lahir: formData.tanggalLahir,
+        ukuran_kaos: formData.ukuranKaos,
+        divisi: formData.divisi,
+        nomor_darurat: formData.nomor_darurat,
+        tipe_nomor_darurat: formData.tipe_nomor_darurat,
+        riwayat_penyakit: formData.riwayatPenyakit,
+        komitmen1: formData.komitmenAcara ? "ya" : "tidak",
+        komitmen2: formData.komitmenDivisi ? "ya" : "tidak",
+      };
+      await registerPanitia(submitData, kodeEvent);
+
+      Swal.fire({
+        icon: "success",
+        title: "Pendaftaran Berhasil!",
+        text: "Terima kasih telah mendaftar sebagai panitia. Data Anda telah kami terima.",
+        confirmButtonColor: "#667eea",
+        confirmButtonText: "OK",
+      }).then(() => {
+        resetForm();
+        navigate("/");
+      });
     } catch (err) {
-      alert(err.response?.data?.error || 'Terjadi kesalahan saat mendaftar');
-      
-      
+      const errorMessage =
+        err.response?.data?.error || "Terjadi kesalahan saat mendaftar";
+
+      Swal.fire({
+        icon: "error",
+        title: "Pendaftaran Gagal",
+        text: errorMessage,
+        confirmButtonColor: "#667eea",
+      });
     } finally {
       setIsLoading(false);
     }
   };
 
-  const ukuranKaosOptions = ['S', 'M', 'L', 'XL', 'XXL'];
-  const divisiOptions = ['PDD', 'Humas', 'Konsumsi', 'Logistik/Peralatan'];
-  
+  const ukuranKaosOptions = ["S", "M", "L", "XL", "XXL"];
+  const divisiOptions = ["PDD", "Humas", "Konsumsi", "Logistik/Peralatan"];
 
   return (
-    <div className='pendaftaran-page'>
+    <div className="pendaftaran-page">
       <div className="form-container">
         <header className="form-header">
           <h3>Form Pendaftaran Panitia Inaugurasi</h3>
           <p>Isi data diri dengan lengkap untuk mendaftar sebagai panitia</p>
         </header>
-        
+
         <form className="add-form" onSubmit={handleSubmit}>
           <div className="form-row">
             <div className="form-group">
-              <label>Nama Lengkap <span className="required">*</span></label>
-              <input 
-                type="text" 
+              <label>
+                Nama Lengkap <span className="required">*</span>
+              </label>
+              <input
+                type="text"
                 name="name"
-                placeholder="Nama lengkap..." 
+                placeholder="Nama lengkap..."
                 value={formData.name}
                 onChange={handleInputChange}
                 required
                 disabled={isLoading}
               />
             </div>
-            
+
             <div className="form-group">
-              <label>NIM <span className="required">*</span></label>
-              <input 
-                type="text" 
+              <label>
+                NIM <span className="required">*</span>
+              </label>
+              <input
+                type="text"
                 name="nim"
-                placeholder="Nomor Induk Mahasiswa..." 
+                placeholder="Nomor Induk Mahasiswa..."
                 value={formData.nim}
                 onChange={handleInputChange}
                 required
@@ -97,14 +120,16 @@ const FormPanitia = () => {
               />
             </div>
           </div>
-          
+
           <div className="form-row">
             <div className="form-group">
-              <label>Angkatan <span className="required">*</span></label>
-              <input 
-                type="number" 
+              <label>
+                Angkatan <span className="required">*</span>
+              </label>
+              <input
+                type="number"
                 name="angkatan"
-                placeholder="Tahun angkatan..." 
+                placeholder="Tahun angkatan..."
                 min="2000"
                 max="2099"
                 value={formData.angkatan}
@@ -113,13 +138,15 @@ const FormPanitia = () => {
                 disabled={isLoading}
               />
             </div>
-            
+
             <div className="form-group">
-              <label>Kelas <span className="required">*</span></label>
-              <input 
-                type="text" 
+              <label>
+                Kelas <span className="required">*</span>
+              </label>
+              <input
+                type="text"
                 name="kelas"
-                placeholder="IF23B" 
+                placeholder="IF23B"
                 value={formData.kelas}
                 onChange={handleInputChange}
                 maxLength="10"
@@ -128,12 +155,14 @@ const FormPanitia = () => {
               />
             </div>
           </div>
-          
+
           <div className="form-row">
             <div className="form-group">
-              <label>Tanggal Lahir <span className="required">*</span></label>
-              <input 
-                type="date" 
+              <label>
+                Tanggal Lahir <span className="required">*</span>
+              </label>
+              <input
+                type="date"
                 name="tanggalLahir"
                 value={formData.tanggalLahir}
                 onChange={handleInputChange}
@@ -142,27 +171,31 @@ const FormPanitia = () => {
               />
             </div>
           </div>
-          
+
           <div className="form-row">
             <div className="form-group">
-              <label>Nomor WhatsApp <span className="required">*</span></label>
-              <input 
-                type="tel" 
+              <label>
+                Nomor WhatsApp <span className="required">*</span>
+              </label>
+              <input
+                type="tel"
                 name="whatsapp"
-                placeholder="08123456789" 
+                placeholder="08123456789"
                 value={formData.whatsapp}
                 onChange={handleInputChange}
                 required
                 disabled={isLoading}
               />
             </div>
-            
+
             <div className="form-group">
-              <label>Email <span className="required">*</span></label>
-              <input 
-                type="email" 
+              <label>
+                Email <span className="required">*</span>
+              </label>
+              <input
+                type="email"
                 name="email"
-                placeholder="Email aktif" 
+                placeholder="Email aktif"
                 value={formData.email}
                 onChange={handleInputChange}
                 required
@@ -172,12 +205,14 @@ const FormPanitia = () => {
           </div>
 
           <div className="form-group">
-            <label>Ukuran Kaos <span className="required">*</span></label>
+            <label>
+              Ukuran Kaos <span className="required">*</span>
+            </label>
             <div className="radio-group">
-              {ukuranKaosOptions.map(ukuran => (
+              {ukuranKaosOptions.map((ukuran) => (
                 <label key={ukuran} className="radio-label">
-                  <input 
-                    type="radio" 
+                  <input
+                    type="radio"
                     name="ukuranKaos"
                     value={ukuran}
                     checked={formData.ukuranKaos === ukuran}
@@ -190,18 +225,20 @@ const FormPanitia = () => {
               ))}
             </div>
           </div>
-          
+
           {/* Divisi dan Komitmen */}
           <div className="form-section">
             <h4>Divisi dan Komitmen</h4>
-            
+
             <div className="form-group">
-              <label>Divisi <span className="required">*</span></label>
+              <label>
+                Divisi <span className="required">*</span>
+              </label>
               <div className="radio-group">
-                {divisiOptions.map(divisi => (
+                {divisiOptions.map((divisi) => (
                   <label key={divisi} className="radio-label">
-                    <input 
-                      type="radio" 
+                    <input
+                      type="radio"
                       name="divisi"
                       value={divisi}
                       checked={formData.divisi === divisi}
@@ -214,25 +251,30 @@ const FormPanitia = () => {
                 ))}
               </div>
             </div>
-            
+
             <div className="form-group">
-              <label>Komitmen <span className="required">*</span></label>
+              <label>
+                Komitmen <span className="required">*</span>
+              </label>
               <div className="checkbox-group">
                 <label className="checkbox-label">
-                  <input 
-                    type="checkbox" 
+                  <input
+                    type="checkbox"
                     name="komitmenAcara"
                     checked={formData.komitmenAcara}
                     onChange={handleInputChange}
                     required
                     disabled={isLoading}
                   />
-                  <span>Bersedia Mengikuti dan Bertanggung Jawab Selama Acara Berlangsung</span>
+                  <span>
+                    Bersedia Mengikuti dan Bertanggung Jawab Selama Acara
+                    Berlangsung
+                  </span>
                 </label>
-                
+
                 <label className="checkbox-label">
-                  <input 
-                    type="checkbox" 
+                  <input
+                    type="checkbox"
                     name="komitmenDivisi"
                     checked={formData.komitmenDivisi}
                     onChange={handleInputChange}
@@ -244,23 +286,27 @@ const FormPanitia = () => {
               </div>
             </div>
           </div>
-          
+
           <div className="form-row">
             <div className="form-group">
-              <label>Nomor Darurat <span className="required">*</span></label> 
-              <input 
-                type="tel" 
+              <label>
+                Nomor Darurat <span className="required">*</span>
+              </label>
+              <input
+                type="tel"
                 name="nomor_darurat"
-                placeholder="Nomor telepon darurat..." 
+                placeholder="Nomor telepon darurat..."
                 value={formData.nomor_darurat}
                 onChange={handleInputChange}
                 disabled={isLoading}
               />
             </div>
-            
+
             <div className="form-group">
-              <label>Tipe Nomor Darurat <span className="required">*</span></label>
-              <select 
+              <label>
+                Tipe Nomor Darurat <span className="required">*</span>
+              </label>
+              <select
                 name="tipe_nomor_darurat"
                 value={formData.tipe_nomor_darurat}
                 onChange={handleInputChange}
@@ -269,8 +315,10 @@ const FormPanitia = () => {
                 <option value="" disabled>
                   nomor darurat siapa?
                 </option>
-                {tipeDaruratOptions.map(tipe => (
-                  <option key={tipe} value={tipe}>{tipe}</option>
+                {tipeDaruratOptions.map((tipe) => (
+                  <option key={tipe} value={tipe}>
+                    {tipe}
+                  </option>
                 ))}
               </select>
             </div>
@@ -278,12 +326,14 @@ const FormPanitia = () => {
           {/* Informasi Kesehatan */}
           <div className="form-section">
             <h4>Informasi Kesehatan</h4>
-            
+
             <div className="form-group">
-              <label>Riwayat Penyakit <span className="required">*</span></label>
-              <textarea 
+              <label>
+                Riwayat Penyakit <span className="required">*</span>
+              </label>
+              <textarea
                 name="riwayatPenyakit"
-                placeholder="Jelaskan riwayat penyakit yang pernah diderita (jika tidak ada, tulis 'Tidak Ada')..." 
+                placeholder="Jelaskan riwayat penyakit yang pernah diderita (jika tidak ada, tulis 'Tidak Ada')..."
                 value={formData.riwayatPenyakit}
                 onChange={handleInputChange}
                 rows="3"
@@ -292,13 +342,9 @@ const FormPanitia = () => {
               />
             </div>
           </div>
-          
-          <button 
-            type="submit" 
-            className="form-button" 
-            disabled={isLoading}
-          >
-            {isLoading ? 'Mendaftarkan...' : 'Daftar sebagai Panitia'}
+
+          <button type="submit" className="form-button" disabled={isLoading}>
+            {isLoading ? "Mendaftarkan..." : "Daftar sebagai Panitia"}
           </button>
         </form>
       </div>

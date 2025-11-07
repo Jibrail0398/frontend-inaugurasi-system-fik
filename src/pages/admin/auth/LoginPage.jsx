@@ -30,8 +30,16 @@ export default function LoginPage() {
 
     setLoading(true);
     try {
-      await login({ nim, password }, rememberMe);
-      navigate("/admin");
+      const response = await login({ nim, password }, rememberMe);
+
+      // Redirect berdasarkan role
+      // Mentor -> Landing Page dengan fitur presensi
+      // Admin & Panitia -> Dashboard Admin
+      if (response?.role === "mentor") {
+        navigate("/");
+      } else {
+        navigate("/admin");
+      }
     } catch (error) {
       Swal.fire({
         icon: "error",

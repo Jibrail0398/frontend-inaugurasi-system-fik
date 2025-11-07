@@ -1,27 +1,21 @@
-import { useState, useEffect } from 'react';
-import { useParams } from 'react-router-dom';
-import useFormPesertaStore from '../stores/useFormPesertaStore';
-import '../style/FormPeserta.css';
-import { create } from '../services/persertaService';
-
+import { useState } from "react";
+import { useParams, useNavigate } from "react-router-dom";
+import useFormPesertaStore from "../stores/useFormPesertaStore";
+import "../style/FormPesertaSplit.css";
+import { create } from "../services/persertaService";
+import Swal from "sweetalert2";
 
 const FormPeserta = () => {
   const { kodeEvent } = useParams();
-  
-  const {
-    formData,
-    setFormData,
-    setFileUpload,
-    validateForm,
-    resetForm,
-  } = useFormPesertaStore();
+  const navigate = useNavigate();
+
+  const { formData, setFormData, setFileUpload, validateForm, resetForm } =
+    useFormPesertaStore();
 
   const [isLoading, setIsLoading] = useState(false);
-  
-  
-  const ukuranKaosOptions = ['S', 'M', 'L', 'XL', 'XXL'];
-  const tipeDaruratOptions = ['Ayah', 'Ibu', 'Saudara', 'Lainnya'];
-  
+
+  const ukuranKaosOptions = ["S", "M", "L", "XL", "XXL"];
+  const tipeDaruratOptions = ["Ayah", "Ibu", "Saudara", "Lainnya"];
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -32,8 +26,13 @@ const FormPeserta = () => {
     const file = e.target.files[0];
     if (file) {
       if (file.size > 5 * 1024 * 1024) {
-        alert('Ukuran file terlalu besar. Maksimal 5MB.');
-        e.target.value = ''; // Reset input file
+        Swal.fire({
+          icon: "error",
+          title: "File Terlalu Besar",
+          text: "Ukuran file maksimal 5MB",
+          confirmButtonColor: "#667eea",
+        });
+        e.target.value = ""; // Reset input file
         return;
       }
       setFileUpload(file);
@@ -42,279 +41,347 @@ const FormPeserta = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
-    
+
     if (!validateForm()) {
-      alert('Harap isi semua field yang wajib diisi!');
+      Swal.fire({
+        icon: "warning",
+        title: "Data Tidak Lengkap",
+        text: "Harap isi semua field yang wajib diisi!",
+        confirmButtonColor: "#667eea",
+      });
       return;
     }
 
     setIsLoading(true);
-    
+
     try {
-      
-      
       const formDataToSend = new FormData();
-      formDataToSend.append('nama', formData.nama);                   
-      formDataToSend.append('NIM', formData.NIM);
-      formDataToSend.append('email', formData.email);
-      formDataToSend.append('nomor_whatapp', formData.nomor_whatapp); 
-      formDataToSend.append('angkatan', formData.angkatan);
-      formDataToSend.append('kelas', formData.kelas);
-      formDataToSend.append('tanggal_lahir', formData.tanggal_lahir);
-      formDataToSend.append('ukuran_kaos', formData.ukuran_kaos);
-      formDataToSend.append('nomor_darurat', formData.nomor_darurat || '');
-      formDataToSend.append('tipe_nomor_darurat', formData.tipe_nomor_darurat || '');
-      formDataToSend.append('riwayat_penyakit', formData.riwayat_penyakit);
-      
+      formDataToSend.append("nama", formData.nama);
+      formDataToSend.append("NIM", formData.NIM);
+      formDataToSend.append("email", formData.email);
+      formDataToSend.append("nomor_whatapp", formData.nomor_whatapp);
+      formDataToSend.append("angkatan", formData.angkatan);
+      formDataToSend.append("kelas", formData.kelas);
+      formDataToSend.append("tanggal_lahir", formData.tanggal_lahir);
+      formDataToSend.append("ukuran_kaos", formData.ukuran_kaos);
+      formDataToSend.append("nomor_darurat", formData.nomor_darurat || "");
+      formDataToSend.append(
+        "tipe_nomor_darurat",
+        formData.tipe_nomor_darurat || ""
+      );
+      formDataToSend.append("riwayat_penyakit", formData.riwayat_penyakit);
+
       if (formData.bukti_pembayaran) {
-      
-        const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png'];
+        const allowedTypes = ["image/jpeg", "image/jpg", "image/png"];
         if (!allowedTypes.includes(formData.bukti_pembayaran.type)) {
-          alert('Format file tidak didukung. Harus JPG, JPEG, atau PNG.');
+          Swal.fire({
+            icon: "error",
+            title: "Format File Salah",
+            text: "File harus berformat JPG, JPEG, atau PNG",
+            confirmButtonColor: "#667eea",
+          });
           setIsLoading(false);
           return;
         }
-        formDataToSend.append('bukti_pembayaran', formData.bukti_pembayaran);
-
+        formDataToSend.append("bukti_pembayaran", formData.bukti_pembayaran);
       }
-      const response = await create(kodeEvent, formDataToSend);
-      
-      
-      
-      alert("Pendaftaran Berhasil");
-      await resetForm();
-      
-     
-      
+
+      await create(kodeEvent, formDataToSend);
+
+      Swal.fire({
+        icon: "success",
+        title: "Pendaftaran Berhasil!",
+        text: "Terima kasih telah mendaftar. Data Anda telah kami terima.",
+        confirmButtonColor: "#667eea",
+        confirmButtonText: "OK",
+      }).then(() => {
+        resetForm();
+        navigate("/");
+      });
     } catch (err) {
-      
-      const errorMessage = err.response?.data?.error || 'Terjadi kesalahan saat mendaftar';
-      alert(`Pendaftaran gagal: ${errorMessage}`);
+      const errorMessage =
+        err.response?.data?.error || "Terjadi kesalahan saat mendaftar";
+
+      Swal.fire({
+        icon: "error",
+        title: "Pendaftaran Gagal",
+        text: errorMessage,
+        confirmButtonColor: "#667eea",
+      });
     } finally {
       setIsLoading(false);
     }
   };
 
   return (
-    <div className='pendaftaran-page'>
-      <div className="form-container">
-        <header className="form-header">
-          <h3>Form Pendaftaran Peserta Inaugurasi</h3>
-          <p>Isi data diri dengan lengkap untuk mendaftar sebagai peserta</p>
-        </header>
-        
-        <form className="add-form" onSubmit={handleSubmit}>
-          <div className="form-row">
-            <div className="form-group">
-              <label>Nama <span className="required">*</span></label>
-              <input 
-                type="text" 
-                name="nama"
-                placeholder="Nama lengkap..." 
-                value={formData.nama}
-                onChange={handleInputChange}
-                required
-                disabled={isLoading}
-              />
-            </div>
-            
-            <div className="form-group">
-              <label>NIM <span className="required">*</span></label>
-              <input 
-                type="text" 
-                name="NIM"
-                placeholder="Nomor Induk Mahasiswa..." 
-                value={formData.NIM}
-                onChange={handleInputChange}
-                required
-                disabled={isLoading}
-              />
-            </div>
-          </div>
-          
-          <div className="form-row">
-            <div className="form-group">
-              <label>Angkatan <span className="required">*</span></label>
-              <input 
-                type="number" 
-                name="angkatan"
-                placeholder="Tahun angkatan..." 
-                min="2000"
-                max="2099"
-                value={formData.angkatan}
-                onChange={handleInputChange}
-                required
-                disabled={isLoading}
-              />
-            </div>
-            
-            <div className="form-group">
-              <label>Kelas <span className="required">*</span></label>
-              <input 
-                type="text" 
-                name="kelas"
-                placeholder="IF23B" 
-                value={formData.kelas}
-                onChange={handleInputChange}
-                maxLength="10"
-                required
-                disabled={isLoading}
-              />
-            </div>
-          </div>
-          
-       
-          <div className="form-row">
-            <div className="form-group">
-              <label>Tanggal Lahir <span className="required">*</span></label>
-              <input 
-                type="date" 
-                name="tanggal_lahir"
-                value={formData.tanggal_lahir}
-                onChange={handleInputChange}
-                required
-                disabled={isLoading}
-              />
-            </div>
-          </div>
-          
-          <div className="form-row">
-            <div className="form-group">
-              <label>Nomor WhatsApp <span className="required">*</span></label>
-              <input 
-                type="tel" 
-                name="nomor_whatapp"
-                placeholder="Contoh: 08123456789" 
-                value={formData.nomor_whatapp}
-                onChange={handleInputChange}
-                required
-                disabled={isLoading}
-              />
-            </div>
-            
-            <div className="form-group">
-              <label>Email <span className="required">*</span></label>
-              <input 
-                type="email" 
-                name="email"
-                placeholder="Alamat email aktif..." 
-                value={formData.email}
-                onChange={handleInputChange}
-                required
-                disabled={isLoading}
-              />
-            </div>
-          </div>
-          
-          <div className="form-group">
-            <label>Ukuran Kaos <span className="required">*</span></label>
-            <div className="radio-group">
-              {ukuranKaosOptions.map(ukuran => (
-                <label key={ukuran} className="radio-label">
-                  <input 
-                    type="radio" 
-                    name="ukuran_kaos"
-                    value={ukuran}
-                    checked={formData.ukuran_kaos === ukuran}
+    <div className="pendaftaran-page-split">
+      <div className="split-container">
+        {/* Center Form */}
+        <div className="split-right center-form">
+          <div className="form-wrapper">
+            <form className="form-split" onSubmit={handleSubmit}>
+              <div className="form-row-split">
+                <div className="form-col">
+                  <label>
+                    Nama Lengkap <span className="req">*</span>
+                  </label>
+                  <input
+                    type="text"
+                    name="nama"
+                    placeholder="Nama lengkap..."
+                    value={formData.nama}
                     onChange={handleInputChange}
                     required
                     disabled={isLoading}
                   />
-                  {ukuran}
-                </label>
-              ))}
-            </div>
-          </div>
-          
-          <div className="form-row">
-            <div className="form-group">
-              <label>Nomor Darurat <span className="required">*</span></label> 
-              <input 
-                type="tel" 
-                name="nomor_darurat"
-                placeholder="Nomor telepon darurat..." 
-                value={formData.nomor_darurat}
-                onChange={handleInputChange}
-                disabled={isLoading}
-              />
-            </div>
-            
-            <div className="form-group">
-              <label>Tipe Nomor Darurat <span className="required">*</span></label>
-              <select 
-                name="tipe_nomor_darurat"
-                value={formData.tipe_nomor_darurat}
-                onChange={handleInputChange}
+                </div>
+
+                <div className="form-col">
+                  <label>
+                    NIM <span className="req">*</span>
+                  </label>
+                  <input
+                    type="text"
+                    name="NIM"
+                    placeholder="202xxxxxxx"
+                    value={formData.NIM}
+                    onChange={handleInputChange}
+                    required
+                    disabled={isLoading}
+                  />
+                </div>
+              </div>
+
+              <div className="form-row-split">
+                <div className="form-col">
+                  <label>
+                    Email <span className="req">*</span>
+                  </label>
+                  <input
+                    type="email"
+                    name="email"
+                    placeholder="email@example.com"
+                    value={formData.email}
+                    onChange={handleInputChange}
+                    required
+                    disabled={isLoading}
+                  />
+                </div>
+
+                <div className="form-col">
+                  <label>
+                    WhatsApp <span className="req">*</span>
+                  </label>
+                  <input
+                    type="tel"
+                    name="nomor_whatapp"
+                    placeholder="08xxxxxxxxxx"
+                    value={formData.nomor_whatapp}
+                    onChange={handleInputChange}
+                    required
+                    disabled={isLoading}
+                  />
+                </div>
+              </div>
+
+              <div className="form-row-split">
+                <div className="form-col">
+                  <label>
+                    Angkatan <span className="req">*</span>
+                  </label>
+                  <input
+                    type="number"
+                    name="angkatan"
+                    placeholder="2024"
+                    min="2000"
+                    max="2099"
+                    value={formData.angkatan}
+                    onChange={handleInputChange}
+                    required
+                    disabled={isLoading}
+                  />
+                </div>
+
+                <div className="form-col">
+                  <label>
+                    Kelas <span className="req">*</span>
+                  </label>
+                  <input
+                    type="text"
+                    name="kelas"
+                    placeholder="IF23B"
+                    value={formData.kelas}
+                    onChange={handleInputChange}
+                    maxLength="10"
+                    required
+                    disabled={isLoading}
+                  />
+                </div>
+              </div>
+
+              <div className="form-row-split">
+                <div className="form-col">
+                  <label>
+                    Tanggal Lahir <span className="req">*</span>
+                  </label>
+                  <input
+                    type="date"
+                    name="tanggal_lahir"
+                    value={formData.tanggal_lahir}
+                    onChange={handleInputChange}
+                    required
+                    disabled={isLoading}
+                  />
+                </div>
+
+                <div className="form-col">
+                  <label>
+                    Ukuran Kaos <span className="req">*</span>
+                  </label>
+                  <div className="size-options">
+                    {ukuranKaosOptions.map((ukuran) => (
+                      <label key={ukuran} className="size-option">
+                        <input
+                          type="radio"
+                          name="ukuran_kaos"
+                          value={ukuran}
+                          checked={formData.ukuran_kaos === ukuran}
+                          onChange={handleInputChange}
+                          required
+                          disabled={isLoading}
+                        />
+                        <span>{ukuran}</span>
+                      </label>
+                    ))}
+                  </div>
+                </div>
+              </div>
+
+              <div className="form-row-split">
+                <div className="form-col">
+                  <label>
+                    Kontak Darurat <span className="req">*</span>
+                  </label>
+                  <input
+                    type="tel"
+                    name="nomor_darurat"
+                    placeholder="08xxxxxxxxxx"
+                    value={formData.nomor_darurat}
+                    onChange={handleInputChange}
+                    disabled={isLoading}
+                  />
+                </div>
+
+                <div className="form-col">
+                  <label>
+                    Hubungan <span className="req">*</span>
+                  </label>
+                  <select
+                    name="tipe_nomor_darurat"
+                    value={formData.tipe_nomor_darurat}
+                    onChange={handleInputChange}
+                    disabled={isLoading}
+                  >
+                    <option value="" disabled>
+                      Pilih...
+                    </option>
+                    {tipeDaruratOptions.map((tipe) => (
+                      <option key={tipe} value={tipe}>
+                        {tipe}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+              </div>
+
+              <div className="form-row-full">
+                <div className="form-col">
+                  <label>
+                    Riwayat Penyakit <span className="req">*</span>
+                  </label>
+                  <textarea
+                    name="riwayat_penyakit"
+                    placeholder="Jelaskan riwayat penyakit atau tulis 'Tidak Ada'"
+                    value={formData.riwayat_penyakit}
+                    onChange={handleInputChange}
+                    rows="3"
+                    required
+                    disabled={isLoading}
+                  />
+                </div>
+              </div>
+
+              <div className="divider-section">
+                <span>Pembayaran</span>
+              </div>
+
+              <div className="payment-info-compact">
+                <div className="payment-row">
+                  <span>Nomor Rekening</span>
+                  <strong>1234567890</strong>
+                </div>
+                <div className="payment-row">
+                  <span>Bank BCA a.n.</span>
+                  <strong>Panitia Inaugurasi FIK</strong>
+                </div>
+                <div className="payment-row">
+                  <span>Nominal Transfer</span>
+                  <strong className="amount">Rp 150.000</strong>
+                </div>
+              </div>
+
+              <div className="form-row-full">
+                <div className="form-col">
+                  <label>
+                    Upload Bukti Transfer <span className="req">*</span>
+                  </label>
+                  <label className="upload-compact">
+                    <input
+                      type="file"
+                      name="bukti_pembayaran"
+                      accept=".jpeg,.jpg,.png"
+                      onChange={handleFileChange}
+                      required
+                      disabled={isLoading}
+                      style={{ display: "none" }}
+                    />
+                    <div className="upload-inner">
+                      {formData.bukti_pembayaran ? (
+                        <>
+                          <i className="fas fa-check-circle"></i>
+                          <span>File terpilih</span>
+                        </>
+                      ) : (
+                        <>
+                          <i className="fas fa-upload"></i>
+                          <span>Pilih file</span>
+                        </>
+                      )}
+                    </div>
+                  </label>
+                </div>
+              </div>
+
+              <button
+                type="submit"
+                className="btn-submit-split"
                 disabled={isLoading}
               >
-                <option value="" disabled>
-                  nomor darurat siapa?
-                </option>
-                {tipeDaruratOptions.map(tipe => (
-                  <option key={tipe} value={tipe}>{tipe}</option>
-                ))}
-              </select>
-            </div>
+                {isLoading ? (
+                  <>
+                    <span className="spinner-mini"></span>
+                    <span>Memproses...</span>
+                  </>
+                ) : (
+                  <>
+                    <span>Daftar Sekarang</span>
+                    <i className="fas fa-arrow-right"></i>
+                  </>
+                )}
+              </button>
+            </form>
           </div>
-          
-          <div className="form-group">
-            <label>Riwayat Penyakit <span className="required">*</span></label>
-            <textarea 
-              name="riwayat_penyakit"
-              placeholder="Jelaskan riwayat penyakit yang pernah diderita (jika tidak ada, tulis 'Tidak Ada')..." 
-              value={formData.riwayat_penyakit}
-              onChange={handleInputChange}
-              rows="3"
-              required
-              disabled={isLoading}
-            />
-          </div>
-          
-          <div className="form-group">
-            <label>Pembayaran <span className="required">*</span></label>
-            
-            <div className="payment-info">
-              <h4>Informasi Transfer:</h4>
-              <p>Bank: BCA</p>
-              <p>No. Rekening: <strong>1234 5678 9012 3456</strong></p>
-              <p>Atas Nama: <strong>UBP punya</strong></p>
-              <p>Jumlah: <strong>Rp 150.000</strong></p>
-            </div>
-
-            <div className="upload-section">
-              <label className="upload-label">
-                <input
-                  type="file"
-                  name="bukti_pembayaran"
-                  accept=".jpeg,.jpg,.png"
-                  onChange={handleFileChange}
-                  className="file-input"
-                  required
-                  disabled={isLoading}
-                />
-                <div className="upload-box">
-                  <div className="upload-icon">📁</div>
-                  <p>Upload Bukti Transfer</p>
-                  <small>Format: JPG, PNG, PDF (Maks. 5MB)</small>
-                  {formData.bukti_pembayaran && (
-                    <div className="file-preview">
-                      <strong>File terpilih:</strong> {formData.buktiPembayaranName}
-                    </div>
-                  )}
-                </div>
-              </label>
-            </div>
-          </div>
-          
-          <button 
-            type="submit" 
-            className="form-button" 
-            disabled={isLoading}
-          >
-            {isLoading ? 'Mendaftarkan...' : 'Daftarkan'}
-          </button>
-        </form>
+        </div>
       </div>
     </div>
   );
