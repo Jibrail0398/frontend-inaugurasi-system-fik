@@ -7,7 +7,7 @@ import * as authService from "../services/authService";
  * 🔐 CUSTOM HOOK: useAuth
  * ============================================
  * Hook untuk mengelola authentication & authorization
- * 
+ *
  * Features:
  * - Login/Logout user
  * - Auto-fetch user data dari token
@@ -63,7 +63,7 @@ const useAuth = () => {
     // Clear user & token
     setUser(null);
     setToken(null);
-    
+
     // ⚠️ REDIRECT ke landing page setelah logout
     window.location.href = "/";
   }, [token, setToken]);
@@ -98,12 +98,12 @@ const useAuth = () => {
 
   // ========== Return Values ==========
   return {
-    user,              // 👤 Data user
-    loading,           // ⏳ Loading state
-    login,             // 🔓 Function login
-    logout,            // 🔒 Function logout
+    user, // 👤 Data user
+    loading, // ⏳ Loading state
+    login, // 🔓 Function login
+    logout, // 🔒 Function logout
     isAuthenticated: !!user, // ✅ Status autentikasi
-    token,             // 🔑 Token JWT
+    token, // 🔑 Token JWT
   };
 };
 

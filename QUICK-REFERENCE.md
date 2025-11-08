@@ -3,26 +3,32 @@
 ## 🔥 FILE-FILE CRITICAL
 
 ### 1. `vercel.json` (Root)
+
 ```json
 {
   "rewrites": [{ "source": "/(.*)", "destination": "/index.html" }]
 }
 ```
+
 **⚠️ WAJIB ADA** - Fix routing SPA di Vercel
 
 ---
 
 ### 2. `src/hooks/useAuth.js`
+
 **Line Penting**:
+
 ```javascript
 // Line ~60: LOGOUT REDIRECT
-window.location.href = "/";  // ← Ke landing page
+window.location.href = "/"; // ← Ke landing page
 ```
 
 ---
 
 ### 3. `src/routes.jsx`
+
 **Route Penting**:
+
 ```javascript
 // Path "*" HARUS DI PALING BAWAH
 {
@@ -34,7 +40,9 @@ window.location.href = "/";  // ← Ke landing page
 ---
 
 ### 4. `src/services/authService.js`
+
 **Environment Variables**:
+
 - `VITE_BASE_URL_API` ✅ Required
 - `VITE_ENVIRONMENT` ✅ Required
 
@@ -60,7 +68,7 @@ window.location.href = "/";  // ← Ke landing page
 - [ ] `vercel.json` ada di root
 - [ ] Environment variables sudah set
 - [ ] Logout redirect ke "/" (landing page)
-- [ ] Route "*" di paling bawah routes.jsx
+- [ ] Route "\*" di paling bawah routes.jsx
 
 ---
 

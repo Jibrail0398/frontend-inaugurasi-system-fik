@@ -83,9 +83,13 @@ const FormPanitia = () => {
   return (
     <div className="pendaftaran-page">
       <div className="form-container">
+        {/* Form Header */}
         <header className="form-header">
-          <h3>Form Pendaftaran Panitia Inaugurasi</h3>
-          <p>Isi data diri dengan lengkap untuk mendaftar sebagai panitia</p>
+          <h2 className="form-title">Pendaftaran Inaugurasi</h2>
+          <h3 className="form-subtitle-main">Panitia Pelaksana</h3>
+          <p className="form-description">
+            Isi data diri dengan lengkap untuk mendaftar sebagai panitia
+          </p>
         </header>
 
         <form className="add-form" onSubmit={handleSubmit}>
@@ -217,10 +221,9 @@ const FormPanitia = () => {
                     value={ukuran}
                     checked={formData.ukuranKaos === ukuran}
                     onChange={handleInputChange}
-                    required
                     disabled={isLoading}
                   />
-                  {ukuran}
+                  <span>{ukuran}</span>
                 </label>
               ))}
             </div>
@@ -243,10 +246,9 @@ const FormPanitia = () => {
                       value={divisi}
                       checked={formData.divisi === divisi}
                       onChange={handleInputChange}
-                      required
                       disabled={isLoading}
                     />
-                    {divisi}
+                    <span>{divisi}</span>
                   </label>
                 ))}
               </div>

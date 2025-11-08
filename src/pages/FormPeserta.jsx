@@ -119,6 +119,14 @@ const FormPeserta = () => {
         {/* Center Form */}
         <div className="split-right center-form">
           <div className="form-wrapper">
+            {/* Form Header */}
+            <div className="form-header-split">
+              <h2 className="form-title-split">Pendaftaran Inaugurasi</h2>
+              <p className="form-subtitle-split">
+                Silakan isi formulir pendaftaran event dengan lengkap dan benar
+              </p>
+            </div>
+
             <form className="form-split" onSubmit={handleSubmit}>
               <div className="form-row-split">
                 <div className="form-col">

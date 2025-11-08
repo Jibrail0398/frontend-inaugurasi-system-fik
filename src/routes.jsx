@@ -3,7 +3,7 @@
  * 🗺️ ROUTER CONFIGURATION
  * ============================================
  * Konfigurasi routing untuk aplikasi
- * 
+ *
  * Route Structure:
  * - "/" : Landing Page (Public)
  * - "/admin/auth/*" : Auth Pages (Login, etc)
