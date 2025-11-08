@@ -899,18 +899,6 @@ const LandingPage = () => {
                   </div>
                 </div>
               </div>
-              <div className="col-lg-5">
-                <div className="cta-button-wrapper">
-                  <Link to="/admin/auth/login" className="btn-cta-primary">
-                    <span>Mulai Sekarang</span>
-                    <i className="fas fa-rocket ms-2"></i>
-                  </Link>
-                  <p className="cta-note">
-                    <i className="fas fa-shield-alt me-2"></i>
-                    Tidak perlu kartu kredit
-                  </p>
-                </div>
-              </div>
             </div>
           </div>
         </div>

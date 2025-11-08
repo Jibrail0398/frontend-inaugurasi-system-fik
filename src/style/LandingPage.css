@@ -63,9 +63,17 @@
   gap: 2.5rem;
 }
 
+/* Remove underline from all navbar links */
+.navbar-menu a,
+.navbar-menu a:hover,
+.navbar-menu a:focus,
+.navbar-menu a:active {
+  text-decoration: none !important;
+}
+
 .nav-link {
   color: var(--text-light);
-  text-decoration: none;
+  text-decoration: none !important;
   font-weight: 500;
   font-size: 0.9375rem;
   transition: color 0.2s ease;
@@ -74,6 +82,7 @@
 
 .nav-link:hover {
   color: var(--text-dark);
+  text-decoration: none !important;
 }
 
 .nav-link-accent {
@@ -94,13 +103,14 @@
   border-radius: 6px;
   font-weight: 500;
   font-size: 0.9375rem;
-  text-decoration: none;
+  text-decoration: none !important;
   transition: all 0.2s ease;
 }
 
 .btn-nav-login:hover {
   background: var(--primary-color);
   color: white;
+  text-decoration: none !important;
 }
 
 /* Hamburger Menu */
