@@ -26,21 +26,24 @@
         const fetchPeserta = async () => {
             try {
                 setLoading(true);
-                const data = await pesertaService.getAll();
+                const response = await pesertaService.getAll();
+                const data = response.data; 
 
                 const pesertaWithStatus = data.map((p) => {
-                    const latest = p.penerimaan_peserta?.[0] || null;
-                    const status = latest?.status_pembayaran || "belum lunas";
+                    
+                    const penerimaan = p.penerimaan_peserta || null;
+                    const status = penerimaan?.status_pembayaran || "belum lunas";
 
                     return {
                         ...p,
-                        latestPenerimaan: latest,
-                        penerimaan_id: latest?.id || null,
+                        latestPenerimaan: penerimaan,
+                        penerimaan_id: penerimaan?.id || null, // ✅ Sekarang tidak akan null
                         status_pembayaran: status,
                     };
                 });
 
                 setPeserta(pesertaWithStatus);
+                
             } catch (err) {
                 console.error("Gagal memuat data:", err);
                 setError("Gagal memuat data peserta");

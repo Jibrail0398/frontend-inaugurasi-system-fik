@@ -33,31 +33,7 @@ export const getAll = async () => {
             headers: { Authorization: `Bearer ${token}` },
         });
 
-        // Ambil array peserta
-        let pesertaArray = [];
-        if (Array.isArray(response.data)) pesertaArray = response.data;
-        else if (response.data?.data && Array.isArray(response.data.data))
-            pesertaArray = response.data.data;
-        else if (response.data?.peserta && Array.isArray(response.data.peserta))
-            pesertaArray = response.data.peserta;
-
-        // Pastikan setiap peserta punya field penerimaanPeserta
-        pesertaArray = pesertaArray.map((p) => {
-            const sortedPenerimaan = Array.isArray(p.penerimaanPeserta)
-                    ? [...p.penerimaanPeserta].sort(
-                        (a, b) =>
-                            new Date(b.tanggal_penerimaan) -
-                            new Date(a.tanggal_penerimaan)
-                    )
-                : [];
-
-            return {
-                ...p,
-                penerimaanPeserta: sortedPenerimaan,
-            };
-        });
-
-        return pesertaArray;
+        return response.data;
     } catch (error) {
         console.error(
             "❌ Gagal mengambil data peserta:",
